@@ -49,7 +49,7 @@ def supportsNamespace() {
 
 android {
   if (supportsNamespace()) {
-    namespace "com.metadataretriever"
+    namespace "com.missingcore.metadataretriever"
 
     sourceSets {
       main {
@@ -120,6 +120,6 @@ if (isNewArchitectureEnabled()) {
   react {
     jsRootDir = file("../src/")
     libraryName = "MetadataRetriever"
-    codegenJavaPackageName = "com.metadataretriever"
+    codegenJavaPackageName = "com.missingcore.metadataretriever"
   }
 }

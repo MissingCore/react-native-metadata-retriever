@@ -163,7 +163,7 @@
     "type": "modules",
     "jsSrcsDir": "src",
     "android": {
-      "javaPackageName": "com.metadataretriever"
+      "javaPackageName": "com.missingcore.metadataretriever"
     }
   },
   "create-react-native-library": {

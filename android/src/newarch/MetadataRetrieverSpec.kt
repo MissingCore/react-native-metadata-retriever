@@ -1,4 +1,4 @@
-package com.metadataretriever
+package com.missingcore.metadataretriever
 
 import com.facebook.react.bridge.ReactApplicationContext
 
