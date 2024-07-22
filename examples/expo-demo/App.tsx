@@ -79,19 +79,32 @@ function App() {
 }
 
 async function testPackage() {
-  const { assets } = await MediaLibrary.getAssetsAsync({
-    mediaType: 'audio',
-    first: 1,
-  });
+  const start = performance.now();
 
-  try {
-    const asset = assets[0];
-    console.log(`Found Asset:`, asset);
-    const result = await getMetadata(asset?.uri!, []);
-    console.log(result);
-  } catch (err) {
-    console.log(err);
-  }
+  const { totalCount } = await MediaLibrary.getAssetsAsync({
+    mediaType: 'audio',
+    first: 0,
+  });
+  const audioFiles = (
+    await MediaLibrary.getAssetsAsync({
+      mediaType: 'audio',
+      first: totalCount,
+    })
+  ).assets.filter(({ uri }) =>
+    uri.startsWith('file:///storage/emulated/0/Music/')
+  );
+
+  await Promise.allSettled(audioFiles.map(({ uri }) => getMetadata(uri!, [])));
+
+  console.log(
+    `Got metadata of ${audioFiles.length} tracks in ${((performance.now() - start) / 1000).toFixed(4)}s.`
+  );
+
+  /*
+    Quick Stats with Current Setup:
+      - 186 tracks on OnePlus 6 took ~3-5s
+      - 186 tracks on Nothing 2a took ~5.4-7s
+  */
 
   return {};
 }
