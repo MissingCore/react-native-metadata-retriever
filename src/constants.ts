@@ -1,0 +1,40 @@
+/**
+ * Fields that can be extracted from media file.
+ *
+ * https://developer.android.com/reference/androidx/media3/common/MediaMetadata#public-fields_1.
+ */
+export const MediaMetadataPublicFields = [
+  'albumArtist',
+  'albumTitle',
+  'artist',
+  'artworkData',
+  'artworkDataType',
+  'artworkUri',
+  'compilation',
+  'composer',
+  'conductor',
+  'description',
+  'discNumber',
+  'displayTitle',
+  'extras',
+  'folderType',
+  'genre',
+  'isBrowsable',
+  'isPlayable',
+  'mediaType',
+  'overallRating',
+  'recordingDay',
+  'recordingMonth',
+  'recordingYear',
+  'releaseDay',
+  'releaseMonth',
+  'releaseYear',
+  'station',
+  'subtitle',
+  'title',
+  'totalDiscCount',
+  'totalTrackCount',
+  'trackNumber',
+  'userRating',
+  'writer',
+] as const;
