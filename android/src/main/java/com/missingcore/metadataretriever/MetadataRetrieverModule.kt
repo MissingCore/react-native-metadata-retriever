@@ -60,11 +60,9 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       return
     }
 
-    val mediaMetadataBuilder = MediaMetadata.Builder()
-    for (idx in 0.rangeTo(metadata.length() - 1)) {
-      metadata.get(idx).populateMediaMetadata(mediaMetadataBuilder)
-    }
-    val mediaMetadata = mediaMetadataBuilder.build()
+    val mediaMetadata = MediaMetadata.Builder()
+      .populateFromMetadata(metadata)
+      .build()
 
     promise.resolve(mediaMetadata.albumTitle)
   }
