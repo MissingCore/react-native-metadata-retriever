@@ -33,7 +33,6 @@
   ],
   "scripts": {
     "example:expo": "pnpm --filter expo-demo run",
-    "example:react-native": "pnpm --filter react-native-demo run",
     "test": "jest --coverage",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
