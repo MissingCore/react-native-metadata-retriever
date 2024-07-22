@@ -65,12 +65,18 @@ importers:
       '@missingcore/react-native-metadata-retriever':
         specifier: workspace:*
         version: link:../..
+      '@tanstack/react-query':
+        specifier: ^5.51.11
+        version: 5.51.11(react@18.2.0)
       expo:
         specifier: ~51.0.19
         version: 51.0.21(@babel/core@7.24.7)(@babel/preset-env@7.24.7)
       expo-build-properties:
         specifier: ^0.12.3
         version: 0.12.3(expo@51.0.21)
+      expo-media-library:
+        specifier: ^16.0.4
+        version: 16.0.4(expo@51.0.21)
       expo-status-bar:
         specifier: ~1.12.1
         version: 1.12.1
@@ -3066,6 +3072,19 @@ packages:
       defer-to-connect: 2.0.1
     dev: true
 
+  /@tanstack/query-core@5.51.9:
+    resolution: {integrity: sha512-HsAwaY5J19MD18ykZDS3aVVh+bAt0i7m6uQlFC2b77DLV9djo+xEN7MWQAQQTR8IM+7r/zbozTQ7P0xr0bHuew==}
+    dev: false
+
+  /@tanstack/react-query@5.51.11(react@18.2.0):
+    resolution: {integrity: sha512-4Kq2x0XpDlpvSnaLG+8pHNH60zEc3mBvb3B2tOMDjcPCi/o+Du3p/9qpPLwJOTliVxxPJAP27fuIhLrsRdCr7A==}
+    peerDependencies:
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-core': 5.51.9
+      react: 18.2.0
+    dev: false
+
   /@tootallnate/quickjs-emscripten@0.23.0:
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
     dev: true
@@ -5602,6 +5621,14 @@ packages:
 
   /expo-keep-awake@13.0.2(expo@51.0.21):
     resolution: {integrity: sha512-kKiwkVg/bY0AJ5q1Pxnm/GvpeB6hbNJhcFsoOWDh2NlpibhCLaHL826KHUM+WsnJRbVRxJ+K9vbPRHEMvFpVyw==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 51.0.21(@babel/core@7.24.7)(@babel/preset-env@7.24.7)
+    dev: false
+
+  /expo-media-library@16.0.4(expo@51.0.21):
+    resolution: {integrity: sha512-nX9iN8+XAoERDVGPpDdUbhFwvfYdBpkgTAxwDOYL7heASYCOdxfqQtXy/jv1+QZpj0epaR6Owq/LUn1lVP3ykg==}
     peerDependencies:
       expo: '*'
     dependencies:

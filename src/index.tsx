@@ -27,3 +27,7 @@ const MetadataRetriever = MetadataRetrieverModule
 export function multiply(a: number, b: number): Promise<number> {
   return MetadataRetriever.multiply(a, b);
 }
+
+export function getMetadata(uri: String, options: string[]): Promise<unknown> {
+  return MetadataRetriever.getMetadata(uri, options);
+}
