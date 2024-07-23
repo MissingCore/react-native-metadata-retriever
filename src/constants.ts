@@ -10,8 +10,8 @@ export const MediaMetadataPublicFields = [
   'albumTitle',
   'artist',
   // 'artworkData',
-  // 'artworkDataType',
-  // 'artworkUri',
+  'artworkDataType',
+  'artworkUri',
   'compilation',
   'composer',
   'conductor',
@@ -22,8 +22,8 @@ export const MediaMetadataPublicFields = [
   'genre',
   'isBrowsable',
   'isPlayable',
-  // 'mediaType',
-  // 'overallRating',
+  'mediaType',
+  'overallRating',
   'recordingDay',
   'recordingMonth',
   'recordingYear',
@@ -36,7 +36,7 @@ export const MediaMetadataPublicFields = [
   'totalDiscCount',
   'totalTrackCount',
   'trackNumber',
-  // 'userRating',
+  'userRating',
   'writer',
 ] as const;
 
@@ -60,8 +60,8 @@ export type MediaMetadata = {
   albumTitle: string | null;
   artist: string | null;
   // artworkData: number[] | null;
-  // artworkDataType: number | null;
-  // artworkUri: string | null;
+  artworkDataType: string | null;
+  artworkUri: string | null;
   compilation: string | null;
   composer: string | null;
   conductor: string | null;
@@ -72,8 +72,8 @@ export type MediaMetadata = {
   genre: string | null;
   isBrowsable: boolean | null;
   isPlayable: boolean | null;
-  // mediaType: number | null;
-  // overallRating: number | null;
+  mediaType: string | null;
+  overallRating: number | null;
   recordingDay: number | null;
   recordingMonth: number | null;
   recordingYear: number | null;
@@ -86,7 +86,7 @@ export type MediaMetadata = {
   totalDiscCount: number | null;
   totalTrackCount: number | null;
   trackNumber: number | null;
-  // userRating: number | null;
+  userRating: number | null;
   writer: string | null;
 };
 
