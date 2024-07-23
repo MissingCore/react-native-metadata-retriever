@@ -40,6 +40,15 @@ export const MediaMetadataPublicFields = [
   'writer',
 ] as const;
 
+/** Some preset options that we can pass down into `getMetadata()`. */
+export const MetadataPresets = {
+  minimum: ['artist', 'title'],
+  standard: [
+    ...['artist', 'albumArtist', 'albumTitle', 'title'],
+    ...['trackNumber', 'recordingYear'],
+  ],
+} as const satisfies Record<string, MediaMetadataPublicField[]>;
+
 export type MediaMetadataPublicField =
   (typeof MediaMetadataPublicFields)[number];
 

@@ -5,7 +5,7 @@ import type {
   MediaMetadataExcerpt,
   MediaMetadataPublicField,
 } from './constants';
-import { MediaMetadataPublicFields } from './constants';
+import { MediaMetadataPublicFields, MetadataPresets } from './constants';
 
 /** Returns the specified metadata of a media file from its uri. */
 export function getMetadata<TOptions extends MediaMetadataPublicFields>(
@@ -20,4 +20,5 @@ export {
   type MediaMetadataExcerpt,
   type MediaMetadataPublicField,
   MediaMetadataPublicFields,
+  MetadataPresets,
 };

@@ -13,7 +13,10 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-import { getMetadata } from '@missingcore/react-native-metadata-retriever';
+import {
+  MetadataPresets,
+  getMetadata,
+} from '@missingcore/react-native-metadata-retriever';
 
 import { isFulfilled, isRejected } from './utils/promise';
 
@@ -104,12 +107,7 @@ async function testPackage() {
   );
 
   const results = await Promise.allSettled(
-    audioFiles.map(({ uri }) =>
-      getMetadata(uri!, [
-        ...['artist', 'albumArtist', 'albumTitle', 'title'],
-        ...['trackNumber', 'recordingYear'],
-      ] as const)
-    )
+    audioFiles.map(({ uri }) => getMetadata(uri, MetadataPresets.standard))
   );
 
   const tracksMetadata = results.filter(isFulfilled).map(({ value }) => value);
