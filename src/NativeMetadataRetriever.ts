@@ -1,18 +1,11 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
-import type {
-  MediaMetadataExcerpt,
-  MediaMetadataPublicFields,
-} from './constants';
-
 export interface Spec extends TurboModule {
-  readonly getConstants: () => Record<string, unknown>;
-
-  getMetadata<TOptions extends MediaMetadataPublicFields>(
+  getMetadata(
     uri: string,
-    options: TOptions
-  ): Promise<MediaMetadataExcerpt<TOptions>>;
+    options: readonly string[]
+  ): Promise<Record<string, unknown>>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('MetadataRetriever');

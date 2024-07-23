@@ -8,11 +8,5 @@ import com.facebook.react.bridge.Promise
 abstract class MetadataRetrieverSpec internal constructor(context: ReactApplicationContext) :
   ReactContextBaseJavaModule(context) {
 
-  abstract fun getTypedExportedConstants(): Map<String, Any?>
-
-  override fun getConstants(): Map<String, Any?> {
-    return getTypedExportedConstants()
-  }
-
   abstract fun getMetadata(uri: String, options: ReadableArray, promise: Promise)
 }

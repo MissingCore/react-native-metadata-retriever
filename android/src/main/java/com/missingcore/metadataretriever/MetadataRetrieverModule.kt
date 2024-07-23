@@ -22,11 +22,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     return NAME
   }
 
-  override fun getTypedExportedConstants(): Map<String, Any?> {
-    val constants: MutableMap<String, Any?> = HashMap()
-    return constants
-  }
-
   @ReactMethod
   override fun getMetadata(uri: String, options: ReadableArray, promise: Promise) {
     // Populate return object with default values based on input.

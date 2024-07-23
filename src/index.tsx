@@ -12,7 +12,9 @@ export function getMetadata<TOptions extends MediaMetadataPublicFields>(
   uri: string,
   options: TOptions
 ): Promise<MediaMetadataExcerpt<TOptions>> {
-  return MetadataRetriever.getMetadata(uri, options);
+  return MetadataRetriever.getMetadata(uri, options) as Promise<
+    MediaMetadataExcerpt<TOptions>
+  >;
 }
 
 export {
