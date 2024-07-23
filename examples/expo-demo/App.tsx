@@ -1,3 +1,4 @@
+import { FlashList } from '@shopify/flash-list';
 import {
   QueryClient,
   QueryClientProvider,
@@ -12,10 +13,9 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-import {
-  multiply,
-  getMetadata,
-} from '@missingcore/react-native-metadata-retriever';
+import { getMetadata } from '@missingcore/react-native-metadata-retriever';
+
+import { isFulfilled, isRejected } from './utils/promise';
 
 const queryClient = new QueryClient();
 
@@ -34,7 +34,7 @@ export default function RootLayout() {
 function Container({ children }: { children: React.ReactNode }) {
   const insets = useSafeAreaInsets();
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 64 }]}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar style="dark" />
       {children}
     </View>
@@ -47,13 +47,11 @@ function App() {
   });
   const [hasPermissions, setHasPermissions] = useState(false);
 
-  const {} = useQuery({
+  const { isPending, error, data } = useQuery({
     queryKey: ['tracks'],
     queryFn: testPackage,
     enabled: hasPermissions,
   });
-
-  const [result, setResult] = useState<number | undefined>();
 
   useEffect(() => {
     async function checkPermissions() {
@@ -67,13 +65,24 @@ function App() {
     checkPermissions();
   }, [permissionResponse?.status, requestPermission]);
 
-  useEffect(() => {
-    multiply(3, 7).then(setResult);
-  }, []);
-
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <FlashList
+        estimatedItemSize={23}
+        data={data}
+        keyExtractor={(_, index) => `${index}`}
+        renderItem={({ item }) => <Text>{item.title}</Text>}
+        ListEmptyComponent={
+          isPending ? (
+            <Text>Currently loading data...</Text>
+          ) : error ? (
+            <Text>{error.message}</Text>
+          ) : (
+            <Text>Failed to get metadata.</Text>
+          )
+        }
+        contentContainerStyle={{ paddingVertical: 8 }}
+      />
     </View>
   );
 }
@@ -94,11 +103,22 @@ async function testPackage() {
     uri.startsWith('file:///storage/emulated/0/Music/')
   );
 
-  await Promise.allSettled(audioFiles.map(({ uri }) => getMetadata(uri!, [])));
+  const results = await Promise.allSettled(
+    audioFiles.map(({ uri }) =>
+      getMetadata(uri!, [
+        ...['artist', 'albumArtist', 'albumTitle', 'title'],
+        ...['trackNumber', 'recordingYear'],
+      ] as const)
+    )
+  );
+
+  const tracksMetadata = results.filter(isFulfilled).map(({ value }) => value);
+  const errors = results.filter(isRejected).map(({ reason }) => reason);
 
   console.log(
     `Got metadata of ${audioFiles.length} tracks in ${((performance.now() - start) / 1000).toFixed(4)}s.`
   );
+  console.log(errors);
 
   /*
     Quick Stats with Current Setup:
@@ -106,18 +126,12 @@ async function testPackage() {
       - 186 tracks on Nothing 2a took ~5.4-7s
   */
 
-  return {};
+  return tracksMetadata;
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+    paddingHorizontal: 8,
   },
 });

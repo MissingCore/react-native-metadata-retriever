@@ -65,6 +65,9 @@ importers:
       '@missingcore/react-native-metadata-retriever':
         specifier: workspace:*
         version: link:../..
+      '@shopify/flash-list':
+        specifier: ^1.7.0
+        version: 1.7.0(@babel/runtime@7.24.7)(react-native@0.74.3)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.51.11
         version: 5.51.11(react@18.2.0)
@@ -2920,6 +2923,20 @@ packages:
     dependencies:
       component-type: 1.2.2
       join-component: 1.1.0
+    dev: false
+
+  /@shopify/flash-list@1.7.0(@babel/runtime@7.24.7)(react-native@0.74.3)(react@18.2.0):
+    resolution: {integrity: sha512-Uys8mWTb0Y34Ts1hD97KrVFbFH9oY7qbj/u1oSrAS5PJAackDFbndUEVuTYyXSyWxHY0sRutF5HgS1yNdhj+0A==}
+    peerDependencies:
+      '@babel/runtime': '*'
+      react: '*'
+      react-native: '*'
+    dependencies:
+      '@babel/runtime': 7.24.7
+      react: 18.2.0
+      react-native: 0.74.3(@babel/core@7.24.7)(@babel/preset-env@7.24.7)(@types/react@18.3.3)(react@18.2.0)
+      recyclerlistview: 4.2.1(react-native@0.74.3)(react@18.2.0)
+      tslib: 2.6.3
     dev: false
 
   /@sideway/address@4.1.5:
@@ -9336,6 +9353,19 @@ packages:
       resolve: 1.22.8
     dev: true
 
+  /recyclerlistview@4.2.1(react-native@0.74.3)(react@18.2.0):
+    resolution: {integrity: sha512-NtVYjofwgUCt1rEsTp6jHQg/47TWjnO92TU2kTVgJ9wsc/ely4HnizHHa+f/dI7qaw4+zcSogElrLjhMltN2/g==}
+    peerDependencies:
+      react: '>= 15.2.1'
+      react-native: '>= 0.30.0'
+    dependencies:
+      lodash.debounce: 4.0.8
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-native: 0.74.3(@babel/core@7.24.7)(@babel/preset-env@7.24.7)(@types/react@18.3.3)(react@18.2.0)
+      ts-object-utils: 0.0.5
+    dev: false
+
   /redent@4.0.0:
     resolution: {integrity: sha512-tYkDkVVtYkSVhuQ4zBgfvciymHaeuel+zFKXShfDnFP5SyVEP7qo70Rf1jTOTCx3vGNAbnEi/xFkcfQVMIBWag==}
     engines: {node: '>=12'}
@@ -10382,6 +10412,10 @@ packages:
 
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
+    dev: false
+
+  /ts-object-utils@0.0.5:
+    resolution: {integrity: sha512-iV0GvHqOmilbIKJsfyfJY9/dNHCs969z3so90dQWsO1eMMozvTpnB1MEaUbb3FYtZTGjv5sIy/xmslEz0Rg2TA==}
     dev: false
 
   /tslib@1.14.1:

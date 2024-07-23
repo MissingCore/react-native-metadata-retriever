@@ -1,18 +1,23 @@
 import MetadataRetriever from './MetadataRetriever';
 
-import type { MediaMetadataPublicField } from './NativeMetadataRetriever';
+import type {
+  MediaMetadata,
+  MediaMetadataExcerpt,
+  MediaMetadataPublicField,
+} from './constants';
+import { MediaMetadataPublicFields } from './constants';
 
-export * from './constants';
-
-export function multiply(a: number, b: number): Promise<number> {
-  return MetadataRetriever.multiply(a, b);
-}
-
-export function getMetadata<TOptions extends MediaMetadataPublicField>(
+/** Returns the specified metadata of a media file from its uri. */
+export function getMetadata<TOptions extends MediaMetadataPublicFields>(
   uri: string,
-  options: TOptions[]
-): Promise<Record<TOptions, string | null>> {
+  options: TOptions
+): Promise<MediaMetadataExcerpt<TOptions>> {
   return MetadataRetriever.getMetadata(uri, options);
 }
 
-export { type MediaMetadataPublicField };
+export {
+  type MediaMetadata,
+  type MediaMetadataExcerpt,
+  type MediaMetadataPublicField,
+  MediaMetadataPublicFields,
+};
