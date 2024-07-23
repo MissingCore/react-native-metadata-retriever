@@ -20,10 +20,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   MetadataRetrieverSpec(reactContext) {
   private val context = reactContext
 
-  override fun getName(): String {
-    return NAME
-  }
-
   @ReactMethod
   override fun getMetadata(uri: String, options: ReadableArray, promise: Promise) {
     // Populate return object with default values based on input.
@@ -126,87 +122,83 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
 
   // Convert the picture type code into a human-readable string.
   // SEE https://developer.android.com/reference/androidx/media3/common/MediaMetadata.PictureType
-  fun getPictureTypeString(code: Int): String? {
-    return when (code) {
-      0 -> "Other"
-      1 -> "32x32 pixels 'file icon' (PNG only)"
-      2 -> "Other file icon"
-      3 -> "Cover (front)"
-      4 -> "Cover (back)"
-      5 -> "Leaflet page"
-      6 -> "Media (e.g. label side of CD)"
-      7 -> "Lead artist/lead performer/soloist"
-      8 -> "Artist/performer"
-      9 -> "Conductor"
-      10 -> "Band/Orchestra"
-      11 -> "Composer"
-      12 -> "Lyricist/text writer"
-      13 -> "Recording Location"
-      14 -> "During recording"
-      15 -> "During performance"
-      16 -> "Movie/video screen capture"
-      17 -> "A bright coloured fish"
-      18 -> "Illustration"
-      19 -> "Band/artist logotype"
-      20 -> "Publisher/Studio logotype"
-      else -> null
-    }
+  fun getPictureTypeString(code: Int): String? = when (code) {
+    0 -> "Other"
+    1 -> "32x32 pixels 'file icon' (PNG only)"
+    2 -> "Other file icon"
+    3 -> "Cover (front)"
+    4 -> "Cover (back)"
+    5 -> "Leaflet page"
+    6 -> "Media (e.g. label side of CD)"
+    7 -> "Lead artist/lead performer/soloist"
+    8 -> "Artist/performer"
+    9 -> "Conductor"
+    10 -> "Band/Orchestra"
+    11 -> "Composer"
+    12 -> "Lyricist/text writer"
+    13 -> "Recording Location"
+    14 -> "During recording"
+    15 -> "During performance"
+    16 -> "Movie/video screen capture"
+    17 -> "A bright coloured fish"
+    18 -> "Illustration"
+    19 -> "Band/artist logotype"
+    20 -> "Publisher/Studio logotype"
+    else -> null
   }
 
   // Convert the media type code into a human-readable string.
   // SEE https://developer.android.com/reference/androidx/media3/common/MediaMetadata.MediaType
-  fun getMediaTypeString(code: Int): String? {
-    return when (code) {
-      0 -> "Mixed"
-      1 -> "Music"
-      2 -> "Audio book chapter"
-      3 -> "Podcast episode"
-      4 -> "Radio station"
-      5 -> "News"
-      6 -> "Video"
-      7 -> "Trailer"
-      8 -> "Movie"
-      9 -> "TV show"
-      10 -> "Album"
-      11 -> "Artist"
-      12 -> "Genre"
-      13 -> "Playlist"
-      14 -> "Year"
-      15 -> "Audio book"
-      16 -> "Podcast"
-      17 -> "TV channel"
-      18 -> "TV series"
-      19 -> "TV season"
-      20 -> "Folder mixed"
-      21 -> "Folder albums"
-      22 -> "Folder artists"
-      23 -> "Folder genres"
-      24 -> "Folder playlists"
-      25 -> "Folder years"
-      26 -> "Folder audio books"
-      27 -> "Folder podcasts"
-      28 -> "Folder tv channels"
-      29 -> "Folder tv series"
-      30 -> "Folder tv shows"
-      31 -> "Folder radio stations"
-      32 -> "Folder news"
-      33 -> "Folder videos"
-      34 -> "Folder trailers"
-      35 -> "Folder movies"
-      else -> null
-    }
+  fun getMediaTypeString(code: Int): String? = when (code) {
+    0 -> "Mixed"
+    1 -> "Music"
+    2 -> "Audio book chapter"
+    3 -> "Podcast episode"
+    4 -> "Radio station"
+    5 -> "News"
+    6 -> "Video"
+    7 -> "Trailer"
+    8 -> "Movie"
+    9 -> "TV show"
+    10 -> "Album"
+    11 -> "Artist"
+    12 -> "Genre"
+    13 -> "Playlist"
+    14 -> "Year"
+    15 -> "Audio book"
+    16 -> "Podcast"
+    17 -> "TV channel"
+    18 -> "TV series"
+    19 -> "TV season"
+    20 -> "Folder mixed"
+    21 -> "Folder albums"
+    22 -> "Folder artists"
+    23 -> "Folder genres"
+    24 -> "Folder playlists"
+    25 -> "Folder years"
+    26 -> "Folder audio books"
+    27 -> "Folder podcasts"
+    28 -> "Folder tv channels"
+    29 -> "Folder tv series"
+    30 -> "Folder tv shows"
+    31 -> "Folder radio stations"
+    32 -> "Folder news"
+    33 -> "Folder videos"
+    34 -> "Folder trailers"
+    35 -> "Folder movies"
+    else -> null
   }
 
   // Get the percentage rating from a `Rating`.
   // SEE https://developer.android.com/reference/androidx/media3/common/Rating
-  fun getPercentageRatingRating(rating: Rating): Double {
-    return when (rating.isRated()) {
-      false -> -1.0
-      true -> PercentageRating.fromBundle(rating.toBundle()).getPercent().toDouble()
-    }
+  fun getPercentageRatingRating(rating: Rating): Double = when (rating.isRated()) {
+    false -> -1.0
+    true -> PercentageRating.fromBundle(rating.toBundle()).getPercent().toDouble()
   }
 
   companion object {
     const val NAME = "MetadataRetriever"
   }
+
+  override fun getName(): String = NAME
 }
