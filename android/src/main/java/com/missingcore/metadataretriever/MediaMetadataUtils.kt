@@ -1,4 +1,3 @@
-@file:JvmName("MediaMetadataUtils")
 package com.missingcore.metadataretriever
 
 import androidx.media3.common.MediaMetadata
