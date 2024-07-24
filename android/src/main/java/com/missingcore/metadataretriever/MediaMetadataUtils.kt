@@ -1,14 +1,58 @@
 package com.missingcore.metadataretriever
 
+import com.facebook.react.bridge.ReactApplicationContext
+
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Metadata
+import androidx.media3.exoplayer.MetadataRetriever
 import androidx.media3.common.PercentageRating
 import androidx.media3.common.Rating
 
 
 /**
+ * Returns a `MediaMetadata` from an uri from a process involving `MetadataRetriever.retrieveMetadata()`.
+ *
+ * @throws ExecutionException If file was not found from uri.
+ * @throws TrackGroupArrayException If no tracks were found in media provided by the uri.
+ *
+ * @see <a href="https://developer.android.com/media/media3/exoplayer/retrieving-metadata#wo-playback">Link</a>
+ */
+fun createMediaMetadataFromUri(context: ReactApplicationContext, uri: String): MediaMetadata {
+  // Get static metadata of media from its uri.
+  // See https://developer.android.com/media/media3/exoplayer/retrieving-metadata#kotlin
+  val mediaItem = MediaItem.fromUri(uri)
+  val trackGroupArray = MetadataRetriever.retrieveMetadata(context, mediaItem).get()
+
+  if (trackGroupArray == null) throw TrackGroupArrayException()
+
+  // Start unwrapping the containers returned by `MetadataRetriever.retrieveMetadata` to get
+  // access to the metadata.
+  val metadataList = mutableListOf<Metadata>()
+  for (i in 0 until trackGroupArray.length) {
+    val trackGroup = trackGroupArray[i]
+    // Only look at the track group containing audio.
+    if (trackGroup.type != C.TRACK_TYPE_AUDIO) continue
+    for (j in 0 until trackGroup.length) {
+      // There's some other data in the `Format` returned by `trackGroup.getFormat(i)` that we
+      // may interest us in the future.
+      val metadata = trackGroup.getFormat(j).metadata
+      if (metadata == null) continue
+      metadataList.add(metadata)
+    }
+  }
+
+  // Format `Metadata` nicely through the `MediaMetadata` container.
+  return MediaMetadata.Builder()
+    .populateFromMetadata(metadataList)
+    .build()
+}
+
+/**
  * Convert "picture type code" into a human-readable string.
  *
- * SEE https://developer.android.com/reference/androidx/media3/common/MediaMetadata.PictureType
+ * @see <a href="https://developer.android.com/reference/androidx/media3/common/MediaMetadata.PictureType">Link</a>
  */
 fun getPictureTypeString(code: Int?): String? = when (code) {
   0 -> "Other"
@@ -38,7 +82,7 @@ fun getPictureTypeString(code: Int?): String? = when (code) {
 /**
  * Convert "media type code" into a human-readable string.
  *
- * SEE https://developer.android.com/reference/androidx/media3/common/MediaMetadata.MediaType
+ * @see <a href="https://developer.android.com/reference/androidx/media3/common/MediaMetadata.MediaType">Link</a>
  */
 fun getMediaTypeString(code: Int?): String? = when (code) {
   0 -> "Mixed"
@@ -83,7 +127,7 @@ fun getMediaTypeString(code: Int?): String? = when (code) {
 /**
  * Get the percentage rating from a `Rating`.
  *
- * SEE https://developer.android.com/reference/androidx/media3/common/Rating
+ * @see <a href="https://developer.android.com/reference/androidx/media3/common/Rating">Link</a>
  */
 fun getPercentageRatingRating(rating: Rating?): Double? = when (rating?.isRated()) {
   false -> -1.0
@@ -94,7 +138,7 @@ fun getPercentageRatingRating(rating: Rating?): Double? = when (rating?.isRated(
 /**
  * Dynamically access a public field inside a `MediaMetadata` instance.
  *
- * SEE https://developer.android.com/reference/androidx/media3/common/MediaMetadata
+ * @see <a href="https://developer.android.com/reference/androidx/media3/common/MediaMetadata">Link</a>
  */
 fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String): Any? = when (field) {
   "albumArtist" -> mediaMetadata.albumArtist?.toString()

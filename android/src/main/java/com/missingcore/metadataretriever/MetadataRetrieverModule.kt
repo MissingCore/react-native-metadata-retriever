@@ -6,11 +6,6 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 
-import androidx.media3.common.C
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
-import androidx.media3.common.Metadata
-import androidx.media3.exoplayer.MetadataRetriever
 import java.util.concurrent.ExecutionException
 
 class MetadataRetrieverModule internal constructor(reactContext: ReactApplicationContext) :
@@ -26,33 +21,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     }
 
     try {
-      // Get static metadata of media from its uri.
-      // See https://developer.android.com/media/media3/exoplayer/retrieving-metadata#kotlin
-      val mediaItem = MediaItem.fromUri(uri)
-      val trackGroupArray = MetadataRetriever.retrieveMetadata(context, mediaItem).get()
-
-      if (trackGroupArray == null) throw TrackGroupArrayException()
-
-      // Start unwrapping the containers returned by `MetadataRetriever.retrieveMetadata` to get
-      // access to the metadata.
-      val metadataList = mutableListOf<Metadata>()
-      for (i in 0 until trackGroupArray.length) {
-        val trackGroup = trackGroupArray[i]
-        // Only look at the track group containing audio.
-        if (trackGroup.type != C.TRACK_TYPE_AUDIO) continue
-        for (j in 0 until trackGroup.length) {
-          // There's some other data in the `Format` returned by `trackGroup.getFormat(i)` that we
-          // may interest us in the future.
-          val metadata = trackGroup.getFormat(j).metadata
-          if (metadata == null) continue
-          metadataList.add(metadata)
-        }
-      }
-
-      // Format the metadata nicely.
-      val mediaMetadata = MediaMetadata.Builder()
-        .populateFromMetadata(metadataList)
-        .build()
+      val mediaMetadata = createMediaMetadataFromUri(context, uri)
 
       // Populate return object with the metadata we found.
       for (i in 0 until options.size()) {
