@@ -17,6 +17,11 @@ export function getMetadata<TOptions extends MediaMetadataPublicFields>(
   >;
 }
 
+/** Returns the artwork of specified media file from its uri. */
+export function getArtwork(uri: string): Promise<string | null> {
+  return MetadataRetriever.getArtwork(uri);
+}
+
 export {
   type MediaMetadata,
   type MediaMetadataExcerpt,

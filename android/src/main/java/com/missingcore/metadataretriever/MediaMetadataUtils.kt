@@ -2,24 +2,26 @@ package com.missingcore.metadataretriever
 
 import com.facebook.react.bridge.ReactApplicationContext
 
+import android.util.Base64
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Metadata
 import androidx.media3.exoplayer.MetadataRetriever
+import androidx.media3.common.MimeTypes
 import androidx.media3.common.PercentageRating
 import androidx.media3.common.Rating
-
+import java.net.URLConnection
 
 /**
- * Returns a `MediaMetadata` from an uri from a process involving `MetadataRetriever.retrieveMetadata()`.
+ * Returns a list of `Metadata` from an uri from a process involving `MetadataRetriever.retrieveMetadata()`.
  *
  * @throws ExecutionException If file was not found from uri.
  * @throws TrackGroupArrayException If no tracks were found in media provided by the uri.
  *
  * @see <a href="https://developer.android.com/media/media3/exoplayer/retrieving-metadata#wo-playback">Link</a>
  */
-fun createMediaMetadataFromUri(context: ReactApplicationContext, uri: String): MediaMetadata {
+fun getMetadataList(context: ReactApplicationContext, uri: String): List<Metadata> {
   // Get static metadata of media from its uri.
   // See https://developer.android.com/media/media3/exoplayer/retrieving-metadata#kotlin
   val mediaItem = MediaItem.fromUri(uri)
@@ -37,16 +39,11 @@ fun createMediaMetadataFromUri(context: ReactApplicationContext, uri: String): M
     for (j in 0 until trackGroup.length) {
       // There's some other data in the `Format` returned by `trackGroup.getFormat(i)` that we
       // may interest us in the future.
-      val metadata = trackGroup.getFormat(j).metadata
-      if (metadata == null) continue
-      metadataList.add(metadata)
+      trackGroup.getFormat(j).metadata?.let { metadataList.add(it) }
     }
   }
 
-  // Format `Metadata` nicely through the `MediaMetadata` container.
-  return MediaMetadata.Builder()
-    .populateFromMetadata(metadataList)
-    .build()
+  return metadataList
 }
 
 /**
@@ -144,7 +141,7 @@ fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String): Any? = 
   "albumArtist" -> mediaMetadata.albumArtist?.toString()
   "albumTitle" -> mediaMetadata.albumTitle?.toString()
   "artist" -> mediaMetadata.artist?.toString()
-//  "artworkData" -> metadataMap.putString()
+  "artworkData" -> getBase64Image(mediaMetadata.artworkData)
   "artworkDataType" -> getPictureTypeString(mediaMetadata.artworkDataType)
   "artworkUri" -> mediaMetadata.artworkUri?.toString()
   "compilation" -> mediaMetadata.compilation?.toString()
@@ -174,4 +171,20 @@ fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String): Any? = 
   "userRating" -> getPercentageRatingRating(mediaMetadata.userRating) // Returns `Double?`
   "writer" -> mediaMetadata.writer?.toString()
   else -> null
+}
+
+/**
+ * Returns a base64 image string from a `ByteArray`.
+ */
+fun getBase64Image(bytes: ByteArray?): String? {
+  if (bytes == null) return null
+
+  // Determine mimetype from bytes.
+  val mimeType = URLConnection.guessContentTypeFromStream(bytes.inputStream())?.let {
+    MimeTypes.normalizeMimeType(it)
+  }
+  // Ensure the mimeType we get is defined and is for an image.
+  if (!MimeTypes.isImage(mimeType)) return null
+
+  return "data:$mimeType;base64,${Base64.encodeToString(bytes as ByteArray, Base64.DEFAULT)}"
 }

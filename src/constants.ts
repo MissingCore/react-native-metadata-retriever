@@ -9,7 +9,7 @@ export const MediaMetadataPublicFields = [
   'albumArtist',
   'albumTitle',
   'artist',
-  // 'artworkData',
+  'artworkData',
   'artworkDataType',
   'artworkUri',
   'compilation',
@@ -59,7 +59,7 @@ export type MediaMetadata = {
   albumArtist: string | null;
   albumTitle: string | null;
   artist: string | null;
-  // artworkData: number[] | null;
+  artworkData: string | null;
   artworkDataType: string | null;
   artworkUri: string | null;
   compilation: string | null;
