@@ -43,10 +43,7 @@ async function getTracks() {
 
   const tracksMetadata = await Promise.allSettled(
     audioFiles.map(async ({ id, filename, uri }) => {
-      const data = await getMetadata(uri, [
-        ...MetadataPresets.standard,
-        'artworkData',
-      ] as const);
+      const data = await getMetadata(uri, MetadataPresets.standardArtwork);
       return { id, filename, ...data };
     })
   );
@@ -142,12 +139,12 @@ export function App() {
               <Text numberOfLines={1}>{item.filename}</Text>
               <Text numberOfLines={1}>{item.title}</Text>
               <Text numberOfLines={1}>{item.artist}</Text>
-              {item.albumTitle && (
+              {!!item.albumTitle && (
                 <Text numberOfLines={1}>{item.albumTitle}</Text>
               )}
               <Text numberOfLines={1}>{item.albumArtist}</Text>
-              {item.trackNumber && <Text>Track {item.trackNumber}</Text>}
-              {item.recordingYear && <Text>({item.recordingYear})</Text>}
+              {!!item.trackNumber && <Text>Track {item.trackNumber}</Text>}
+              {!!item.recordingYear && <Text>({item.recordingYear})</Text>}
             </View>
           </View>
         )}

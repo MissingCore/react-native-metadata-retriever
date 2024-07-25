@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 
+import android.media.MediaMetadataRetriever
 import androidx.media3.common.MediaMetadata
 import java.util.concurrent.ExecutionException
 
@@ -25,13 +26,25 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       val mediaMetadata = MediaMetadata.Builder()
         .populateFromMetadata(getMetadataList(context, uri))
         .build()
+      var mmrMetadata: MediaMetadataRetriever? = null
+
+      // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`. This is
+      // the case with `ID3v1` tags for example.
+      if (mediaMetadata.equals(MediaMetadata.EMPTY)) {
+        mmrMetadata = MediaMetadataRetriever()
+        mmrMetadata.setDataSource(uri)
+      }
 
       // Populate return object with the metadata we found.
       for (i in 0 until options.size()) {
         val field = options.getString(i)
-        val fieldData = readMediaMetadataField(mediaMetadata, field)
+        val fieldData = when (mmrMetadata) {
+          null -> readMediaMetadataField(mediaMetadata, field)
+          else -> readMMRField(mmrMetadata, field)
+        }
+
         // Use scope functions to help determine output.
-        // See https://kotlinlang.org/docs/scope-functions.html
+        // @see <a href="https://kotlinlang.org/docs/scope-functions.html">Link</a>
         when (field) {
           "albumArtist", "albumTitle", "artist", "artworkData", "artworkDataType", "artworkUri",
           "compilation", "composer", "conductor", "description", "displayTitle", "genre", "mediaType",
@@ -66,7 +79,9 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       promise.resolve(metadataMap)
 
     } catch (e: ExecutionException) {
-      val isWantedException = e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException") ?: false
+      val isWantedException =
+        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
+          ?: false
       when (isWantedException) {
         true -> promise.reject("`getMetadata` error", "File Not Found Error", e)
         false -> promise.reject("`getMetadata` error", "Unknown ExecutionException", e)
@@ -89,6 +104,14 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     try {
       val metadataList = getMetadataList(context, uri)
 
+      // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
+      if (metadataList.size == 0) {
+        val mmrMetadata = MediaMetadataRetriever()
+        mmrMetadata.setDataSource(uri)
+        promise.resolve(readMMRField(mmrMetadata, "artworkData") as String?)
+        return
+      }
+
       // We'll want to return the image designated as "Cover (front)", otherwise return image for "Other".
       var coverImage: String? = null
       var backupImage: String? = null
@@ -108,15 +131,17 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
 
       promise.resolve(coverImage ?: backupImage)
     } catch (e: ExecutionException) {
-      val isWantedException = e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException") ?: false
+      val isWantedException =
+        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
+          ?: false
       when (isWantedException) {
-        true -> promise.reject("`getMetadata` error", "File Not Found Error", e)
-        false -> promise.reject("`getMetadata` error", "Unknown ExecutionException", e)
+        true -> promise.reject("`getArtwork` error", "File Not Found Error", e)
+        false -> promise.reject("`getArtwork` error", "Unknown ExecutionException", e)
       }
     } catch (e: TrackGroupArrayException) {
       promise.resolve(null)
     } catch (e: Exception) {
-      promise.reject("`getMetadata` error", "Metadata Retrieval Error", e)
+      promise.reject("`getArtwork` error", "Metadata Retrieval Error", e)
     }
   }
 

@@ -47,6 +47,10 @@ export const MetadataPresets = {
     ...['artist', 'albumArtist', 'albumTitle', 'title'],
     ...['trackNumber', 'recordingYear'],
   ],
+  standardArtwork: [
+    ...['artist', 'albumArtist', 'albumTitle', 'title'],
+    ...['trackNumber', 'recordingYear', 'artworkData'],
+  ],
 } as const satisfies Record<string, MediaMetadataPublicField[]>;
 
 export type MediaMetadataPublicField =

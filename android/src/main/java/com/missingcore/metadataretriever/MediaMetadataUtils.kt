@@ -2,16 +2,13 @@ package com.missingcore.metadataretriever
 
 import com.facebook.react.bridge.ReactApplicationContext
 
-import android.util.Base64
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Metadata
 import androidx.media3.exoplayer.MetadataRetriever
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.PercentageRating
 import androidx.media3.common.Rating
-import java.net.URLConnection
 
 /**
  * Returns a list of `Metadata` from an uri from a process involving `MetadataRetriever.retrieveMetadata()`.
@@ -171,20 +168,4 @@ fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String): Any? = 
   "userRating" -> getPercentageRatingRating(mediaMetadata.userRating) // Returns `Double?`
   "writer" -> mediaMetadata.writer?.toString()
   else -> null
-}
-
-/**
- * Returns a base64 image string from a `ByteArray`.
- */
-fun getBase64Image(bytes: ByteArray?): String? {
-  if (bytes == null) return null
-
-  // Determine mimetype from bytes.
-  val mimeType = URLConnection.guessContentTypeFromStream(bytes.inputStream())?.let {
-    MimeTypes.normalizeMimeType(it)
-  }
-  // Ensure the mimeType we get is defined and is for an image.
-  if (!MimeTypes.isImage(mimeType)) return null
-
-  return "data:$mimeType;base64,${Base64.encodeToString(bytes as ByteArray, Base64.DEFAULT)}"
 }
