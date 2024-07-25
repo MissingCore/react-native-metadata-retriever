@@ -32,7 +32,7 @@
     "!**/.*"
   ],
   "scripts": {
-    "example:expo": "pnpm --filter expo-demo run",
+    "example:benchmarking": "pnpm --filter benchmarking-demo run",
     "test": "jest --coverage",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",

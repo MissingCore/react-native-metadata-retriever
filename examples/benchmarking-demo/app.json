@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "RNMR Example",
-    "slug": "rnmr-example",
+    "name": "RNMR Benchmarking",
+    "slug": "rnmr-benchmarking",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,7 +16,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.example.rnmr"
+      "package": "com.anonymous.benchmarking.rnmr"
     },
     "plugins": [
       [

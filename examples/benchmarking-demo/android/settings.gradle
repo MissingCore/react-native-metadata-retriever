@@ -1,4 +1,4 @@
-rootProject.name = 'RNMR Example'
+rootProject.name = 'RNMR Benchmarking'
 
 dependencyResolutionManagement {
   versionCatalogs {

@@ -60,7 +60,7 @@ importers:
         specifier: ^5.2.2
         version: 5.5.3
 
-  examples/expo-demo:
+  examples/benchmarking-demo:
     dependencies:
       '@missingcore/react-native-metadata-retriever':
         specifier: workspace:*
@@ -77,6 +77,9 @@ importers:
       expo-build-properties:
         specifier: ^0.12.3
         version: 0.12.3(expo@51.0.21)
+      expo-image:
+        specifier: ^1.12.13
+        version: 1.12.13(expo@51.0.21)
       expo-media-library:
         specifier: ^16.0.4
         version: 16.0.4(expo@51.0.21)
@@ -5526,6 +5529,14 @@ packages:
     dependencies:
       expo: 51.0.21(@babel/core@7.24.7)(@babel/preset-env@7.24.7)
       fontfaceobserver: 2.3.0
+    dev: false
+
+  /expo-image@1.12.13(expo@51.0.21):
+    resolution: {integrity: sha512-Dmuc5qmkIsl1nFj8C3Ux3wL2bN4QYW4dM9fkGA8kYiP5Fxf1lT36ldkHk2O2lPFRSFJDvLxT8Tz+7GTko5fzwQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 51.0.21(@babel/core@7.24.7)(@babel/preset-env@7.24.7)
     dev: false
 
   /expo-keep-awake@13.0.2(expo@51.0.21):
