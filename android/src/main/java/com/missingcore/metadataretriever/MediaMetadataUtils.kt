@@ -3,6 +3,7 @@ package com.missingcore.metadataretriever
 import com.facebook.react.bridge.ReactApplicationContext
 
 import androidx.media3.common.C
+import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Metadata
@@ -10,15 +11,16 @@ import androidx.media3.exoplayer.MetadataRetriever
 import androidx.media3.common.PercentageRating
 import androidx.media3.common.Rating
 
+
 /**
- * Returns a list of `Metadata` from an uri from a process involving `MetadataRetriever.retrieveMetadata()`.
+ * Returns a list of `Format` from an uri from a process involving `MetadataRetriever.retrieveMetadata()`.
  *
  * @throws ExecutionException If file was not found from uri.
  * @throws TrackGroupArrayException If no tracks were found in media provided by the uri.
  *
  * @see <a href="https://developer.android.com/media/media3/exoplayer/retrieving-metadata#wo-playback">Link</a>
  */
-fun getMetadataList(context: ReactApplicationContext, uri: String): List<Metadata> {
+fun getFormatList(context: ReactApplicationContext, uri: String): List<Format> {
   // Get static metadata of media from its uri.
   // See https://developer.android.com/media/media3/exoplayer/retrieving-metadata#kotlin
   val mediaItem = MediaItem.fromUri(uri)
@@ -26,20 +28,29 @@ fun getMetadataList(context: ReactApplicationContext, uri: String): List<Metadat
 
   if (trackGroupArray == null) throw TrackGroupArrayException()
 
-  // Start unwrapping the containers returned by `MetadataRetriever.retrieveMetadata` to get
-  // access to the metadata.
-  val metadataList = mutableListOf<Metadata>()
+  // Unwrap the containers returned by `MetadataRetriever.retrieveMetadata`, getting a list
+  // of `Format` from audio `TrackGroup`.
+  val formatList = mutableListOf<Format>()
   for (i in 0 until trackGroupArray.length) {
     val trackGroup = trackGroupArray[i]
     // Only look at the track group containing audio.
     if (trackGroup.type != C.TRACK_TYPE_AUDIO) continue
     for (j in 0 until trackGroup.length) {
-      // There's some other data in the `Format` returned by `trackGroup.getFormat(i)` that we
-      // may interest us in the future.
-      trackGroup.getFormat(j).metadata?.let { metadataList.add(it) }
+      // By definition, a `TrackGroup` should have at least 1 `Format`.
+      // SEE https://developer.android.com/reference/androidx/media3/common/TrackGroup#TrackGroup(androidx.media3.common.Format...)
+      formatList.add(trackGroup.getFormat(j))
     }
   }
 
+  return formatList
+}
+
+/** Returns a list of `Metadata` from `List<Format>`. */
+fun getMetadataListFromFormatList(formatList: List<Format>): List<Metadata> {
+  val metadataList = mutableListOf<Metadata>()
+  formatList.forEach {
+    it.metadata?.let { metadataList.add(it) }
+  }
   return metadataList
 }
 
@@ -124,8 +135,31 @@ fun getMediaTypeString(code: Int?): String? = when (code) {
  * @see <a href="https://developer.android.com/reference/androidx/media3/common/Rating">Link</a>
  */
 fun getPercentageRatingRating(rating: Rating?): Double? = when (rating?.isRated()) {
-  false -> -1.0
   true -> PercentageRating.fromBundle(rating.toBundle()).getPercent().toDouble()
+  else -> null
+}
+
+/**
+ * Return `null` if we see `Format.NO_VALUE` (-1).
+ *
+ * @see <a href="https://developer.android.com/reference/androidx/media3/common/Format#NO_VALUE()">Link</a>
+ */
+fun fixNoValue(intVal: Int?): Int? = when (intVal) {
+  null, Format.NO_VALUE -> null
+  else -> intVal
+}
+
+/**
+ * Dynamically access a public field inside a `Format` instance.
+ *
+ * @see <a href="https://developer.android.com/reference/androidx/media3/common/Format">Link</a>
+ */
+fun readFormatField(format: Format, field: String): Any? = when (field) {
+  "bitrate" -> fixNoValue(format.bitrate) // Returns `Int?`
+  "channelCount" -> fixNoValue(format.channelCount) // Returns `Int?`
+  "codecs" -> format.codecs
+  "sampleMimeType" -> format.sampleMimeType
+  "sampleRate" -> fixNoValue(format.sampleRate) // Returns `Int?`
   else -> null
 }
 

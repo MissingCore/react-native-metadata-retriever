@@ -23,8 +23,9 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     }
 
     try {
+      val formatList = getFormatList(context, uri)
       val mediaMetadata = MediaMetadata.Builder()
-        .populateFromMetadata(getMetadataList(context, uri))
+        .populateFromMetadata(getMetadataListFromFormatList(formatList))
         .build()
       var mmrMetadata: MediaMetadataRetriever? = null
 
@@ -44,8 +45,16 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         }
 
         // Use scope functions to help determine output.
-        // @see <a href="https://kotlinlang.org/docs/scope-functions.html">Link</a>
+        // SEE https://kotlinlang.org/docs/scope-functions.html
         when (field) {
+          /** List of fields available on `Format`. */
+          "bitrate", "channelCount", "sampleRate" ->
+            readFormatField(formatList[0], field)?.let { metadataMap.putInt(field, it as Int) }
+
+          "codecs", "sampleMimeType" ->
+            readFormatField(formatList[0], field)?.let { metadataMap.putString(field, it as String) }
+
+          /** List of fields available on `MediaMetadata`. */
           "albumArtist", "albumTitle", "artist", "artworkData", "artworkDataType", "artworkUri",
           "compilation", "composer", "conductor", "description", "displayTitle", "genre", "mediaType",
           "station", "subtitle", "title", "writer" ->
@@ -102,7 +111,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   @ReactMethod
   override fun getArtwork(uri: String, promise: Promise) {
     try {
-      val metadataList = getMetadataList(context, uri)
+      val metadataList = getMetadataListFromFormatList(getFormatList(context, uri))
 
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
       if (metadataList.size == 0) {

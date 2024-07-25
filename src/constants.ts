@@ -6,6 +6,13 @@ import type { Prettify } from './utils';
  * https://developer.android.com/reference/androidx/media3/common/MediaMetadata#public-fields_1.
  */
 export const MediaMetadataPublicFields = [
+  /* List of fields available on `Format`. */
+  'bitrate',
+  'channelCount',
+  'codecs',
+  'sampleMimeType',
+  'sampleRate',
+  /* List of fields available on `MediaMetadata`. */
   'albumArtist',
   'albumTitle',
   'artist',
@@ -51,6 +58,10 @@ export const MetadataPresets = {
     ...['artist', 'albumArtist', 'albumTitle', 'title'],
     ...['trackNumber', 'recordingYear', 'artworkData'],
   ],
+  statistics: [
+    ...['bitrate', 'channelCount', 'codecs', 'sampleMimeType'],
+    ...['sampleRate'],
+  ],
 } as const satisfies Record<string, MediaMetadataPublicField[]>;
 
 export type MediaMetadataPublicField =
@@ -60,6 +71,13 @@ export type MediaMetadataPublicFields = ReadonlyArray<MediaMetadataPublicField>;
 
 /** Expected typed result of when we recieve metadata. */
 export type MediaMetadata = {
+  /* List of fields available on `Format`. */
+  bitrate: number | null;
+  channelCount: number | null;
+  codecs: string | null;
+  sampleMimeType: string | null;
+  sampleRate: number | null; // in `Hz`
+  /* List of fields available on `MediaMetadata`. */
   albumArtist: string | null;
   albumTitle: string | null;
   artist: string | null;
