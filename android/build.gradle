@@ -109,13 +109,16 @@ repositories {
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
 dependencies {
+  def media3_version = "1.3.1"
+
   // For < 0.71, this will be from the local maven repo
   // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-  implementation "androidx.media3:media3-exoplayer:1.3.1"
+  implementation "androidx.media3:media3-common:$media3_version"
+  implementation "androidx.media3:media3-exoplayer:$media3_version"
 }
 
 if (isNewArchitectureEnabled()) {

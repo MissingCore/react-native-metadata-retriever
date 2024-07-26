@@ -13,6 +13,7 @@ import android.os.storage.StorageManager
 import androidx.media3.common.MediaMetadata
 import java.util.concurrent.ExecutionException
 
+
 class MetadataRetrieverModule internal constructor(reactContext: ReactApplicationContext) :
   MetadataRetrieverSpec(reactContext) {
   private val context = reactContext
