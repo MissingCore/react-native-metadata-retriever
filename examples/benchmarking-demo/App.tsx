@@ -144,7 +144,7 @@ export function App() {
               )}
               <Text numberOfLines={1}>{item.albumArtist}</Text>
               {!!item.trackNumber && <Text>Track {item.trackNumber}</Text>}
-              {!!item.recordingYear && <Text>({item.recordingYear})</Text>}
+              {!!item.year && <Text>({item.year})</Text>}
             </View>
           </View>
         )}

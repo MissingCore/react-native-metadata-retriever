@@ -2,6 +2,7 @@ package com.cyanchill.missingcore.metadataretriever
 
 import com.facebook.react.bridge.ReactApplicationContext
 
+import android.media.MediaMetadataRetriever
 import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
@@ -164,11 +165,13 @@ fun readFormatField(format: Format, field: String): Any? = when (field) {
 }
 
 /**
- * Dynamically access a public field inside a `MediaMetadata` instance.
+ * Dynamically access a public field inside a `MediaMetadata` instance. The `uri` parameter is only
+ * used if we specify the `year` field and if none of the year-related fields in `MediaMetadata`
+ * produces a valid result.
  *
  * @see <a href="https://developer.android.com/reference/androidx/media3/common/MediaMetadata">Link</a>
  */
-fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String): Any? = when (field) {
+fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String, uri: String): Any? = when (field) {
   "albumArtist" -> mediaMetadata.albumArtist?.toString()
   "albumTitle" -> mediaMetadata.albumTitle?.toString()
   "artist" -> mediaMetadata.artist?.toString()
@@ -201,5 +204,10 @@ fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String): Any? = 
   "trackNumber" -> mediaMetadata.trackNumber // Returns `Int?`
   "userRating" -> getPercentageRatingRating(mediaMetadata.userRating) // Returns `Double?`
   "writer" -> mediaMetadata.writer?.toString()
+  "year" -> mediaMetadata.recordingYear ?: mediaMetadata.releaseYear ?: run {
+    val mmrMetadata = MediaMetadataRetriever()
+    mmrMetadata.setDataSource(uri)
+    readMMRField(mmrMetadata, "year")
+  } // Returns `Int?`
   else -> null
 }

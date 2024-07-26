@@ -142,6 +142,8 @@ type MediaMetadata = {
   trackNumber: number | null;
   userRating: number | null;
   writer: string | null;
+  /* List of custom fields derived from other fields. */
+  year: number | null;
 };
 ```
 

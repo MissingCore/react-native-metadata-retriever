@@ -45,6 +45,8 @@ export const MediaMetadataPublicFields = [
   'trackNumber',
   'userRating',
   'writer',
+  /* List of custom fields derived from other fields. */
+  'year',
 ] as const;
 
 /** Some preset options that we can pass down into `getMetadata()`. */
@@ -52,11 +54,11 @@ export const MetadataPresets = {
   minimum: ['artist', 'title'],
   standard: [
     ...['artist', 'albumArtist', 'albumTitle', 'title'],
-    ...['trackNumber', 'recordingYear'],
+    ...['trackNumber', 'year'],
   ],
   standardArtwork: [
     ...['artist', 'albumArtist', 'albumTitle', 'title'],
-    ...['trackNumber', 'recordingYear', 'artworkData'],
+    ...['trackNumber', 'year', 'artworkData'],
   ],
   statistics: [
     ...['bitrate', 'channelCount', 'codecs', 'sampleMimeType'],
@@ -110,6 +112,8 @@ export type MediaMetadata = {
   trackNumber: number | null;
   userRating: number | null;
   writer: string | null;
+  /* List of custom fields derived from other fields. */
+  year: number | null;
 };
 
 /** Returns a type-safe excerpt of `MediaMetadata`. */

@@ -46,5 +46,14 @@ fun readMMRField(mmr: MediaMetadataRetriever, field: String): Any? = when (field
   } // Returns `Int?`
   "userRating" -> null // Returns `Double?`
   "writer" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_WRITER)
+  "year" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)?.toInt() ?: run {
+    val date: String? = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)
+    try {
+      // The "date" format should start with 4 digits representing the year.
+      date?.substring(0, 4)?.toInt()?.also { if (it > 999) it else null }
+    } catch (err: Exception) {
+      null
+    }
+  } // Returns `Int?`
   else -> null
 }

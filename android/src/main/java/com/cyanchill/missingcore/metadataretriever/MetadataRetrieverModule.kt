@@ -52,7 +52,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       for (i in 0 until options.size()) {
         val field = options.getString(i)
         val fieldData = when (mmrMetadata) {
-          null -> readMediaMetadataField(mediaMetadata, field)
+          null -> readMediaMetadataField(mediaMetadata, field, uri)
           else -> readMMRField(mmrMetadata, field)
         }
 
@@ -73,7 +73,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
             fieldData?.let { metadataMap.putString(field, it as String) }
 
           "discNumber", "recordingDay", "recordingMonth", "recordingYear", "releaseDay", "releaseMonth",
-          "releaseYear", "totalDiscCount", "totalTrackCount", "trackNumber" ->
+          "releaseYear", "totalDiscCount", "totalTrackCount", "trackNumber", "year" ->
             fieldData?.let { metadataMap.putInt(field, it as Int) }
 
           "isBrowsable", "isPlayable" ->
@@ -98,7 +98,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       }
 
       promise.resolve(metadataMap)
-
     } catch (e: ExecutionException) {
       val isWantedException =
         e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
@@ -143,8 +142,8 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           .build()
 
         when (mediaMetadata.artworkDataType) {
-          0 -> { backupImage = readMediaMetadataField(mediaMetadata, "artworkData") as String? }
-          3 -> { coverImage = readMediaMetadataField(mediaMetadata, "artworkData") as String? }
+          0 -> { backupImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String? }
+          3 -> { coverImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String? }
         }
 
         if (coverImage !== null) break
