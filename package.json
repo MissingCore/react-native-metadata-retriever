@@ -2,15 +2,15 @@
   "name": "@missingcore/react-native-metadata-retriever",
   "version": "0.1.0",
   "description": "React Native wrapper for Android's unstable `MetadataRetriever` API.",
-  "main": "./lib/module/index.mjs",
-  "module": "./lib/module/index.mjs",
+  "main": "./lib/module/index.js",
+  "module": "./lib/module/index.js",
   "types": "./lib/typescript/index.d.ts",
   "react-native": "./src/index.tsx",
   "source": "./src/index.tsx",
   "exports": {
     ".": {
       "types": "./lib/typescript/index.d.ts",
-      "import": "./lib/module/index.mjs"
+      "import": "./lib/module/index.js"
     }
   },
   "files": [
@@ -55,22 +55,22 @@
   },
   "homepage": "https://github.com/MissingCore/react-native-metadata-retriever#readme",
   "devDependencies": {
-    "@react-native/eslint-config": "^0.73.1",
+    "@react-native/eslint-config": "^0.73.2",
     "@release-it/keep-a-changelog": "^5.0.0",
-    "@types/jest": "^29.5.5",
-    "@types/react": "^18.2.44",
+    "@types/jest": "^29.5.12",
+    "@types/react": "^18.3.3",
     "del-cli": "^5.1.0",
-    "eslint": "^8.51.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.1",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "jest": "^29.7.0",
-    "prettier": "^3.0.3",
+    "prettier": "^3.3.3",
     "react": "18.2.0",
     "react-native": "0.74.3",
-    "react-native-builder-bob": "^0.25.0",
-    "release-it": "^17.5.0",
-    "release-it-pnpm": "^4.6.2",
-    "typescript": "^5.2.2"
+    "react-native-builder-bob": "^0.27.0",
+    "release-it": "^17.6.0",
+    "release-it-pnpm": "^4.6.3",
+    "typescript": "^5.5.4"
   },
   "resolutions": {
     "@types/react": "^18.2.44"
