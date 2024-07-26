@@ -1,4 +1,4 @@
-package com.missingcore.metadataretriever
+package com.cyanchill.missingcore.metadataretriever
 
 import android.util.Base64
 import androidx.media3.common.MimeTypes

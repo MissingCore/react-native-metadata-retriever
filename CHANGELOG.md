@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Changed
+
+- Changed package id to `com.cyanchill.missingcore.metadataretriever` from `com.missingcore.metadataretriever` (ie: to a domain we control).
+
 ## [0.1.0] - 2024-07-25
 
 ### Added

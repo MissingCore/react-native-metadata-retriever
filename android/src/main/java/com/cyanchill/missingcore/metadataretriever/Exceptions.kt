@@ -1,4 +1,4 @@
-package com.missingcore.metadataretriever
+package com.cyanchill.missingcore.metadataretriever
 
 
 class TrackGroupArrayException:

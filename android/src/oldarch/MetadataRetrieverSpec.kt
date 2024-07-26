@@ -1,4 +1,4 @@
-package com.missingcore.metadataretriever
+package com.cyanchill.missingcore.metadataretriever
 
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
