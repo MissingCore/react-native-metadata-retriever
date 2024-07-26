@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [0.1.0] - 2024-07-25
+
 ### Added
 
 - Getting metadata supported by `MediaMetadata` API & a subset from the `Format` API.
@@ -17,3 +19,6 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ## [0.0.0] - 2024-07-20
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
+
+[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/MissingCore/react-native-metadata-retriever/releases/tag/v0.1.0
