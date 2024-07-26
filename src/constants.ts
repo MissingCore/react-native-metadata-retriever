@@ -51,6 +51,7 @@ export const MediaMetadataPublicFields = [
 
 /** Some preset options that we can pass down into `getMetadata()`. */
 export const MetadataPresets = {
+  album: ['artist', 'albumArtist', 'albumTitle', 'year'],
   minimum: ['artist', 'title'],
   standard: [
     ...['artist', 'albumArtist', 'albumTitle', 'title'],

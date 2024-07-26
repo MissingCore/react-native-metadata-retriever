@@ -7,6 +7,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Added
+
+- New custom `year` metadata field that returns: `recordingYear` -> `releaseYear` -> year parsed from `MediaMetadataRetriever`'s `DATE` field.
+- New `album` metadata preset.
+
 ## [0.2.0] - 2024-07-26
 
 ### Changed
