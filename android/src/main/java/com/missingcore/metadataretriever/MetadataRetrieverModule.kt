@@ -6,13 +6,24 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 
+import android.content.Context
 import android.media.MediaMetadataRetriever
+import android.os.Environment
+import android.os.storage.StorageManager
 import androidx.media3.common.MediaMetadata
 import java.util.concurrent.ExecutionException
 
 class MetadataRetrieverModule internal constructor(reactContext: ReactApplicationContext) :
   MetadataRetrieverSpec(reactContext) {
   private val context = reactContext
+
+  override fun getTypedExportedConstants(): Map<String, Any?> {
+    val constants: MutableMap<String, Any?> = HashMap()
+    constants["MusicDirectoryPath"] = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).absolutePath
+    val storageManager = this.reactApplicationContext.getSystemService(Context.STORAGE_SERVICE) as StorageManager
+    constants["StorageVolumesDirectoryPaths"] = storageManager.storageVolumes.map { it.getDirectory()?.toString() }
+    return constants
+  }
 
   @ReactMethod
   override fun getMetadata(uri: String, options: ReadableArray, promise: Promise) {
