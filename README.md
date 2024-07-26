@@ -1,7 +1,7 @@
 # @missingcore/react-native-metadata-retriever
 
-[<img src="https://img.shields.io/npm/v/@missingcore/react-native-metadata-retriever.svg?style=for-the-badge&labelColor=000000" alt="NPM Version"/>](https://www.npmjs.com/package/@missingcore/react-native-metadata-retriever)
-[<img src="https://img.shields.io/npm/l/@missingcore/react-native-metadata-retriever.svg?style=for-the-badge&labelColor=000000" alt="License"/>](./LICENSE)
+[<img src="https://img.shields.io/npm/v/@missingcore/react-native-metadata-retriever?style=for-the-badge&labelColor=000000" alt="NPM Version"/>](https://www.npmjs.com/package/@missingcore/react-native-metadata-retriever)
+[<img src="https://img.shields.io/npm/l/@missingcore/react-native-metadata-retriever?style=for-the-badge&labelColor=000000" alt="License"/>](./LICENSE)
 
 React Native wrapper for Android's unstable [`MetadataRetriever`](https://developer.android.com/reference/androidx/media3/exoplayer/MetadataRetriever) API, which fallback to the old [`MediaMetadataRetriever`](https://developer.android.com/reference/android/media/MediaMetadataRetriever) API if no metadata was found (ie: ID3v1 tags aren't detected).
 
