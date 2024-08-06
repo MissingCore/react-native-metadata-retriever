@@ -64,6 +64,14 @@ const MusicDirectoryPath: string;
 
 Default path to the `Music` folder on device. This is usually `/storage/emulated/0/Music` or `/sdcard/Music` for older devices.
 
+### PrimaryDirectoryPath
+
+```ts
+const PrimaryDirectoryPath: string;
+```
+
+Path to the primary shared/external storage directory. This is usually `/storage/emulated/0`.
+
 ### StorageVolumesDirectoryPaths
 
 ```ts

@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+- Document `PrimaryDirectoryPath` in `README.md`.
+
 ## [0.2.2] - 2024-08-06
 
 ### Added
