@@ -22,8 +22,11 @@ export function getArtwork(uri: string): Promise<string | null> {
   return MetadataRetriever.getArtwork(uri);
 }
 
-const { MusicDirectoryPath, StorageVolumesDirectoryPaths } =
-  MetadataRetriever.getConstants();
+const {
+  MusicDirectoryPath,
+  PrimaryDirectoryPath,
+  StorageVolumesDirectoryPaths,
+} = MetadataRetriever.getConstants();
 
 export {
   type MediaMetadata,
@@ -33,5 +36,6 @@ export {
   MetadataPresets,
   // System paths.
   MusicDirectoryPath,
+  PrimaryDirectoryPath,
   StorageVolumesDirectoryPaths,
 };

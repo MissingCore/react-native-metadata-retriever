@@ -11,6 +11,12 @@ export interface Spec extends TurboModule {
      */
     MusicDirectoryPath: string;
     /**
+     * Path of primary storage volume on device.
+     *
+     * @example `"/storage/emulated/0"`
+     */
+    PrimaryDirectoryPath: string;
+    /**
      * Array of directory paths for all shared/external storage volumes.
      * Includes attached external volumes such as SD cards and USB drives.
      *

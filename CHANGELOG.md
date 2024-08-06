@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Added
+
+- New `PrimaryDirectoryPath` exported variable.
+
 ## [0.2.1] - 2024-07-26
 
 ### Added
