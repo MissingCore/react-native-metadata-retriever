@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [0.2.2] - 2024-08-06
+
 ### Added
 
 - New `PrimaryDirectoryPath` exported variable.
@@ -37,7 +39,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.2.1...HEAD
+[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/MissingCore/react-native-metadata-retriever/releases/tag/v0.1.0
