@@ -7,6 +7,12 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ⚡ Changes
+
+- No longer provide `Unknown ExecutionException` & `Metadata Retrieval Error` message with promise rejection for unknown errors (ie: now default to the message in the error object).
+
+### 📚 Documentation
+
 - Document `PrimaryDirectoryPath` in `README.md`.
 
 ## [0.2.2] - 2024-08-06

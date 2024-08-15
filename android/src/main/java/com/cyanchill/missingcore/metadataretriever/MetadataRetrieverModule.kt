@@ -105,13 +105,13 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           ?: false
       when (isWantedException) {
         true -> promise.reject("`getMetadata` error", "File Not Found Error", e)
-        false -> promise.reject("`getMetadata` error", "Unknown ExecutionException", e)
+        false -> promise.reject("`getMetadata` error", e)
       }
     } catch (e: TrackGroupArrayException) {
       // Return default wanted metadata map where all fields are `null`.
       promise.resolve(metadataMap)
     } catch (e: Exception) {
-      promise.reject("`getMetadata` error", "Metadata Retrieval Error", e)
+      promise.reject("`getMetadata` error", e)
     }
   }
 
@@ -157,12 +157,12 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           ?: false
       when (isWantedException) {
         true -> promise.reject("`getArtwork` error", "File Not Found Error", e)
-        false -> promise.reject("`getArtwork` error", "Unknown ExecutionException", e)
+        false -> promise.reject("`getArtwork` error", e)
       }
     } catch (e: TrackGroupArrayException) {
       promise.resolve(null)
     } catch (e: Exception) {
-      promise.reject("`getArtwork` error", "Metadata Retrieval Error", e)
+      promise.reject("`getArtwork` error", e)
     }
   }
 
