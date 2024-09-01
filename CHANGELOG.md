@@ -7,6 +7,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ⚡ Changes
+
+- Support React Native 0.75.
+  - For the Expo example to work (as I've encountered `ERROR: autolinkLibrariesFromCommand: process cmd /c npx @react-native-community/cli config exited with error code: 1`), you need `EXPO_UNSTABLE_CORE_AUTOLINKING=1` in your `.env` file. Not sure if this is needed in a production app.
+
 ### 🛠️ Fixes
 
 - Issue where an app using this package crashes in Android 7 to 10. This was due to the `StorageVolume.getDirectory()` being introduced in Android 11.
