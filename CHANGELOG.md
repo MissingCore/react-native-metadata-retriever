@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [0.3.0] - 2024-09-01
+
 ### ⚡ Changes
 
 - No longer provide `Unknown ExecutionException` & `Metadata Retrieval Error` message with promise rejection for unknown errors (ie: now default to the message in the error object).
@@ -53,7 +55,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.2.2...HEAD
+[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.1.0...v0.2.0
