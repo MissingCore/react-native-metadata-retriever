@@ -1,7 +1,6 @@
 package com.cyanchill.missingcore.metadataretriever
 
 import android.media.MediaMetadataRetriever
-import com.facebook.react.bridge.ReactApplicationContext
 
 
 /**

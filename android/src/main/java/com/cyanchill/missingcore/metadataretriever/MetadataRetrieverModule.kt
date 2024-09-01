@@ -22,7 +22,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     val constants: MutableMap<String, Any?> = HashMap()
     constants["MusicDirectoryPath"] = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).absolutePath
     val storageManager = this.reactApplicationContext.getSystemService(Context.STORAGE_SERVICE) as StorageManager
-    constants["StorageVolumesDirectoryPaths"] = storageManager.storageVolumes.map { it.getDirectory()?.toString() }
+    constants["StorageVolumesDirectoryPaths"] = this.reactApplicationContext.getExternalFilesDirs(null).mapNotNull { it.absolutePath.split("/Android")[0] }
     constants["PrimaryDirectoryPath"] = Environment.getExternalStorageDirectory()?.absolutePath
     return constants
   }
