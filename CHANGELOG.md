@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ⚡ Changes
+
+- Bumped AndroidX media3 to `1.4.1` from `1.3.1`.
+
 ## [0.3.0] - 2024-09-01
 
 ### ⚡ Changes
