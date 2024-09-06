@@ -20,3 +20,12 @@ fun getBase64Image(bytes: ByteArray?): String? {
 
   return "data:$mimeType;base64,${Base64.encodeToString(bytes as ByteArray, Base64.DEFAULT)}"
 }
+
+/**
+ * Returns the year from ISO 8601 format (ie: `YYYY-MM-DD`).
+ */
+fun parseYear(_dateString: Any?): Int? {
+  if (_dateString == null) return null
+  val dateString = _dateString.toString()
+  return dateString.substring(0, 4).toInt()
+}

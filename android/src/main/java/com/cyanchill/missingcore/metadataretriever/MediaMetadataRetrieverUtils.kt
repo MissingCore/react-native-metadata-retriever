@@ -29,7 +29,7 @@ fun readMMRField(mmr: MediaMetadataRetriever, field: String): Any? = when (field
   "overallRating" -> null // Returns `Double?`
   "recordingDay" -> null // Returns `Int?`
   "recordingMonth" -> null // Returns `Int?`
-  "recordingYear" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)?.toInt() // Returns `Int?`
+  "recordingYear" -> parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)) // Returns `Int?`
   "releaseDay" -> null // Returns `Int?`
   "releaseMonth" -> null // Returns `Int?`
   "releaseYear" -> null // Returns `Int?`
@@ -45,11 +45,10 @@ fun readMMRField(mmr: MediaMetadataRetriever, field: String): Any? = when (field
   } // Returns `Int?`
   "userRating" -> null // Returns `Double?`
   "writer" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_WRITER)
-  "year" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)?.toInt() ?: run {
-    val date: String? = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)
+  "year" -> parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)) ?: run {
     try {
       // The "date" format should start with 4 digits representing the year.
-      date?.substring(0, 4)?.toInt()?.also { if (it > 999) it else null }
+      parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE))?.also { if (it > 999) it else null }
     } catch (err: Exception) {
       null
     }

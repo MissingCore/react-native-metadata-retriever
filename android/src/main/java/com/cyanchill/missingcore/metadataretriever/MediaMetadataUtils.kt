@@ -192,10 +192,10 @@ fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String, uri: Str
   "overallRating" -> getPercentageRatingRating(mediaMetadata.overallRating) // Returns `Double?`
   "recordingDay" -> mediaMetadata.recordingDay // Returns `Int?`
   "recordingMonth" -> mediaMetadata.recordingMonth // Returns `Int?`
-  "recordingYear" -> mediaMetadata.recordingYear // Returns `Int?`
+  "recordingYear" -> parseYear(mediaMetadata.recordingYear) // Returns `Int?`
   "releaseDay" -> mediaMetadata.releaseDay // Returns `Int?`
   "releaseMonth" -> mediaMetadata.releaseMonth // Returns `Int?`
-  "releaseYear" -> mediaMetadata.releaseYear // Returns `Int?`
+  "releaseYear" -> parseYear(mediaMetadata.releaseYear) // Returns `Int?`
   "station" -> mediaMetadata.station?.toString()
   "subtitle" -> mediaMetadata.subtitle?.toString()
   "title" -> mediaMetadata.title?.toString()
@@ -204,7 +204,7 @@ fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String, uri: Str
   "trackNumber" -> mediaMetadata.trackNumber // Returns `Int?`
   "userRating" -> getPercentageRatingRating(mediaMetadata.userRating) // Returns `Double?`
   "writer" -> mediaMetadata.writer?.toString()
-  "year" -> mediaMetadata.recordingYear ?: mediaMetadata.releaseYear ?: run {
+  "year" -> parseYear(mediaMetadata.recordingYear) ?: parseYear(mediaMetadata.releaseYear) ?: run {
     val mmrMetadata = MediaMetadataRetriever()
     mmrMetadata.setDataSource(uri)
     readMMRField(mmrMetadata, "year")
