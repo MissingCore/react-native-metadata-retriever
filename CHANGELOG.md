@@ -14,6 +14,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### 🛠️ Fixes
 
 - Ensure "year" field returns a year.
+- Reduce risk of `OutOfMemoryError` due to trying to convert a large byte array representing an image into a base64 string.
 
 ## [0.3.0] - 2024-09-01
 
