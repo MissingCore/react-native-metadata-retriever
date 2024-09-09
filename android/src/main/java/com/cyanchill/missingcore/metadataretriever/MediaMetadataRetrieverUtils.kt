@@ -19,7 +19,7 @@ fun readMMRField(mmr: MediaMetadataRetriever, field: String): Any? = when (field
   "composer" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER)
   "conductor" -> null
   "description" -> null
-  "discNumber" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)?.toInt() // Returns `Int?`
+  "discNumber" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)?.toIntOrNull() // Returns `Int?`
   "displayTitle" -> null
 //  "extras" -> metadataMap.putString()
   "genre" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE)
@@ -37,10 +37,10 @@ fun readMMRField(mmr: MediaMetadataRetriever, field: String): Any? = when (field
   "subtitle" -> null
   "title" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
   "totalDiscCount" -> null // Returns `Int?`
-  "totalTrackCount" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_NUM_TRACKS)?.toInt() // Returns `Int?`
+  "totalTrackCount" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_NUM_TRACKS)?.toIntOrNull() // Returns `Int?`
   "trackNumber" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER)?.let {
     // `trackNumber` seems to default to `0`, which is incorrect if it was `undefined` in reality.
-    val trackNumber = it.toInt()
+    val trackNumber = it.toIntOrNull() ?: 0
     return if (trackNumber == 0) null else trackNumber
   } // Returns `Int?`
   "userRating" -> null // Returns `Double?`

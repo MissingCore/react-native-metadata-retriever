@@ -42,5 +42,5 @@ fun getBase64Image(bytes: ByteArray?): String? {
 fun parseYear(_dateString: Any?): Int? {
   if (_dateString == null) return null
   val dateString = _dateString.toString()
-  return dateString.substring(0, 4).toInt()
+  return dateString.substring(0, 4).toIntOrNull()
 }

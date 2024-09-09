@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ⚡ Changes
+
+- Switched to `String.toIntOrNull()` to prevent `NumberFormatException` caused by incorrect metadata structure.
+
 ## [0.4.0] - 2024-09-08
 
 ### ⚡ Changes
