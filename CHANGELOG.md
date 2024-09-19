@@ -10,6 +10,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### ⚡ Changes
 
 - Switched to `String.toIntOrNull()` to prevent `NumberFormatException` caused by incorrect metadata structure.
+- `getArtwork` only attempts to read the 1st "Other" picture type (instead of overriding previous values if they existed).
 
 ## [0.4.0] - 2024-09-08
 

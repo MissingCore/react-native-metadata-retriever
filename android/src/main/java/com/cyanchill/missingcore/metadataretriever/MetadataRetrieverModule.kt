@@ -142,7 +142,13 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           .build()
 
         when (mediaMetadata.artworkDataType) {
-          0 -> { backupImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String? }
+          // "Other" Picture Type
+          0 -> {
+            if (backupImage == null) {
+              backupImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String?
+            }
+          }
+          // "Cover (front)" Picture Type
           3 -> { coverImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String? }
         }
 
