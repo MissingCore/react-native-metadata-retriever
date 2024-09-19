@@ -48,7 +48,7 @@ fun readMMRField(mmr: MediaMetadataRetriever, field: String): Any? = when (field
   "year" -> parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)) ?: run {
     try {
       // The "date" format should start with 4 digits representing the year.
-      parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE))?.also { if (it > 999) it else null }
+      parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE))?.let { if (it > 999) it else null }
     } catch (err: Exception) {
       null
     }

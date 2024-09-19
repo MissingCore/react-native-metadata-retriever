@@ -21,7 +21,7 @@ fun getBase64Image(bytes: ByteArray?): String? {
 
   // Use simplier & faster method for converting the byte array to a string based on its size (<5MB).
   if (bytes.size < 5 * 1024 * 1024) {
-    return "data:$mimeType;base64,${Base64.encodeToString(bytes as ByteArray, Base64.DEFAULT)}"
+    return "data:$mimeType;base64,${Base64.encodeToString(bytes, Base64.DEFAULT)}"
   }
 
   // Process large byte array (>=5MB) more efficiently to prevent `OutOfMemoryError`.
