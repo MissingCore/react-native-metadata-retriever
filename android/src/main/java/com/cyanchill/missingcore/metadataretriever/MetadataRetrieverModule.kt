@@ -98,19 +98,19 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       }
 
       promise.resolve(metadataMap)
+    } catch (e: TrackGroupArrayException) {
+      // Return default wanted metadata map where all fields are `null`.
+      promise.resolve(metadataMap)
     } catch (e: ExecutionException) {
       val isWantedException =
         e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
           ?: false
       when (isWantedException) {
-        true -> promise.reject("`getMetadata` error", "File Not Found Error", e)
-        false -> promise.reject("`getMetadata` error", e)
+        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
+        false -> promise.reject("ERR_METADATA", e.message, e)
       }
-    } catch (e: TrackGroupArrayException) {
-      // Return default wanted metadata map where all fields are `null`.
-      promise.resolve(metadataMap)
     } catch (e: Exception) {
-      promise.reject("`getMetadata` error", e)
+      promise.reject("ERR_METADATA", e.message, e)
     }
   }
 
@@ -156,18 +156,18 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       }
 
       promise.resolve(coverImage ?: backupImage)
+    } catch (e: TrackGroupArrayException) {
+      promise.resolve(null)
     } catch (e: ExecutionException) {
       val isWantedException =
         e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
           ?: false
       when (isWantedException) {
-        true -> promise.reject("`getArtwork` error", "File Not Found Error", e)
-        false -> promise.reject("`getArtwork` error", e)
+        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
+        false -> promise.reject("ERR_ARTWORK", e.message, e)
       }
-    } catch (e: TrackGroupArrayException) {
-      promise.resolve(null)
     } catch (e: Exception) {
-      promise.reject("`getArtwork` error", e)
+      promise.reject("ERR_ARTWORK", e.message, e)
     }
   }
 
