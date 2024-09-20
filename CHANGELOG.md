@@ -12,7 +12,12 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 - Switched to `String.toIntOrNull()` to prevent `NumberFormatException` caused by incorrect metadata structure.
 - `getArtwork` only attempts to read the 1st "Other" picture type (instead of overriding previous values if they existed).
 - Updated how we rejected promises.
-  - I wonder if the cause of the `message` field of the error recieved in React being `null` is due to the use of the following `promise.reject` format: `promise.reject(code: String, throwable: Throwable?)`
+  - I wonder if the cause of the `message` field of the error received in React being `null` is due to the use of the following `promise.reject` format: `promise.reject(code: String, throwable: Throwable?)`
+
+### 🛠️ Fixes
+
+- Fixed `No suitable media source factory found for content type: 2` error due to missing modules to support the `HLS` stream.
+  - Added modules for `DASH`, `SmoothStreaming`, and `RTSP` as well.
 
 ## [0.4.0] - 2024-09-08
 
