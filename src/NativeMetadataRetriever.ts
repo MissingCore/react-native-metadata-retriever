@@ -18,10 +18,9 @@ export interface Spec extends TurboModule {
     PrimaryDirectoryPath: string;
     /**
      * Array of directory paths for all shared/external storage volumes.
-     * Includes attached external volumes such as SD cards and USB drives.
      *
-     * @example `["/storage/emulated/0"]`
-     * @see https://developer.android.com/reference/android/os/storage/StorageManager#getStorageVolumes()
+     * @example `["/storage/emulated/0", "/storage/0A08-1F1A"]`
+     * @see https://developer.android.com/reference/android/content/Context#getExternalFilesDirs(java.lang.String)
      */
     StorageVolumesDirectoryPaths: string[];
   };

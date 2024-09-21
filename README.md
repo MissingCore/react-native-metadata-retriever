@@ -78,9 +78,9 @@ Path to the primary shared/external storage directory. This is usually `/storage
 const StorageVolumesDirectoryPaths: string[];
 ```
 
-An array of directory paths for all shared/external storage volumes. Includes attached external volumes such as SD cards and USB drives.
+An array of directory paths for all shared/external storage volumes.
 
-**Example output:** `["/storage/emulated/0"]`
+**Example output:** `["/storage/emulated/0", "/storage/0A08-1F1A"]`
 
 ## Functions
 
