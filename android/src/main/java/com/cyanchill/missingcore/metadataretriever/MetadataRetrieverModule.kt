@@ -87,7 +87,8 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         }
       }
 
-      // Have fallback for `albumArtist` if it's not defined, but only when certain conditions are met.
+      // Have `albumArtist` fallback to `artist` value if it's not defined, but only when certain
+      // conditions are met (`artist` & `albumTitle` fields are defined).
       if (metadataMap.hasKey("albumArtist") && metadataMap.isNull("albumArtist")) {
         if (
           metadataMap.hasKey("artist") && !metadataMap.isNull("artist") &&
