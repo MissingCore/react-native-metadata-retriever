@@ -7,6 +7,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Other
+
+- `EXPO_UNSTABLE_CORE_AUTOLINKING=1` (mentioned in [0.3.0]) is no longer needed in the `.env` file for the Expo example with `react-native@0.75.4`.
+  - Narrowed down to this causing crashing in the production app and the development version showing a white screen.
+
 ## [0.5.0] - 2024-09-21
 
 ### ⚡ Changes
