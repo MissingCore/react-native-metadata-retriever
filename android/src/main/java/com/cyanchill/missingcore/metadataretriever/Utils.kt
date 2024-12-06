@@ -2,7 +2,6 @@ package com.cyanchill.missingcore.metadataretriever
 
 import android.util.Base64
 import androidx.media3.common.MimeTypes
-import java.io.ByteArrayOutputStream
 import java.net.URLConnection
 
 
@@ -19,21 +18,11 @@ fun getBase64Image(bytes: ByteArray?): String? {
   // Ensure the mimeType we get is defined and is for an image.
   if (!MimeTypes.isImage(mimeType)) return null
 
-  // Use simplier & faster method for converting the byte array to a string based on its size (<5MB).
-  if (bytes.size < 5 * 1024 * 1024) {
-    return "data:$mimeType;base64,${Base64.encodeToString(bytes, Base64.DEFAULT)}"
-  }
-
-  // Process large byte array (>=5MB) more efficiently to prevent `OutOfMemoryError`.
-  val outputStream = ByteArrayOutputStream()
-  bytes.asSequence()
-    .chunked(3 * 1024 * 1024) // 4 characters usually convert to 3 bytes; so we should chunk in multiples of 3.
-    .forEach { chunk ->
-      val encodedChunk = Base64.encode(chunk.toByteArray(), Base64.NO_WRAP)
-      outputStream.write(encodedChunk)
-    }
-
-  return "data:$mimeType;base64,${outputStream.toString()}"
+  // Set hard-cap on the amount of bytes we'll convert to base64 to 3.75MB. This is because when
+  // converting a byte array to a base64 string, we see a 33-37% increase in the size (bringing up
+  // to a max return size of ~5MB).
+  if (bytes.size > 3.75 * 1024 * 1024) return null
+  return "data:$mimeType;base64,${Base64.encodeToString(bytes, Base64.DEFAULT)}"
 }
 
 /**

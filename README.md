@@ -92,6 +92,8 @@ function getArtwork(uri: string): Promise<string | null>;
 
 Returns the base64 image string for the media file of the provided uri.
 
+> **Note:** Has a `5MB` return limit (so a `3.75MB` image size limit as converting it to base64 increases its size by 33-37%).
+
 ### getMetadata
 
 ```ts
