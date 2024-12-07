@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [0.6.0] - 2024-12-07
+
 > [!NOTE]
 > This will be followed by `v0.7.0` which will update AndroidX media3 to `1.5.0`, which requires setting the compiled SDK version to 35.
 
@@ -99,7 +101,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.5.0...HEAD
+[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.2.2...v0.3.0
