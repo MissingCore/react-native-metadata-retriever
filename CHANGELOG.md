@@ -7,6 +7,9 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+> [!NOTE]
+> This will be followed by `v0.7.0` which will update AndroidX media3 to `1.5.0`, which requires setting the compiled SDK version to 35.
+
 ### ⚡ Changes
 
 - Set max cap of size of base64 image returned from `getArtwork()` to `5MB` (this means capping the image found to `3.75MB` due to converting a byte array to a base64 string increasing the size by 33-37%).
