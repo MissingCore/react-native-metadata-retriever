@@ -169,5 +169,10 @@
     "type": "module-mixed",
     "languages": "kotlin-objc",
     "version": "0.38.1"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "expo-modules-core@1.12.26": "patches/expo-modules-core@1.12.26.patch"
+    }
   }
 }

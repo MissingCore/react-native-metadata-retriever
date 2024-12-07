@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  expo-modules-core@1.12.26:
+    hash: a6jlgraqjlew422ewftdvf4d64
+    path: patches/expo-modules-core@1.12.26.patch
+
 importers:
 
   .:
@@ -5619,11 +5624,12 @@ packages:
       resolve-from: 5.0.0
     dev: false
 
-  /expo-modules-core@1.12.26:
+  /expo-modules-core@1.12.26(patch_hash=a6jlgraqjlew422ewftdvf4d64):
     resolution: {integrity: sha512-y8yDWjOi+rQRdO+HY+LnUlz8qzHerUaw/LUjKPU/mX8PRXP4UUPEEp5fjAwBU44xjNmYSHWZDwet4IBBE+yQUA==}
     dependencies:
       invariant: 2.2.4
     dev: false
+    patched: true
 
   /expo-status-bar@1.12.1:
     resolution: {integrity: sha512-/t3xdbS8KB0prj5KG5w7z+wZPFlPtkgs95BsmrP/E7Q0xHXTcDcQ6Cu2FkFuRM+PKTb17cJDnLkawyS5vDLxMA==}
@@ -5645,7 +5651,7 @@ packages:
       expo-font: 12.0.10(expo@51.0.39)
       expo-keep-awake: 13.0.2(expo@51.0.39)
       expo-modules-autolinking: 1.11.3
-      expo-modules-core: 1.12.26
+      expo-modules-core: 1.12.26(patch_hash=a6jlgraqjlew422ewftdvf4d64)
       fbemitter: 3.0.0
       whatwg-url-without-unicode: 8.0.0-3
     transitivePeerDependencies:
