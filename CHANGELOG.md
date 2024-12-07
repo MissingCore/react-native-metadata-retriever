@@ -12,6 +12,12 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 - Set max cap of size of base64 image returned from `getArtwork()` to `5MB` (this means capping the image found to `3.75MB` due to converting a byte array to a base64 string increasing the size by 33-37%).
   - This should further reduce the risk of `OutOfMemoryError` and will catch extreme cases such as trying to convert massive byte arrays (ie: >50MB) to a base64 string.
 
+### 🛠️ Fixes
+
+- Workaround with supporting other metadata fields in `.flac` files by utilizing `MediaMetadataRetriever`.
+  - Someone noticed that track numbers were missing with `.flac` files. Upon further investigation, we've also seen that the `discNumber` value was also missing. This was not the case when using `MediaMetadataRetriever`.
+  - Will like to implement a better fix in the future.
+
 ### Other
 
 - `EXPO_UNSTABLE_CORE_AUTOLINKING=1` (mentioned in [0.3.0]) is no longer needed in the `.env` file for the Expo example with `react-native@0.75.4`.
