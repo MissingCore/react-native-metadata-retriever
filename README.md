@@ -105,7 +105,7 @@ function getMetadata<TOptions extends MediaMetadataPublicFields>(
 
 Returns the specified metadata of the provided uri based on the `options` argument.
 
-**Note:** The "complicated" typing is to make the resulting promise type-safe and be based off the provided `options`.
+> **Note:** The "complicated" typing is to make the resulting promise type-safe and be based off the provided `options`.
 
 ## Types
 
