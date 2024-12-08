@@ -12,6 +12,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 - Bumped AndroidX media3 to `1.5.0` from `1.4.1`.
   - Requires setting `compileSdkVersion=35` & patching `expo-modules-core` due to Kotlin type errors.
 
+### Other
+
+- Validate compatibility with React Native 0.76.
+  - A patch file was required to get the example working due to monorepo behaviors.
+
 ## [0.6.0] - 2024-12-07
 
 > [!NOTE]
