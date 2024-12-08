@@ -7,6 +7,9 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+> [!NOTE]
+> Use `v0.6.0` if you don't want the previous `targetSdkVersion` or `compileSdkVersion` to change.
+
 ### ⚡ Changes
 
 - Bumped AndroidX media3 to `1.5.0` from `1.4.1`.
