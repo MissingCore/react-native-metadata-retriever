@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [0.7.1] - 2024-12-10
+
 ### ⚡ Changes
 
 - Add fallback to `PrimaryDirectoryPath` & `StorageVolumesDirectoryPaths` to be `"/storage/emulated/0"` & `["/storage/emulated/0"]` respectively.
@@ -146,7 +148,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.7.0...HEAD
+[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.6.0...v0.7.0
 [0.6.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.5.0...v0.6.0
