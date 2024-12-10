@@ -19,10 +19,19 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   private val context = reactContext
 
   override fun getTypedExportedConstants(): Map<String, Any?> {
-    val constants: MutableMap<String, Any?> = HashMap()
-    constants["MusicDirectoryPath"] = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).absolutePath
-    constants["StorageVolumesDirectoryPaths"] = this.reactApplicationContext.getExternalFilesDirs(null).mapNotNull { it.absolutePath.split("/Android")[0] }
-    constants["PrimaryDirectoryPath"] = Environment.getExternalStorageDirectory()?.absolutePath
+    val primaryPath = Environment.getExternalStorageDirectory()?.absolutePath
+    var storagePaths = this.reactApplicationContext.getExternalFilesDirs(null)?.mapNotNull { it.absolutePath.split("/Android")[0] }
+    val musicPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)?.absolutePath
+
+    if (storagePaths?.size == 0) storagePaths = null  // Use fallback value.
+
+    val fallbackDefaultPath = "/storage/emulated/0"
+    val constants: MutableMap<String, Any?> = hashMapOf(
+      "PrimaryDirectoryPath" to (primaryPath ?: fallbackDefaultPath),
+      "StorageVolumesDirectoryPaths" to (storagePaths ?: listOf(fallbackDefaultPath)),
+      "MusicDirectoryPath" to musicPath // We'll let this be `null`.
+    )
+
     return constants
   }
 

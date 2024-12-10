@@ -56,10 +56,10 @@ const MetadataPresets: Record<string, MediaMetadataPublicField[]>;
 
 An object containing several metadata presets we can use to retrieve metadata.
 
-### MusicDirectoryPath
+### [Deprecated] MusicDirectoryPath
 
 ```ts
-const MusicDirectoryPath: string;
+const MusicDirectoryPath: string | null;
 ```
 
 Default path to the `Music` folder on device. This is usually `/storage/emulated/0/Music` or `/sdcard/Music` for older devices.
