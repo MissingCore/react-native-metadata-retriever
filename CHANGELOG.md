@@ -22,6 +22,22 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 - Validate compatibility with React Native 0.76.
   - A patch file was required to get the example working due to monorepo behaviors.
 
+## [0.6.1] - 2024-12-10
+
+### ⚡ Changes
+
+- Add fallback to `PrimaryDirectoryPath` & `StorageVolumesDirectoryPaths` to be `"/storage/emulated/0"` & `["/storage/emulated/0"]` respectively.
+- Mark `MusicDirectoryPath` as deprecated mainly due to not specifying a fallback (ie: it may be `null`).
+  - Will be removed in `v1.0.0`.
+
+### 🛠️ Fixes
+
+- Attempt to fix `stacktrace: com.facebook.react.common.JavascriptException: Error: Exception in HostObject::get for prop 'MetadataRetriever': java.lang.NullPointerException: Attempt to invoke virtual method 'java.lang.String java.io.File.getAbsolutePath()' on a null object reference` that occurs on some devices.
+  - We don't have a device to replicate this issue so we're kind of going in blind.
+- Fallback to using `MediaMetadataRetriever` if bitrate isn't found or if the value isn't "correct".
+  - Bitrate isn't present in `Format` for `.flac` files and I've seen variable bitrate for `.mp3` returned as `64000`, which is incorrect.
+  - The reason for these issues may be related to [this issue comment](https://github.com/androidx/media/issues/1081#issuecomment-1936301349).
+
 ## [0.6.0] - 2024-12-07
 
 > [!NOTE]
@@ -118,6 +134,7 @@ Add section to make `release-it` not complain that this is missing. 2024-07-20 i
 
 [unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.7.0...HEAD
 [0.7.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.6.0...v0.7.0
+[0.6.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.3.0...v0.4.0

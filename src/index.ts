@@ -39,6 +39,7 @@ export {
   MediaMetadataPublicFields,
   MetadataPresets,
   // System paths.
+  /** @deprecated */
   MusicDirectoryPath,
   PrimaryDirectoryPath,
   StorageVolumesDirectoryPaths,

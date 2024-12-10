@@ -19,10 +19,19 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   private val context = reactContext
 
   override fun getTypedExportedConstants(): Map<String, Any?> {
-    val constants: MutableMap<String, Any?> = HashMap()
-    constants["MusicDirectoryPath"] = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).absolutePath
-    constants["StorageVolumesDirectoryPaths"] = this.reactApplicationContext.getExternalFilesDirs(null).mapNotNull { it.absolutePath.split("/Android")[0] }
-    constants["PrimaryDirectoryPath"] = Environment.getExternalStorageDirectory()?.absolutePath
+    val primaryPath = Environment.getExternalStorageDirectory()?.absolutePath
+    var storagePaths = this.reactApplicationContext.getExternalFilesDirs(null)?.mapNotNull { it.absolutePath.split("/Android")[0] }
+    val musicPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)?.absolutePath
+
+    if (storagePaths?.size == 0) storagePaths = null  // Use fallback value.
+
+    val fallbackDefaultPath = "/storage/emulated/0"
+    val constants: MutableMap<String, Any?> = hashMapOf(
+      "PrimaryDirectoryPath" to (primaryPath ?: fallbackDefaultPath),
+      "StorageVolumesDirectoryPaths" to (storagePaths ?: listOf(fallbackDefaultPath)),
+      "MusicDirectoryPath" to musicPath // We'll let this be `null`.
+    )
+
     return constants
   }
 
@@ -49,6 +58,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         mmrMetadata.setDataSource(uri)
       }
 
+      var recheckBitRate = false
       // Populate return object with the metadata we found.
       for (i in 0 until options.size()) {
         val field = options.getString(i)
@@ -61,7 +71,18 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         // SEE https://kotlinlang.org/docs/scope-functions.html
         when (field) {
           /** List of fields available on `Format`. */
-          "bitrate", "channelCount", "sampleRate" ->
+          "bitrate" -> {
+            var foundBitRate = readFormatField(formatList[0], field)
+            if (foundBitRate != null) {
+              metadataMap.putInt(field, foundBitRate as Int)
+              // Recheck bitrate if less than 96kbps as the value should typically be greater than this.
+              // This also handles the case where variable bitrate isn't probably returned as I've seen
+              // it be set to `64000`.
+              if (foundBitRate < 96000) recheckBitRate = true
+            } else recheckBitRate = true
+          }
+
+          "channelCount", "sampleRate" ->
             readFormatField(formatList[0], field)?.let { metadataMap.putInt(field, it as Int) }
 
           "codecs", "sampleMimeType" ->
@@ -86,6 +107,17 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
 //          "extras" ->
 //            metadataMap.putNull(field)
         }
+      }
+
+      // Compute bitrate using `MediaMetadataRetriever` if wanted and not found. Necessary for FLAC
+      // files as `Format` doesn't populate that field for whatever reason.
+      if (recheckBitRate) {
+        // Ensure the `MediaMetadataRetriever` object exists.
+        if (mmrMetadata == null) {
+          mmrMetadata = MediaMetadataRetriever()
+          mmrMetadata.setDataSource(uri)
+        }
+        mmrMetadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toIntOrNull()?.let { metadataMap.putInt("bitrate", it as Int) }
       }
 
       // Have `albumArtist` fallback to `artist` value if it's not defined, but only when certain

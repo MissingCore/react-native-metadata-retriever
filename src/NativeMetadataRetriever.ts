@@ -4,13 +4,6 @@ import { TurboModuleRegistry } from 'react-native';
 export interface Spec extends TurboModule {
   readonly getConstants: () => {
     /**
-     * Default path to the `Music` folder on device.
-     *
-     * @example `/storage/emulated/0/Music`
-     * @example `/sdcard/Music`
-     */
-    MusicDirectoryPath: string;
-    /**
      * Path of primary storage volume on device.
      *
      * @example `"/storage/emulated/0"`
@@ -23,6 +16,14 @@ export interface Spec extends TurboModule {
      * @see https://developer.android.com/reference/android/content/Context#getExternalFilesDirs(java.lang.String)
      */
     StorageVolumesDirectoryPaths: string[];
+    /**
+     * Default path to the `Music` folder on device.
+     *
+     * @example `/storage/emulated/0/Music`
+     * @example `/sdcard/Music`
+     * @deprecated
+     */
+    MusicDirectoryPath: string | null;
   };
 
   getMetadata(
