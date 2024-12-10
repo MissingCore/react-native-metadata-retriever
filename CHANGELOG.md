@@ -17,6 +17,9 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - Attempt to fix `stacktrace: com.facebook.react.common.JavascriptException: Error: Exception in HostObject::get for prop 'MetadataRetriever': java.lang.NullPointerException: Attempt to invoke virtual method 'java.lang.String java.io.File.getAbsolutePath()' on a null object reference` that occurs on some devices.
   - We don't have a device to replicate this issue so we're kind of going in blind.
+- Fallback to using `MediaMetadataRetriever` if bitrate isn't found or if the value isn't "correct".
+  - Bitrate isn't present in `Format` for `.flac` files and I've seen variable bitrate for `.mp3` returned as `64000`, which is incorrect.
+  - The reason for these issues may be related to [this issue comment](https://github.com/androidx/media/issues/1081#issuecomment-1936301349).
 
 ## [0.6.0] - 2024-12-07
 
