@@ -22,7 +22,7 @@ import androidx.media3.exoplayer.MetadataRetriever
 fun getFormatList(context: ReactApplicationContext, uri: String): List<Format> {
   // Get static metadata of media from its uri.
   // See https://developer.android.com/media/media3/exoplayer/retrieving-metadata#kotlin
-  val mediaItem = MediaItem.fromUri(uri)
+  val mediaItem = MediaItem.fromUri(getSafeUri(uri))
   val trackGroupArray = MetadataRetriever.retrieveMetadata(context, mediaItem).get()
   if (trackGroupArray == null) throw TrackGroupArrayException()
 
@@ -108,7 +108,7 @@ fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String, uri: Str
   "writer" -> mediaMetadata.writer?.toString()
   "year" -> parseYear(mediaMetadata.recordingYear) ?: parseYear(mediaMetadata.releaseYear) ?: run {
     val mmrMetadata = MediaMetadataRetriever()
-    mmrMetadata.setDataSource(uri)
+    mmrMetadata.setDataSource(getSafeUri(uri))
     readMMRField(mmrMetadata, "year")
   } // Returns `Int?`
   else -> null

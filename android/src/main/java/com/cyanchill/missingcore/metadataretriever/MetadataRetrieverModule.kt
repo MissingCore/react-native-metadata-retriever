@@ -55,7 +55,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       // using `MetadataRetriever`.
       if (mediaMetadata.equals(MediaMetadata.EMPTY) || uri.endsWith(".flac")) {
         mmrMetadata = MediaMetadataRetriever()
-        mmrMetadata.setDataSource(uri)
+        mmrMetadata.setDataSource(getSafeUri(uri))
       }
 
       var recheckBitRate = false
@@ -115,7 +115,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         // Ensure the `MediaMetadataRetriever` object exists.
         if (mmrMetadata == null) {
           mmrMetadata = MediaMetadataRetriever()
-          mmrMetadata.setDataSource(uri)
+          mmrMetadata.setDataSource(getSafeUri(uri))
         }
         mmrMetadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toIntOrNull()?.let { metadataMap.putInt("bitrate", it as Int) }
       }
@@ -161,7 +161,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
       if (metadataList.size == 0) {
         val mmrMetadata = MediaMetadataRetriever()
-        mmrMetadata.setDataSource(uri)
+        mmrMetadata.setDataSource(getSafeUri(uri))
         promise.resolve(readMMRField(mmrMetadata, "artworkData") as String?)
         return
       }

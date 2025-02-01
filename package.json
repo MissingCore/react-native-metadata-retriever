@@ -70,7 +70,7 @@
     "react-native-builder-bob": "^0.34.0",
     "release-it": "^17.10.0",
     "release-it-pnpm": "^4.6.3",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.3"
   },
   "peerDependencies": {
     "react": "*",
@@ -172,7 +172,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@expo/cli@0.22.3": "patches/@expo__cli@0.22.3.patch"
+      "@expo/cli@0.22.11": "patches/@expo__cli@0.22.11.patch"
     }
   }
 }
