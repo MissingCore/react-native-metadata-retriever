@@ -10,6 +10,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### 🛠️ Fixes
 
 - Parsing issue with `year` metadata field if we have an invalid value that's less than 4 characters long.
+- Error thrown when trying to read metadata from a file that contains a `?` or `#` in its filename.
 
 ## [0.6.1] - 2024-12-10
 
