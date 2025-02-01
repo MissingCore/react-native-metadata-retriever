@@ -123,5 +123,6 @@ fun fixNoValue(intVal: Int?): Int? = when (intVal) {
 fun parseYear(dateTime: Any?): Int? {
   if (dateTime == null) return null
   val dateTimeString = dateTime.toString() // We expect `dateTime` to be a `String` or `Int`.
+  if (dateTimeString.length < 4) return null
   return dateTimeString.substring(0, 4).toIntOrNull()
 }
