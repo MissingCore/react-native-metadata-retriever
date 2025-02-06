@@ -7,6 +7,15 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ⚡ Changes
+
+- Bumped AndroidX media3 to `1.5.1` from `1.5.0`.
+
+### 🛠️ Fixes
+
+- Issue where `MetadataRetriever` doesn't find the disc & track number for `.flac` files.
+- Issue where `MediaMetadataRetriever` incorrectly parses some characters from `.flac` files.
+
 ## [0.7.2] - 2025-01-31
 
 ### 🛠️ Fixes

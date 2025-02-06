@@ -51,9 +51,8 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       var mmrMetadata: MediaMetadataRetriever? = null
 
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever` (in the case
-      // with `ID3v1` tags) or if we're dealing with a `.flac` file as some fields were missing when
-      // using `MetadataRetriever`.
-      if (mediaMetadata.equals(MediaMetadata.EMPTY) || uri.endsWith(".flac")) {
+      // with `ID3v1` tags).
+      if (mediaMetadata.equals(MediaMetadata.EMPTY)) {
         mmrMetadata = MediaMetadataRetriever()
         mmrMetadata.setDataSource(getSafeUri(uri))
       }
