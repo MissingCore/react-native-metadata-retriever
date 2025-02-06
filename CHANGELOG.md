@@ -10,6 +10,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### ⚡ Changes
 
 - Bumped AndroidX media3 to `1.5.1` from `1.5.0`.
+- Release `MediaMetadataRetriever` resources in `getMetadata()` after we're done with it.
 
 ### 🛠️ Fixes
 

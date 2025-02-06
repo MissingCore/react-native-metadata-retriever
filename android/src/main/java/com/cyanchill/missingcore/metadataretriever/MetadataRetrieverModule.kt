@@ -130,6 +130,9 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         }
       }
 
+      // Release `MediaMetadataRetriever` resources.
+      if (mmrMetadata !== null) mmrMetadata.release()
+
       promise.resolve(metadataMap)
     } catch (e: TrackGroupArrayException) {
       // Return default wanted metadata map where all fields are `null`.
