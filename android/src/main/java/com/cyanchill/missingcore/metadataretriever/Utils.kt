@@ -109,9 +109,11 @@ fun getPercentageRating(rating: Rating?): Double? = when (rating?.isRated()) {
   else -> null
 }
 
-/** Returns a string that safely handles special characters such as "?" and "#". */
+/** Returns a string that safely handles special characters such as "%", "?", and "#". */
 fun getSafeUri(uri: String): String {
-  return uri.replace("?", "%3F").replace("#", "%23")
+  // It's important to replace the "%" first as if we put it later on, it'll
+  // break the decoding for "?" & "#".
+  return uri.replace("%", "%25").replace("?", "%3F").replace("#", "%23")
 }
 
 /**

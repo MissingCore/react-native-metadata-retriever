@@ -7,6 +7,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### 🛠️ Fixes
+
+- Error thrown when trying to read metadata from a file that contains a `%` in its filename.
+  - If we had `%20` in the filename, it'll get incorrectly decoded to a space (` `), resulting in the file not being found.
+
 ## [0.7.3] - 2025-02-06
 
 ### ⚡ Changes
