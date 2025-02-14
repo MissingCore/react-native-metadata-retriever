@@ -171,6 +171,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       // We'll want to return the image designated as "Cover (front)", otherwise return image for "Other".
       var coverImage: String? = null
       var backupImage: String? = null
+      var backupImageCode: Int? = null
 
       for (i in 0 until metadataList.size) {
         val mediaMetadata = MediaMetadata.Builder()
@@ -180,12 +181,25 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         when (mediaMetadata.artworkDataType) {
           // "Other" Picture Type
           0 -> {
+            if (backupImage == null || backupImageCode == 1) {
+              val newImg = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String?
+              if (newImg !== null) {
+                backupImage = newImg
+                backupImageCode = 3
+              }
+            }
+          }
+          // "32x32 pixels 'file icon' (PNG only)" Picture Type
+          1 -> {
             if (backupImage == null) {
               backupImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String?
+              backupImageCode = 1
             }
           }
           // "Cover (front)" Picture Type
-          3 -> { coverImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String? }
+          3 -> {
+            coverImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String?
+          }
         }
 
         if (coverImage !== null) break

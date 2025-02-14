@@ -7,6 +7,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ⚡ Changes
+
+- We now also consider saving covers classified as `"32x32 pixels 'file icon' (PNG only)"` when using `getArtwork()`.
+  - The order of priority is: `"Cover (front)"` → `"Other"` → `"32x32 pixels 'file icon' (PNG only)"`.
+
 ## [0.7.5] - 2025-02-13
 
 ### ⚡ Changes
