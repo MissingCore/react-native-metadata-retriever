@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [0.8.0] - 2025-02-13
+
 ### ⚡ Changes
 
 - We now also consider saving covers classified as `"32x32 pixels 'file icon' (PNG only)"` when using `getArtwork()`.
@@ -193,7 +195,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.7.5...HEAD
+[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.7.5...v0.8.0
 [0.7.5]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.7.4...v0.7.5
 [0.7.4]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.7.2...v0.7.3
