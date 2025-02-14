@@ -7,6 +7,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ⚡ Changes
+
+- Ensure we don't return `trackNumber = 0` when getting the metadata using `MetadataRetriever`.
+  - This matches the behavior we do with `MediaMetadataRetriever`.
+
 ## [0.7.4] - 2025-02-10
 
 ### 🛠️ Fixes

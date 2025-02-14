@@ -103,7 +103,10 @@ fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String, uri: Str
   "title" -> mediaMetadata.title?.toString()
   "totalDiscCount" -> mediaMetadata.totalDiscCount // Returns `Int?`
   "totalTrackCount" -> mediaMetadata.totalTrackCount // Returns `Int?`
-  "trackNumber" -> mediaMetadata.trackNumber // Returns `Int?`
+  "trackNumber" -> {
+    if (mediaMetadata.trackNumber == 0) null
+    else mediaMetadata.trackNumber
+  } // Returns `Int?`
   "userRating" -> getPercentageRating(mediaMetadata.userRating) // Returns `Double?`
   "writer" -> mediaMetadata.writer?.toString()
   "year" -> parseYear(mediaMetadata.recordingYear) ?: parseYear(mediaMetadata.releaseYear) ?: run {
