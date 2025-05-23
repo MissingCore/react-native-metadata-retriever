@@ -10,10 +10,13 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### ⚡ Changes
 
 - Bumped AndroidX media3 to `1.6.1` from `1.5.1`.
+- Mark `PrimaryDirectoryPath` & `StorageVolumesDirectoryPaths` as deprecated.
+  - This library shouldn't care about where the media comes from and the fact that `StorageVolumesDirectoryPaths` might not return everything.
+  - Will be removed in `v1.0.0`.
 
 ### Other
 
-- Validate that the New Architecture works in example app.
+- Validate that the New Architecture works in the example app.
   - Required a workaround for CMAKE due to long paths in Windows.
 
 ## [0.8.0] - 2025-02-13

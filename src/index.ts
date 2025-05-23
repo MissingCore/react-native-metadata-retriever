@@ -41,6 +41,8 @@ export {
   // System paths.
   /** @deprecated */
   MusicDirectoryPath,
+  /** @deprecated */
   PrimaryDirectoryPath,
+  /** @deprecated */
   StorageVolumesDirectoryPaths,
 };

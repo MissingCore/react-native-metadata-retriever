@@ -7,6 +7,7 @@ export interface Spec extends TurboModule {
      * Path of primary storage volume on device.
      *
      * @example `"/storage/emulated/0"`
+     * @deprecated
      */
     PrimaryDirectoryPath: string;
     /**
@@ -14,6 +15,7 @@ export interface Spec extends TurboModule {
      *
      * @example `["/storage/emulated/0", "/storage/0A08-1F1A"]`
      * @see https://developer.android.com/reference/android/content/Context#getExternalFilesDirs(java.lang.String)
+     * @deprecated
      */
     StorageVolumesDirectoryPaths: string[];
     /**
