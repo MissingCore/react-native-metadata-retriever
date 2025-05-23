@@ -7,6 +7,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Other
+
+- Validate that the New Architecture works in example app.
+  - Required a workaround for CMAKE due to long paths in Windows.
+
 ## [0.8.0] - 2025-02-13
 
 ### ⚡ Changes
