@@ -55,22 +55,22 @@
   },
   "homepage": "https://github.com/MissingCore/react-native-metadata-retriever#readme",
   "devDependencies": {
-    "@react-native/eslint-config": "^0.76.4",
-    "@release-it/keep-a-changelog": "^5.0.0",
+    "@react-native/eslint-config": "^0.76.9",
+    "@release-it/keep-a-changelog": "^7.0.0",
     "@types/jest": "^29.5.14",
-    "@types/react": "^18.3.14",
+    "@types/react": "^18.3.22",
     "del-cli": "^6.0.0",
     "eslint": "^8.57.1",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.0",
     "jest": "^29.7.0",
-    "prettier": "^3.4.2",
+    "prettier": "^3.5.3",
     "react": "18.3.1",
-    "react-native": "0.76.4",
-    "react-native-builder-bob": "^0.34.0",
-    "release-it": "^17.10.0",
-    "release-it-pnpm": "^4.6.3",
-    "typescript": "^5.7.3"
+    "react-native": "0.76.9",
+    "react-native-builder-bob": "^0.40.11",
+    "release-it": "^19.0.2",
+    "release-it-pnpm": "^4.6.5",
+    "typescript": "^5.8.3"
   },
   "peerDependencies": {
     "react": "*",
@@ -172,7 +172,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@expo/cli@0.22.11": "patches/@expo__cli@0.22.11.patch"
+      "@expo/cli": "patches/@expo__cli.patch"
     }
   }
 }
