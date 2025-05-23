@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ⚡ Changes
+
+- Bumped AndroidX media3 to `1.6.1` from `1.5.1`.
+
 ### Other
 
 - Validate that the New Architecture works in example app.
