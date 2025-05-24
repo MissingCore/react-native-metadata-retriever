@@ -8,7 +8,8 @@ import { Image } from 'expo-image';
 import * as MediaLibrary from 'expo-media-library';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import type { TextProps } from 'react-native';
+import { StyleSheet, Text as RNText, View } from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -161,6 +162,10 @@ function Container({ children }: { children: React.ReactNode }) {
       {children}
     </View>
   );
+}
+function Text({ style, ...props }: TextProps) {
+  // eslint-disable-next-line react-native/no-inline-styles
+  return <RNText style={[{ color: 'black' }, style]} {...props} />;
 }
 
 const styles = StyleSheet.create({

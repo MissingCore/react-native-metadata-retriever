@@ -1,15 +1,15 @@
 diff --git a/build/src/start/server/metro/MetroBundlerDevServer.js b/build/src/start/server/metro/MetroBundlerDevServer.js
-index f805cf4e0bed784e752248e8f9034a5e17c2f1a9..5154d409fb999a41117e721431537118d68a92ed 100644
+index 193cd60923b26ca1aea0285096f5d2de69e83e2e..edc7662960a13e5e5122a98f563c6d4f56924f3f 100644
 --- a/build/src/start/server/metro/MetroBundlerDevServer.js
 +++ b/build/src/start/server/metro/MetroBundlerDevServer.js
-@@ -644,7 +644,9 @@ class MetroBundlerDevServer extends _bundlerDevServer.BundlerDevServer {
+@@ -642,7 +642,9 @@ class MetroBundlerDevServer extends _BundlerDevServer.BundlerDevServer {
          };
          // https://github.com/facebook/metro/blob/2405f2f6c37a1b641cc379b9c733b1eff0c1c2a1/packages/metro/src/lib/parseOptionsFromUrl.js#L55-L87
-         if (!opts.mainModuleName.startsWith("/") && !_path().default.isAbsolute(opts.mainModuleName)) {
--            opts.mainModuleName = "./" + opts.mainModuleName;
+         if (!opts.mainModuleName.startsWith('/') && !_path().default.isAbsolute(opts.mainModuleName)) {
+-            opts.mainModuleName = './' + opts.mainModuleName;
 +            // FIXME: Hard-coded due to not working as expected in monorepo.
 +            opts.mainModuleName = "./examples/benchmarking-demo";
-+            // opts.mainModuleName = "./" + opts.mainModuleName;
++            // opts.mainModuleName = './' + opts.mainModuleName;
          }
          const output = await this.metroLoadModuleContents(opts.mainModuleName, opts, extraOptions);
          return {
