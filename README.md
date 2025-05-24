@@ -41,7 +41,7 @@ const base64Artwork = await getArtwork(uri);
 ## Constants
 
 > [!CAUTION]  
-> All exported constants relating to directory paths from this library will be deprecated in `v1.0.0`.
+> All exported constants relating to directory paths from this library will be removed in `v1.0.0`.
 
 ### MediaMetadataPublicFields
 
