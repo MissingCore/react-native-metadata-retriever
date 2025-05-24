@@ -11,9 +11,6 @@ Unlike [`@missingcore/audio-metadata`](https://github.com/MissingCore/audio-meta
 
 View the full list of supported audio formats on Android's documentation on [Supported media formats](https://developer.android.com/media/platform/supported-formats#audio-formats).
 
-> [!NOTE]  
-> Since we're using AndroidX libraries and in addition, the unstable `MetadataRetriever` API, things may break in the future. Currently, we pinned the used AndroidX Media3 libraries to `1.5.0`, which should hopefully prevent any breaking changes.
-
 ## Installation
 
 ```sh
