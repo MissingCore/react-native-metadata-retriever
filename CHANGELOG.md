@@ -14,6 +14,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
   - This library shouldn't care about where the media comes from and the fact that `StorageVolumesDirectoryPaths` might not return everything.
   - Will be removed in `v1.0.0`.
 
+### 🛠️ Fixes
+
+- Fixed type errors breaking React Native 0.77 builds caused by upgrading Kotlin to v2.0 from v1.9.
+
 ### Other
 
 - Validate that the New Architecture works in the example app.

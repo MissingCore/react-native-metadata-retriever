@@ -40,7 +40,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     // Populate return object with default values based on input.
     val metadataMap = Arguments.createMap()
     for (i in 0 until options.size()) {
-      metadataMap.putNull(options.getString(i))
+      metadataMap.putNull(options.getString(i) as String)
     }
 
     try {
@@ -60,7 +60,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       var recheckBitRate = false
       // Populate return object with the metadata we found.
       for (i in 0 until options.size()) {
-        val field = options.getString(i)
+        val field = options.getString(i) as String
         val fieldData = when (mmrMetadata) {
           null -> readMediaMetadataField(mediaMetadata, field, uri)
           else -> readMMRField(mmrMetadata, field)
