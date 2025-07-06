@@ -12,6 +12,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 - Removed deprecated `PrimaryDirectoryPath`, `StorageVolumesDirectoryPaths`, and `MusicDirectoryPath`.
   - It seems like `getTypedExportedConstants()`, which creates these constants caused crashes on some devices according to the Google Play Console.
 
+### Other
+
+- Bumped dependencies.
+
 ## [0.9.0] - 2025-05-24
 
 ### ⚡ Changes
