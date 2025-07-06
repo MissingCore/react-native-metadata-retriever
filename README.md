@@ -37,9 +37,6 @@ const base64Artwork = await getArtwork(uri);
 
 ## Constants
 
-> [!CAUTION]  
-> All exported constants relating to directory paths from this library will be removed in `v1.0.0`.
-
 ### MediaMetadataPublicFields
 
 ```ts
@@ -55,32 +52,6 @@ const MetadataPresets: Record<string, MediaMetadataPublicField[]>;
 ```
 
 An object containing several metadata presets we can use to retrieve metadata.
-
-### [Deprecated] MusicDirectoryPath
-
-```ts
-const MusicDirectoryPath: string | null;
-```
-
-Default path to the `Music` folder on device. This is usually `/storage/emulated/0/Music` or `/sdcard/Music` for older devices.
-
-### [Deprecated] PrimaryDirectoryPath
-
-```ts
-const PrimaryDirectoryPath: string;
-```
-
-Path to the primary shared/external storage directory. This is usually `/storage/emulated/0`.
-
-### [Deprecated] StorageVolumesDirectoryPaths
-
-```ts
-const StorageVolumesDirectoryPaths: string[];
-```
-
-An array of directory paths for all shared/external storage volumes.
-
-**Example output:** `["/storage/emulated/0", "/storage/0A08-1F1A"]`
 
 ## Functions
 

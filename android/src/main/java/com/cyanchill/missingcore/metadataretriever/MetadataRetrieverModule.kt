@@ -18,23 +18,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   MetadataRetrieverSpec(reactContext) {
   private val context = reactContext
 
-  override fun getTypedExportedConstants(): Map<String, Any?> {
-    val primaryPath = Environment.getExternalStorageDirectory()?.absolutePath
-    var storagePaths = this.reactApplicationContext.getExternalFilesDirs(null)?.mapNotNull { it.absolutePath.split("/Android")[0] }
-    val musicPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)?.absolutePath
-
-    if (storagePaths?.size == 0) storagePaths = null  // Use fallback value.
-
-    val fallbackDefaultPath = "/storage/emulated/0"
-    val constants: MutableMap<String, Any?> = hashMapOf(
-      "PrimaryDirectoryPath" to (primaryPath ?: fallbackDefaultPath),
-      "StorageVolumesDirectoryPaths" to (storagePaths ?: listOf(fallbackDefaultPath)),
-      "MusicDirectoryPath" to musicPath // We'll let this be `null`.
-    )
-
-    return constants
-  }
-
   @ReactMethod
   override fun getMetadata(uri: String, options: ReadableArray, promise: Promise) {
     // Populate return object with default values based on input.
