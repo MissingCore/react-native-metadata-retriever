@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [1.0.0] - 2025-07-06
+
 ### ❗ Breaking Changes
 
 - Removed deprecated `PrimaryDirectoryPath`, `StorageVolumesDirectoryPaths`, and `MusicDirectoryPath`.
@@ -223,7 +225,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.9.0...HEAD
+[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.9.0...v1.0.0
 [0.9.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.7.5...v0.8.0
 [0.7.5]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.7.4...v0.7.5
