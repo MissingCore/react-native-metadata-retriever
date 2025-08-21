@@ -23,7 +23,9 @@ fun getFormatList(context: ReactApplicationContext, uri: String): List<Format> {
   // Get static metadata of media from its uri.
   // See https://developer.android.com/media/media3/exoplayer/retrieving-metadata#kotlin
   val mediaItem = MediaItem.fromUri(getSafeUri(uri))
-  val trackGroupArray = MetadataRetriever.retrieveMetadata(context, mediaItem).get()
+  // Media3 v1.8.0 deprecated `retrieveMetadata` and requires us to use the builder.
+  val metadataRetrieverInstance = MetadataRetriever.Builder(context, mediaItem).build()
+  val trackGroupArray = metadataRetrieverInstance.retrieveTrackGroups().get()
   if (trackGroupArray == null) throw TrackGroupArrayException()
 
   // Unwrap the containers returned by `MetadataRetriever.retrieveMetadata`, getting a list
