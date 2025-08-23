@@ -2,9 +2,11 @@ package com.cyanchill.missingcore.metadataretriever.utils
 
 import android.util.Base64
 import androidx.media3.common.MimeTypes
+import androidx.media3.common.PercentageRating
+import androidx.media3.common.Rating
 import java.net.URLConnection
 
-object ArtworkUtils {
+object MediaMetadataUtils {
   /** Returns a base64 image string from a `ByteArray`. */
   fun getBase64Image(bytes: ByteArray = null, maxSizeMB = 5): String? {
     if (bytes == null) return null
@@ -48,6 +50,61 @@ object ArtworkUtils {
     18 -> "Illustration"
     19 -> "Band/artist logotype"
     20 -> "Publisher/Studio logotype"
+    else -> null
+  }
+
+  /**
+   * Convert integer media type to a human-readable string.
+   *
+   * @see <a href="https://developer.android.com/reference/androidx/media3/common/MediaMetadata.MediaType">Link</a>
+   */
+  fun getMediaType(code: Int?): String? = when (code) {
+    0 -> "Mixed"
+    1 -> "Music"
+    2 -> "Audio book chapter"
+    3 -> "Podcast episode"
+    4 -> "Radio station"
+    5 -> "News"
+    6 -> "Video"
+    7 -> "Trailer"
+    8 -> "Movie"
+    9 -> "TV show"
+    10 -> "Album"
+    11 -> "Artist"
+    12 -> "Genre"
+    13 -> "Playlist"
+    14 -> "Year"
+    15 -> "Audio book"
+    16 -> "Podcast"
+    17 -> "TV channel"
+    18 -> "TV series"
+    19 -> "TV season"
+    20 -> "Folder mixed"
+    21 -> "Folder albums"
+    22 -> "Folder artists"
+    23 -> "Folder genres"
+    24 -> "Folder playlists"
+    25 -> "Folder years"
+    26 -> "Folder audio books"
+    27 -> "Folder podcasts"
+    28 -> "Folder tv channels"
+    29 -> "Folder tv series"
+    30 -> "Folder tv shows"
+    31 -> "Folder radio stations"
+    32 -> "Folder news"
+    33 -> "Folder videos"
+    34 -> "Folder trailers"
+    35 -> "Folder movies"
+    else -> null
+  }
+
+  /**
+   * Get the percentage rating from a `Rating`.
+   *
+   * @see <a href="https://developer.android.com/reference/androidx/media3/common/Rating">Link</a>
+   */
+  fun getPercentageRating(rating: Rating?): Double? = when (rating?.isRated()) {
+    true -> PercentageRating.fromBundle(rating.toBundle()).getPercent().toDouble()
     else -> null
   }
 }
