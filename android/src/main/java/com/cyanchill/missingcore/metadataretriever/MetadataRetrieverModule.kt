@@ -17,6 +17,7 @@ import com.cyanchill.missingcore.metadataretriever.models.FormatMetadataItem
 import com.cyanchill.missingcore.metadataretriever.models.MediaMetadataItem
 import com.cyanchill.missingcore.metadataretriever.models.MediaMetadataRetrieverItem
 import com.cyanchill.missingcore.metadataretriever.utils.BridgeUtils
+import com.cyanchill.missingcore.metadataretriever.utils.MediaMetadataUtils
 import com.cyanchill.missingcore.metadataretriever.utils.NormalizationUtils
 
 
@@ -171,7 +172,8 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       if (metadataList.size == 0) {
         val mmrMetadata = MediaMetadataRetriever()
         mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
-        promise.resolve(readMMRField(mmrMetadata, "artworkData") as String?)
+        promise.resolve(MediaMetadataUtils.getBase64Image(mmrMetadata.getEmbeddedPicture()))
+        mmrMetadata.release()
         return
       }
 
@@ -189,7 +191,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           // "Other" Picture Type
           0 -> {
             if (backupImage == null || backupImageCode == 1) {
-              val newImg = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String?
+              val newImg = MediaMetadataUtils.getBase64Image(mediaMetadata.artworkData)
               if (newImg !== null) {
                 backupImage = newImg
                 backupImageCode = 3
@@ -199,13 +201,13 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           // "32x32 pixels 'file icon' (PNG only)" Picture Type
           1 -> {
             if (backupImage == null) {
-              backupImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String?
+              backupImage = MediaMetadataUtils.getBase64Image(mediaMetadata.artworkData)
               backupImageCode = 1
             }
           }
           // "Cover (front)" Picture Type
           3 -> {
-            coverImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String?
+            coverImage = MediaMetadataUtils.getBase64Image(mediaMetadata.artworkData)
           }
         }
 
