@@ -8,7 +8,7 @@ import java.net.URLConnection
 
 object MediaMetadataUtils {
   /** Returns a base64 image string from a `ByteArray`. */
-  fun getBase64Image(bytes: ByteArray? = null, maxSizeMB: Int = 5): String? {
+  fun getBase64Image(bytes: ByteArray? = null, maxSizeMB: Double = 5.0): String? {
     if (bytes == null) return null
     // Determine the mimetype from bytes.
     val mimeType = URLConnection.guessContentTypeFromStream(bytes.inputStream())?.let {
