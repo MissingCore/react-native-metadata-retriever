@@ -1,4 +1,4 @@
-package com.cyanchill.missingcore.metadataretriever.model
+package com.cyanchill.missingcore.metadataretriever.models
 
 interface MetadataItem {
   /* List of fields available on `Format`. */

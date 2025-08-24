@@ -1,4 +1,4 @@
-package com.cyanchill.missingcore.metadataretriever.model
+package com.cyanchill.missingcore.metadataretriever.models
 
 data class TrackMetadataItem(
   override var bitrate: Int?,
