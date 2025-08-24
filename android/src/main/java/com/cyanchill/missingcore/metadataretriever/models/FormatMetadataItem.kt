@@ -7,7 +7,7 @@ import androidx.media3.common.util.UnstableApi
 import com.cyanchill.missingcore.metadataretriever.utils.NormalizationUtils
 
 @OptIn(UnstableApi::class)
-data class NormalizedFormatMetadataItem(val format: Format) : FormatMetadata {
+data class FormatMetadataItem(val format: Format) : FormatMetadata {
   override val bitrate = NormalizationUtils.fixNoValue(format.bitrate)
   override val channelCount = NormalizationUtils.fixNoValue(format.channelCount)
   override val codecs = format.codecs

@@ -8,7 +8,7 @@ import com.cyanchill.missingcore.metadataretriever.utils.MediaMetadataUtils
 import com.cyanchill.missingcore.metadataretriever.utils.NormalizationUtils
 
 @OptIn(UnstableApi::class)
-data class NormalizedMediaMetadataItem(
+data class MediaMetadataItem(
   val mediaMetadata: AndroidXMediaMetadata,
   val getArtworkData: Boolean = false,
 ) : MediaMetadata {
@@ -27,7 +27,7 @@ data class NormalizedMediaMetadataItem(
   override val description = mediaMetadata.description?.toString()
   override val discNumber = mediaMetadata.discNumber
   override val displayTitle = mediaMetadata.displayTitle?.toString()
-  // override val extras: Any?
+  // override val extras = null
   override val genre = mediaMetadata.genre?.toString()
   override val isBrowsable = mediaMetadata.isBrowsable
   override val isPlayable = mediaMetadata.isPlayable
