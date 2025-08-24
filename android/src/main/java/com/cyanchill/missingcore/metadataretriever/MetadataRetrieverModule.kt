@@ -13,6 +13,10 @@ import android.os.storage.StorageManager
 import androidx.media3.common.MediaMetadata
 import java.util.concurrent.ExecutionException
 
+import com.cyanchill.missingcore.metadataretriever.models.FormatMetadataItem
+import com.cyanchill.missingcore.metadataretriever.models.MediaMetadataItem
+import com.cyanchill.missingcore.metadataretriever.models.MediaMetadataRetrieverItem
+import com.cyanchill.missingcore.metadataretriever.utils.BridgeUtils
 import com.cyanchill.missingcore.metadataretriever.utils.NormalizationUtils
 
 
@@ -22,18 +26,21 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
 
   @ReactMethod
   override fun getMetadata(uri: String, options: ReadableArray, promise: Promise) {
+    val optionsList = BridgeUtils.readableStringArrayToList(options)
+
     // Populate return object with default values based on input.
     val metadataMap = Arguments.createMap()
-    for (i in 0 until options.size()) {
-      metadataMap.putNull(options.getString(i) as String)
-    }
+    optionsList.forEach { fieldName -> metadataMap.putNull(fieldName) }
+    var wantArtwork = optionsList.any { fieldName -> fieldName == "artworkData" }
+
+    // Move outside of try-catch block so we can release it in finally.
+    var mmrMetadata: MediaMetadataRetriever? = null
 
     try {
       val formatList = getFormatList(context, uri)
       val mediaMetadata = MediaMetadata.Builder()
         .populateFromMetadata(getMetadataListFromFormatList(formatList))
         .build()
-      var mmrMetadata: MediaMetadataRetriever? = null
 
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever` (in the case
       // with `ID3v1` tags).
@@ -42,54 +49,69 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
       }
 
+      val formatMetadataData = FormatMetadataItem(formatList[0])
+      val metadataData = when (mmrMetadata) {
+        null -> MediaMetadataItem(mediaMetadata, wantArtwork)
+        else -> MediaMetadataRetrieverItem(mmrMetadata, wantArtwork)
+      }
+
       var recheckBitRate = false
       // Populate return object with the metadata we found.
-      for (i in 0 until options.size()) {
-        val field = options.getString(i) as String
-        val fieldData = when (mmrMetadata) {
-          null -> readMediaMetadataField(mediaMetadata, field, uri)
-          else -> readMMRField(mmrMetadata, field)
-        }
-
+      for (field in optionsList) {
         // Use scope functions to help determine output.
         // SEE https://kotlinlang.org/docs/scope-functions.html
         when (field) {
           /** List of fields available on `Format`. */
           "bitrate" -> {
-            var foundBitRate = readFormatField(formatList[0], field)
+            var foundBitRate = formatMetadataData.bitrate
             if (foundBitRate != null) {
-              metadataMap.putInt(field, foundBitRate as Int)
+              metadataMap.putInt(field, foundBitRate)
               // Recheck bitrate if less than 96kbps as the value should typically be greater than this.
               // This also handles the case where variable bitrate isn't probably returned as I've seen
               // it be set to `64000`.
               if (foundBitRate < 96000) recheckBitRate = true
             } else recheckBitRate = true
           }
-
-          "channelCount", "sampleRate" ->
-            readFormatField(formatList[0], field)?.let { metadataMap.putInt(field, it as Int) }
-
-          "codecs", "sampleMimeType" ->
-            readFormatField(formatList[0], field)?.let { metadataMap.putString(field, it as String) }
+          "channelCount" -> formatMetadataData.channelCount?.let { metadataMap.putInt(field, it) }
+          "codecs" -> formatMetadataData.codecs?.let { metadataMap.putString(field, it) }
+          "sampleMimeType" -> formatMetadataData.sampleMimeType?.let { metadataMap.putString(field, it) }
+          "sampleRate" -> formatMetadataData.sampleRate?.let { metadataMap.putInt(field, it) }
 
           /** List of fields available on `MediaMetadata`. */
-          "albumArtist", "albumTitle", "artist", "artworkData", "artworkDataType", "artworkUri",
-          "compilation", "composer", "conductor", "description", "displayTitle", "genre", "mediaType",
-          "station", "subtitle", "title", "writer" ->
-            fieldData?.let { metadataMap.putString(field, it as String) }
-
-          "discNumber", "recordingDay", "recordingMonth", "recordingYear", "releaseDay", "releaseMonth",
-          "releaseYear", "totalDiscCount", "totalTrackCount", "trackNumber", "year" ->
-            fieldData?.let { metadataMap.putInt(field, it as Int) }
-
-          "isBrowsable", "isPlayable" ->
-            fieldData?.let { metadataMap.putBoolean(field, it as Boolean) }
-
-          "overallRating", "userRating" ->
-            fieldData?.let { metadataMap.putDouble(field, it as Double) }
-
-//          "extras" ->
-//            metadataMap.putNull(field)
+          "albumArtist" -> metadataData.albumArtist?.let { metadataMap.putString(field, it) }
+          "albumTitle" -> metadataData.albumTitle?.let { metadataMap.putString(field, it) }
+          "artist" -> metadataData.artist?.let { metadataMap.putString(field, it) }
+          "artworkData" -> metadataData.artworkData?.let { metadataMap.putString(field, it) }
+          "artworkDataType" -> metadataData.artworkDataType?.let { metadataMap.putString(field, it) }
+          "artworkUri" -> metadataData.artworkUri?.let { metadataMap.putString(field, it) }
+          "compilation" -> metadataData.compilation?.let { metadataMap.putString(field, it) }
+          "composer" -> metadataData.composer?.let { metadataMap.putString(field, it) }
+          "conductor" -> metadataData.conductor?.let { metadataMap.putString(field, it) }
+          "description" -> metadataData.description?.let { metadataMap.putString(field, it) }
+          "discNumber" -> metadataData.discNumber?.let { metadataMap.putInt(field, it) }
+          "displayTitle" -> metadataData.displayTitle?.let { metadataMap.putString(field, it) }
+          // "extras" -> metadataMap.putNull(field)
+          "genre" -> metadataData.genre?.let { metadataMap.putString(field, it) }
+          "isBrowsable" -> metadataData.isBrowsable?.let { metadataMap.putBoolean(field, it) }
+          "isPlayable" -> metadataData.isPlayable?.let { metadataMap.putBoolean(field, it) }
+          "mediaType" -> metadataData.mediaType?.let { metadataMap.putString(field, it) }
+          "overallRating" -> metadataData.overallRating?.let { metadataMap.putDouble(field, it) }
+          "recordingDay" -> metadataData.recordingDay?.let { metadataMap.putInt(field, it) }
+          "recordingMonth" -> metadataData.recordingMonth?.let { metadataMap.putInt(field, it) }
+          "recordingYear" -> metadataData.recordingYear?.let { metadataMap.putInt(field, it) }
+          "releaseDay" -> metadataData.releaseDay?.let { metadataMap.putInt(field, it) }
+          "releaseMonth" -> metadataData.releaseMonth?.let { metadataMap.putInt(field, it) }
+          "releaseYear" -> metadataData.releaseYear?.let { metadataMap.putInt(field, it) }
+          "station" -> metadataData.station?.let { metadataMap.putString(field, it) }
+          "subtitle" -> metadataData.subtitle?.let { metadataMap.putString(field, it) }
+          "title" -> metadataData.title?.let { metadataMap.putString(field, it) }
+          "totalDiscCount" -> metadataData.totalDiscCount?.let { metadataMap.putInt(field, it) }
+          "totalTrackCount" -> metadataData.totalTrackCount?.let { metadataMap.putInt(field, it) }
+          "trackNumber" -> metadataData.trackNumber?.let { metadataMap.putInt(field, it) }
+          "userRating" -> metadataData.userRating?.let { metadataMap.putDouble(field, it) }
+          "writer" -> metadataData.writer?.let { metadataMap.putString(field, it) }
+          /* List of custom fields derived from other fields. */
+          "year" -> metadataData.year?.let { metadataMap.putInt(field, it) }
         }
       }
 
@@ -101,7 +123,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           mmrMetadata = MediaMetadataRetriever()
           mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
         }
-        mmrMetadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toIntOrNull()?.let { metadataMap.putInt("bitrate", it as Int) }
+        mmrMetadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toIntOrNull()?.let { metadataMap.putInt("bitrate", it) }
       }
 
       // Have `albumArtist` fallback to `artist` value if it's not defined, but only when certain
@@ -114,9 +136,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           metadataMap.putString("albumArtist", metadataMap.getString("artist"))
         }
       }
-
-      // Release `MediaMetadataRetriever` resources.
-      if (mmrMetadata !== null) mmrMetadata.release()
 
       promise.resolve(metadataMap)
     } catch (e: TrackGroupArrayException) {
@@ -132,6 +151,9 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       }
     } catch (e: Exception) {
       promise.reject("ERR_METADATA", e.message, e)
+    } finally {
+      // Release `MediaMetadataRetriever` resources.
+      if (mmrMetadata !== null) mmrMetadata.release()
     }
   }
 
