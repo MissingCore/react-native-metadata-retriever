@@ -2,7 +2,7 @@ package com.cyanchill.missingcore.metadataretriever.models
 
 import android.media.MediaMetadataRetriever
 import androidx.annotation.OptIn
-import androidx.media3.common.MediaMetadata
+import androidx.media3.common.MediaMetadata as AndroidXMediaMetadata
 import androidx.media3.common.util.UnstableApi
 
 import com.cyanchill.missingcore.metadataretriever.utils.MediaMetadataUtils
@@ -10,54 +10,12 @@ import com.cyanchill.missingcore.metadataretriever.utils.NormalizationUtils
 // FIXME: Remove temporary import
 import com.cyanchill.missingcore.metadataretriever.readMMRField
 
-/**
- * Metadata fields found on `MediaMetadata` that has been normalized for our use.
- *
- * @see <a href="https://developer.android.com/reference/androidx/media3/common/MediaMetadata">Link</a>
- */
-interface NormalizedMediaMetadata {
-  val albumArtist: String?
-  val albumTitle: String?
-  val artist: String?
-  val artworkData: String?
-  val artworkDataType: String?
-  val artworkUri: String?
-  val compilation: String?
-  val composer: String?
-  val conductor: String?
-  val description: String?
-  val discNumber: Int?
-  val displayTitle: String?
-  // val extras: Any?
-  val genre: String?
-  val isBrowsable: Boolean?
-  val isPlayable: Boolean?
-  val mediaType: String?
-  val overallRating: Double?
-  val recordingDay: Int?
-  val recordingMonth: Int?
-  val recordingYear: Int?
-  val releaseDay: Int?
-  val releaseMonth: Int?
-  val releaseYear: Int?
-  val station: String?
-  val subtitle: String?
-  val title: String?
-  val totalDiscCount: Int?
-  val totalTrackCount: Int?
-  val trackNumber: Int?
-  val userRating: Double?
-  val writer: String?
-  /* List of custom fields derived from other fields. */
-  val year: Int?
-}
-
 @OptIn(UnstableApi::class)
 data class NormalizedMediaMetadataItem(
-  val mediaMetadata: MediaMetadata,
+  val mediaMetadata: AndroidXMediaMetadata,
   val uri: String,
   val getArtworkData: Boolean = false,
-): NormalizedMediaMetadata {
+) : MediaMetadata {
   override val albumArtist = mediaMetadata.albumArtist?.toString()
   override val albumTitle = mediaMetadata.albumTitle?.toString()
   override val artist = mediaMetadata.artist?.toString()

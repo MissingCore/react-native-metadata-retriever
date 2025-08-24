@@ -38,4 +38,4 @@ data class TrackMetadataItem(
   override var userRating: Double?,
   override var writer: String?,
   override var year: Int?,
-): MetadataItem
+) : MetadataItem
