@@ -6,11 +6,10 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 
-import android.content.Context
 import android.media.MediaMetadataRetriever
-import android.os.Environment
-import android.os.storage.StorageManager
+import androidx.annotation.OptIn
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.util.UnstableApi
 import java.util.concurrent.ExecutionException
 
 import com.cyanchill.missingcore.metadataretriever.models.FormatMetadataItem
@@ -21,6 +20,7 @@ import com.cyanchill.missingcore.metadataretriever.utils.MediaMetadataUtils
 import com.cyanchill.missingcore.metadataretriever.utils.NormalizationUtils
 
 
+@OptIn(UnstableApi::class)
 class MetadataRetrieverModule internal constructor(reactContext: ReactApplicationContext) :
   MetadataRetrieverSpec(reactContext) {
   private val context = reactContext
@@ -45,7 +45,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
 
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever` (in the case
       // with `ID3v1` tags).
-      if (mediaMetadata.equals(MediaMetadata.EMPTY)) {
+      if (mediaMetadata == MediaMetadata.EMPTY) {
         mmrMetadata = MediaMetadataRetriever()
         mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
       }
@@ -154,7 +154,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       promise.reject("ERR_METADATA", e.message, e)
     } finally {
       // Release `MediaMetadataRetriever` resources.
-      if (mmrMetadata !== null) mmrMetadata.release()
+      mmrMetadata?.release()
     }
   }
 
@@ -169,7 +169,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       val metadataList = getMetadataListFromFormatList(getFormatList(context, uri))
 
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
-      if (metadataList.size == 0) {
+      if (metadataList.isEmpty()) {
         val mmrMetadata = MediaMetadataRetriever()
         mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
         promise.resolve(MediaMetadataUtils.getBase64Image(mmrMetadata.getEmbeddedPicture()))
@@ -182,14 +182,14 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       var backupImage: String? = null
       var backupImageCode: Int? = null
 
-      for (i in 0 until metadataList.size) {
+      for (metadataItem in metadataList) {
         val mediaMetadata = MediaMetadata.Builder()
-          .populateFromMetadata(metadataList[i])
+          .populateFromMetadata(metadataItem)
           .build()
 
         when (mediaMetadata.artworkDataType) {
           // "Other" Picture Type
-          0 -> {
+          MediaMetadata.PICTURE_TYPE_OTHER -> {
             if (backupImage == null || backupImageCode == 1) {
               val newImg = MediaMetadataUtils.getBase64Image(mediaMetadata.artworkData)
               if (newImg !== null) {
@@ -199,14 +199,14 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
             }
           }
           // "32x32 pixels 'file icon' (PNG only)" Picture Type
-          1 -> {
+          MediaMetadata.PICTURE_TYPE_FILE_ICON -> {
             if (backupImage == null) {
               backupImage = MediaMetadataUtils.getBase64Image(mediaMetadata.artworkData)
               backupImageCode = 1
             }
           }
           // "Cover (front)" Picture Type
-          3 -> {
+          MediaMetadata.PICTURE_TYPE_FRONT_COVER -> {
             coverImage = MediaMetadataUtils.getBase64Image(mediaMetadata.artworkData)
           }
         }

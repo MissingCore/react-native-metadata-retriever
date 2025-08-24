@@ -1,11 +1,14 @@
 package com.cyanchill.missingcore.metadataretriever.utils
 
 import android.util.Base64
+import androidx.annotation.OptIn
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.PercentageRating
 import androidx.media3.common.Rating
+import androidx.media3.common.util.UnstableApi
 import java.net.URLConnection
 
+@OptIn(UnstableApi::class)
 object MediaMetadataUtils {
   /** Returns a base64 image string from a `ByteArray`. */
   fun getBase64Image(bytes: ByteArray? = null, maxSizeMB: Double = 5.0): String? {
