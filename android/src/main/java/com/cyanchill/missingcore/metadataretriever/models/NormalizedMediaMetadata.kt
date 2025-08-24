@@ -1,19 +1,15 @@
 package com.cyanchill.missingcore.metadataretriever.models
 
-import android.media.MediaMetadataRetriever
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaMetadata as AndroidXMediaMetadata
 import androidx.media3.common.util.UnstableApi
 
 import com.cyanchill.missingcore.metadataretriever.utils.MediaMetadataUtils
 import com.cyanchill.missingcore.metadataretriever.utils.NormalizationUtils
-// FIXME: Remove temporary import
-import com.cyanchill.missingcore.metadataretriever.readMMRField
 
 @OptIn(UnstableApi::class)
 data class NormalizedMediaMetadataItem(
   val mediaMetadata: AndroidXMediaMetadata,
-  val uri: String,
   val getArtworkData: Boolean = false,
 ) : MediaMetadata {
   override val albumArtist = mediaMetadata.albumArtist?.toString()
@@ -57,9 +53,4 @@ data class NormalizedMediaMetadataItem(
   /* List of custom fields derived from other fields. */
   override val year = NormalizationUtils.parseYear(mediaMetadata.recordingYear)
     ?: NormalizationUtils.parseYear(mediaMetadata.releaseYear)
-    ?: run {
-      val mmrMetadata = MediaMetadataRetriever()
-      mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
-      readMMRField(mmrMetadata, "year") as Int?
-    }
 }
