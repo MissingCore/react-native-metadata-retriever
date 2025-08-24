@@ -63,11 +63,11 @@ fun getMetadataListFromFormatList(formatList: List<Format>): List<Metadata> {
  * @see <a href="https://developer.android.com/reference/androidx/media3/common/Format">Link</a>
  */
 fun readFormatField(format: Format, field: String): Any? = when (field) {
-  "bitrate" -> NormalizationUtils.getInt(format.bitrate) // Returns `Int?`
-  "channelCount" -> NormalizationUtils.getInt(format.channelCount) // Returns `Int?`
+  "bitrate" -> NormalizationUtils.fixNoValue(format.bitrate) // Returns `Int?`
+  "channelCount" -> NormalizationUtils.fixNoValue(format.channelCount) // Returns `Int?`
   "codecs" -> format.codecs
   "sampleMimeType" -> format.sampleMimeType
-  "sampleRate" -> NormalizationUtils.getInt(format.sampleRate) // Returns `Int?`
+  "sampleRate" -> NormalizationUtils.fixNoValue(format.sampleRate) // Returns `Int?`
   else -> null
 }
 

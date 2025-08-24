@@ -8,7 +8,7 @@ object NormalizationUtils {
    *
    * @see <a href="https://developer.android.com/reference/androidx/media3/common/Format#NO_VALUE()">Link</a>
    */
-  fun getInt(intVal: Int?): Int? = when (intVal) {
+  fun fixNoValue(intVal: Int?): Int? = when (intVal) {
     null, Format.NO_VALUE -> null
     else -> intVal
   }
