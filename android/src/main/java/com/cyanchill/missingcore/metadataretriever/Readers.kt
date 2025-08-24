@@ -10,6 +10,9 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Metadata
 import androidx.media3.exoplayer.MetadataRetriever
 
+import com.cyanchill.missingcore.metadataretriever.utils.MediaMetadataUtils
+import com.cyanchill.missingcore.metadataretriever.utils.NormalizationUtils
+
 
 /**
  * Returns a list of `Format` from an uri from a process involving `MetadataRetriever.retrieveMetadata()`.
@@ -22,7 +25,7 @@ import androidx.media3.exoplayer.MetadataRetriever
 fun getFormatList(context: ReactApplicationContext, uri: String): List<Format> {
   // Get static metadata of media from its uri.
   // See https://developer.android.com/media/media3/exoplayer/retrieving-metadata#kotlin
-  val mediaItem = MediaItem.fromUri(getSafeUri(uri))
+  val mediaItem = MediaItem.fromUri(NormalizationUtils.getSafeUri(uri))
   // Media3 v1.8.0 deprecated `retrieveMetadata` and requires us to use the builder.
   val metadataRetrieverInstance = MetadataRetriever.Builder(context, mediaItem).build()
   val trackGroupArray = metadataRetrieverInstance.retrieveTrackGroups().get()
@@ -60,11 +63,11 @@ fun getMetadataListFromFormatList(formatList: List<Format>): List<Metadata> {
  * @see <a href="https://developer.android.com/reference/androidx/media3/common/Format">Link</a>
  */
 fun readFormatField(format: Format, field: String): Any? = when (field) {
-  "bitrate" -> fixNoValue(format.bitrate) // Returns `Int?`
-  "channelCount" -> fixNoValue(format.channelCount) // Returns `Int?`
+  "bitrate" -> NormalizationUtils.getInt(format.bitrate) // Returns `Int?`
+  "channelCount" -> NormalizationUtils.getInt(format.channelCount) // Returns `Int?`
   "codecs" -> format.codecs
   "sampleMimeType" -> format.sampleMimeType
-  "sampleRate" -> fixNoValue(format.sampleRate) // Returns `Int?`
+  "sampleRate" -> NormalizationUtils.getInt(format.sampleRate) // Returns `Int?`
   else -> null
 }
 
@@ -79,8 +82,8 @@ fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String, uri: Str
   "albumArtist" -> mediaMetadata.albumArtist?.toString()
   "albumTitle" -> mediaMetadata.albumTitle?.toString()
   "artist" -> mediaMetadata.artist?.toString()
-  "artworkData" -> getBase64Image(mediaMetadata.artworkData)
-  "artworkDataType" -> getID3PictureType(mediaMetadata.artworkDataType)
+  "artworkData" -> MediaMetadataUtils.getBase64Image(mediaMetadata.artworkData)
+  "artworkDataType" -> MediaMetadataUtils.getID3PictureType(mediaMetadata.artworkDataType)
   "artworkUri" -> mediaMetadata.artworkUri?.toString()
   "compilation" -> mediaMetadata.compilation?.toString()
   "composer" -> mediaMetadata.composer?.toString()
@@ -92,14 +95,14 @@ fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String, uri: Str
   "genre" -> mediaMetadata.genre?.toString()
   "isBrowsable" -> mediaMetadata.isBrowsable // Returns `Boolean?`
   "isPlayable" -> mediaMetadata.isPlayable // Returns `Boolean?`
-  "mediaType" -> getMediaType(mediaMetadata.mediaType)
-  "overallRating" -> getPercentageRating(mediaMetadata.overallRating) // Returns `Double?`
+  "mediaType" -> MediaMetadataUtils.getMediaType(mediaMetadata.mediaType)
+  "overallRating" -> MediaMetadataUtils.getPercentageRating(mediaMetadata.overallRating) // Returns `Double?`
   "recordingDay" -> mediaMetadata.recordingDay // Returns `Int?`
   "recordingMonth" -> mediaMetadata.recordingMonth // Returns `Int?`
-  "recordingYear" -> parseYear(mediaMetadata.recordingYear) // Returns `Int?`
+  "recordingYear" -> NormalizationUtils.parseYear(mediaMetadata.recordingYear) // Returns `Int?`
   "releaseDay" -> mediaMetadata.releaseDay // Returns `Int?`
   "releaseMonth" -> mediaMetadata.releaseMonth // Returns `Int?`
-  "releaseYear" -> parseYear(mediaMetadata.releaseYear) // Returns `Int?`
+  "releaseYear" -> NormalizationUtils.parseYear(mediaMetadata.releaseYear) // Returns `Int?`
   "station" -> mediaMetadata.station?.toString()
   "subtitle" -> mediaMetadata.subtitle?.toString()
   "title" -> mediaMetadata.title?.toString()
@@ -109,11 +112,11 @@ fun readMediaMetadataField(mediaMetadata: MediaMetadata, field: String, uri: Str
     if (mediaMetadata.trackNumber == 0) null
     else mediaMetadata.trackNumber
   } // Returns `Int?`
-  "userRating" -> getPercentageRating(mediaMetadata.userRating) // Returns `Double?`
+  "userRating" -> MediaMetadataUtils.getPercentageRating(mediaMetadata.userRating) // Returns `Double?`
   "writer" -> mediaMetadata.writer?.toString()
-  "year" -> parseYear(mediaMetadata.recordingYear) ?: parseYear(mediaMetadata.releaseYear) ?: run {
+  "year" -> NormalizationUtils.parseYear(mediaMetadata.recordingYear) ?: NormalizationUtils.parseYear(mediaMetadata.releaseYear) ?: run {
     val mmrMetadata = MediaMetadataRetriever()
-    mmrMetadata.setDataSource(getSafeUri(uri))
+    mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
     readMMRField(mmrMetadata, "year")
   } // Returns `Int?`
   else -> null
@@ -128,7 +131,7 @@ fun readMMRField(mmr: MediaMetadataRetriever, field: String): Any? = when (field
   "albumArtist" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST)
   "albumTitle" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
   "artist" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
-  "artworkData" -> getBase64Image(mmr.getEmbeddedPicture())
+  "artworkData" -> MediaMetadataUtils.getBase64Image(mmr.getEmbeddedPicture())
   "artworkDataType" -> null
   "artworkUri" -> null
   "compilation" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPILATION)
@@ -145,7 +148,7 @@ fun readMMRField(mmr: MediaMetadataRetriever, field: String): Any? = when (field
   "overallRating" -> null // Returns `Double?`
   "recordingDay" -> null // Returns `Int?`
   "recordingMonth" -> null // Returns `Int?`
-  "recordingYear" -> parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)) // Returns `Int?`
+  "recordingYear" -> NormalizationUtils.parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)) // Returns `Int?`
   "releaseDay" -> null // Returns `Int?`
   "releaseMonth" -> null // Returns `Int?`
   "releaseYear" -> null // Returns `Int?`
@@ -161,10 +164,10 @@ fun readMMRField(mmr: MediaMetadataRetriever, field: String): Any? = when (field
   } // Returns `Int?`
   "userRating" -> null // Returns `Double?`
   "writer" -> mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_WRITER)
-  "year" -> parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)) ?: run {
+  "year" -> NormalizationUtils.parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)) ?: run {
     try {
       // The "date" format should start with 4 digits representing the year.
-      parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE))?.let { if (it > 999) it else null }
+      NormalizationUtils.parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE))?.let { if (it > 999) it else null }
     } catch (err: Exception) {
       null
     }

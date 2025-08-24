@@ -13,6 +13,8 @@ import android.os.storage.StorageManager
 import androidx.media3.common.MediaMetadata
 import java.util.concurrent.ExecutionException
 
+import com.cyanchill.missingcore.metadataretriever.utils.NormalizationUtils
+
 
 class MetadataRetrieverModule internal constructor(reactContext: ReactApplicationContext) :
   MetadataRetrieverSpec(reactContext) {
@@ -37,7 +39,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       // with `ID3v1` tags).
       if (mediaMetadata.equals(MediaMetadata.EMPTY)) {
         mmrMetadata = MediaMetadataRetriever()
-        mmrMetadata.setDataSource(getSafeUri(uri))
+        mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
       }
 
       var recheckBitRate = false
@@ -97,7 +99,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         // Ensure the `MediaMetadataRetriever` object exists.
         if (mmrMetadata == null) {
           mmrMetadata = MediaMetadataRetriever()
-          mmrMetadata.setDataSource(getSafeUri(uri))
+          mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
         }
         mmrMetadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toIntOrNull()?.let { metadataMap.putInt("bitrate", it as Int) }
       }
@@ -146,7 +148,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
       if (metadataList.size == 0) {
         val mmrMetadata = MediaMetadataRetriever()
-        mmrMetadata.setDataSource(getSafeUri(uri))
+        mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
         promise.resolve(readMMRField(mmrMetadata, "artworkData") as String?)
         return
       }
