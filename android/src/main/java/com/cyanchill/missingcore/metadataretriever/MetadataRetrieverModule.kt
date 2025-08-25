@@ -8,8 +8,13 @@ import com.facebook.react.bridge.Promise
 
 import android.media.MediaMetadataRetriever
 import androidx.annotation.OptIn
+import androidx.media3.common.C
+import androidx.media3.common.Format
+import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Metadata
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.MetadataRetriever
 import java.util.concurrent.ExecutionException
 
 import com.cyanchill.missingcore.metadataretriever.models.FormatMetadataItem
@@ -38,9 +43,9 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     var mmrMetadata: MediaMetadataRetriever? = null
 
     try {
-      val formatList = getFormatList(context, uri)
+      val formatList = getFormatList(uri)
       val mediaMetadata = MediaMetadata.Builder()
-        .populateFromMetadata(getMetadataListFromFormatList(formatList))
+        .populateFromMetadata(getMetadataList(formatList))
         .build()
 
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever` (in the case
@@ -139,9 +144,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       }
 
       promise.resolve(metadataMap)
-    } catch (e: TrackGroupArrayException) {
-      // Return default wanted metadata map where all fields are `null`.
-      promise.resolve(metadataMap)
     } catch (e: ExecutionException) {
       val isWantedException =
         e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
@@ -166,7 +168,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   @ReactMethod
   override fun getArtwork(uri: String, promise: Promise) {
     try {
-      val metadataList = getMetadataListFromFormatList(getFormatList(context, uri))
+      val metadataList = getMetadataList(getFormatList(uri))
 
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
       if (metadataList.isEmpty()) {
@@ -215,8 +217,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       }
 
       promise.resolve(coverImage ?: backupImage)
-    } catch (e: TrackGroupArrayException) {
-      promise.resolve(null)
     } catch (e: ExecutionException) {
       val isWantedException =
         e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
@@ -228,6 +228,41 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     } catch (e: Exception) {
       promise.reject("ERR_ARTWORK", e.message, e)
     }
+  }
+
+  /**
+   * Returns a list of `Format` from an uri.
+   *
+   * @throws ExecutionException If file was not found from uri.
+   *
+   * @see <a href="https://developer.android.com/media/media3/exoplayer/retrieving-metadata#wo-playback">Link</a>
+   */
+  private fun getFormatList(uri: String): List<Format> {
+    val mediaItem = MediaItem.fromUri(NormalizationUtils.getSafeUri(uri))
+    MetadataRetriever.Builder(context, mediaItem).build().use { metadataRetriever ->
+      val trackGroupArray = metadataRetriever.retrieveTrackGroups().get()
+      val formatList = mutableListOf<Format>()
+      for (i in 0 until trackGroupArray.length) {
+        val trackGroup = trackGroupArray[i]
+        // Only care about `TrackGroup` containing audio.
+        if (trackGroup.type != C.TRACK_TYPE_AUDIO) continue
+        for (j in 0 until trackGroup.length) {
+          // By definition, a `TrackGroup` should have at least 1 `Format`.
+          // SEE https://developer.android.com/reference/androidx/media3/common/TrackGroup#TrackGroup(androidx.media3.common.Format...)
+          formatList.add(trackGroup.getFormat(j))
+        }
+      }
+      return formatList
+    }
+  }
+
+  /** Returns a list of `Metadata` from `List<Format>`. */
+  private fun getMetadataList(formatList: List<Format>): List<Metadata> {
+    val metadataList = mutableListOf<Metadata>()
+    formatList.forEach {
+      it.metadata?.let { metadataList.add(it) }
+    }
+    return metadataList
   }
 
   companion object {
