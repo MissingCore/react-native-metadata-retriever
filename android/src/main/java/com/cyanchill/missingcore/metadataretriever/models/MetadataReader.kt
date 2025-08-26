@@ -11,8 +11,6 @@ import androidx.media3.common.MediaMetadata as AndroidXMediaMetadata
 import androidx.media3.common.util.UnstableApi
 import java.net.URLConnection
 
-import com.cyanchill.missingcore.metadataretriever.utils.NormalizationUtils
-
 /**
  * Utilities to format & normalize sources of metadata as a map.
  */
@@ -27,9 +25,9 @@ object MetadataReader {
     val dataMap = hashMapOf<String, Any?>()
 
     // Set `Int?` values.
-    dataMap.put("bitrate", NormalizationUtils.fixNoValue(format.bitrate))
-    dataMap.put("channelCount", NormalizationUtils.fixNoValue(format.channelCount))
-    dataMap.put("sampleRate", NormalizationUtils.fixNoValue(format.sampleRate))
+    dataMap.put("bitrate", fixNoValue(format.bitrate))
+    dataMap.put("channelCount", fixNoValue(format.channelCount))
+    dataMap.put("sampleRate", fixNoValue(format.sampleRate))
     // Set `String?` values.
     dataMap.put("codecs", format.codecs)
     dataMap.put("sampleMimeType", format.sampleMimeType)
@@ -51,8 +49,7 @@ object MetadataReader {
     // Pre-compute values to put in hash map.
     val artworkData = if (getArtworkData) getBase64Image(mediaMetadata.artworkData) else null
     val trackNumber = if (mediaMetadata.trackNumber == 0) null else mediaMetadata.trackNumber
-    val year = NormalizationUtils.parseYear(mediaMetadata.recordingYear)
-      ?: NormalizationUtils.parseYear(mediaMetadata.releaseYear)
+    val year = parseYear(mediaMetadata.recordingYear) ?: parseYear(mediaMetadata.releaseYear)
 
     // Set `Boolean?` values.
     dataMap.put("isBrowsable", mediaMetadata.isBrowsable)
@@ -64,10 +61,10 @@ object MetadataReader {
     dataMap.put("discNumber", mediaMetadata.discNumber)
     dataMap.put("recordingDay", mediaMetadata.recordingDay)
     dataMap.put("recordingMonth", mediaMetadata.recordingMonth)
-    dataMap.put("recordingYear", NormalizationUtils.parseYear(mediaMetadata.recordingYear))
+    dataMap.put("recordingYear", parseYear(mediaMetadata.recordingYear))
     dataMap.put("releaseDay", mediaMetadata.releaseDay)
     dataMap.put("releaseMonth", mediaMetadata.releaseMonth)
-    dataMap.put("releaseYear", NormalizationUtils.parseYear(mediaMetadata.releaseYear))
+    dataMap.put("releaseYear", parseYear(mediaMetadata.releaseYear))
     dataMap.put("totalDiscCount", mediaMetadata.totalDiscCount)
     dataMap.put("totalTrackCount", mediaMetadata.totalTrackCount)
     dataMap.put("trackNumber", trackNumber)
@@ -109,10 +106,10 @@ object MetadataReader {
     val artworkData = if (getArtworkData) getBase64Image(mmr.getEmbeddedPicture()) else null
     val trackNumber = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER)
       ?.let { if (it.toIntOrNull() == 0) null else it.toIntOrNull() }
-    val year = NormalizationUtils.parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)) ?: run {
+    val year = parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)) ?: run {
       try {
         // The "date" format should start with 4 digits representing the year.
-        NormalizationUtils.parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE))
+        parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE))
           ?.let { if (it > 999) it else null }
       } catch (err: Exception) {
         null
@@ -121,7 +118,7 @@ object MetadataReader {
 
     // Set `Int?` values.
     dataMap.put("discNumber", mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)?.toIntOrNull())
-    dataMap.put("recordingYear", NormalizationUtils.parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)))
+    dataMap.put("recordingYear", parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)))
     dataMap.put("totalTrackCount", mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_NUM_TRACKS)?.toIntOrNull())
     dataMap.put("trackNumber", trackNumber)
     dataMap.put("year", year)
@@ -159,6 +156,16 @@ object MetadataReader {
   //#endregion
 
   //#region [Internal Helpers To Parse Metadata Values]
+  /**
+   * Return `null` if we see `Format.NO_VALUE` (-1).
+   *
+   * @see <a href="https://developer.android.com/reference/androidx/media3/common/Format#NO_VALUE()">Link</a>
+   */
+  private fun fixNoValue(intVal: Int?): Int? = when (intVal) {
+    null, Format.NO_VALUE -> null
+    else -> intVal
+  }
+
   /**
    * Convert integer picture type to a human-readable string.
    *
@@ -242,6 +249,14 @@ object MetadataReader {
   private fun getPercentageRating(rating: Rating?): Double? = when (rating?.isRated()) {
     true -> PercentageRating.fromBundle(rating.toBundle()).getPercent().toDouble()
     else -> null
+  }
+
+  /** Returns the year from ISO 8601 format (ie: `YYYY-MM-DD`). */
+  private fun parseYear(dateTime: Any?): Int? {
+    if (dateTime == null) return null
+    val dateTimeString = dateTime.toString() // We expect `dateTime` to be a `String` or `Int`.
+    if (dateTimeString.length < 4) return null
+    return dateTimeString.substring(0, 4).toIntOrNull()
   }
   //#endregion
 }

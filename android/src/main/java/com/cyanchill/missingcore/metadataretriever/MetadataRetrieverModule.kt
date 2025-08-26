@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException
 import com.cyanchill.missingcore.metadataretriever.models.MetadataReader
 import com.cyanchill.missingcore.metadataretriever.utils.BridgeUtils
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
-import com.cyanchill.missingcore.metadataretriever.utils.NormalizationUtils
+import com.cyanchill.missingcore.metadataretriever.utils.Normalization
 
 
 @OptIn(UnstableApi::class)
@@ -50,7 +50,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       // with `ID3v1` tags).
       if (mediaMetadata == MediaMetadata.EMPTY) {
         mmrMetadata = MediaMetadataRetriever()
-        mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
+        mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
       }
 
       val formatMetadataDataMap = MetadataReader.fromFormat(formatList[0])
@@ -107,7 +107,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         // Ensure the `MediaMetadataRetriever` object exists.
         if (mmrMetadata == null) {
           mmrMetadata = MediaMetadataRetriever()
-          mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
+          mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
         }
         mmrMetadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toIntOrNull()?.let { metadataMap.putInt("bitrate", it) }
       }
@@ -153,7 +153,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
       if (metadataList.isEmpty()) {
         val mmrMetadata = MediaMetadataRetriever()
-        mmrMetadata.setDataSource(NormalizationUtils.getSafeUri(uri))
+        mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
         promise.resolve(MetadataReader.getBase64Image(mmrMetadata.getEmbeddedPicture()))
         mmrMetadata.release()
         return
@@ -210,6 +210,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     }
   }
 
+  //#region [Internal Helpers]
   /**
    * Returns a list of `Format` from an uri.
    *
@@ -218,7 +219,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
    * @see <a href="https://developer.android.com/media/media3/exoplayer/retrieving-metadata#wo-playback">Link</a>
    */
   private fun getFormatList(uri: String): List<Format> {
-    val mediaItem = MediaItem.fromUri(NormalizationUtils.getSafeUri(uri))
+    val mediaItem = MediaItem.fromUri(Normalization.getSafeUri(uri))
     MetadataRetriever.Builder(context, mediaItem).build().use { metadataRetriever ->
       val trackGroupArray = metadataRetriever.retrieveTrackGroups().get()
       val formatList = mutableListOf<Format>()
@@ -244,6 +245,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     }
     return metadataList
   }
+  //#endregion
 
   companion object {
     const val NAME = "MetadataRetriever"
