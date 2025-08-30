@@ -6,57 +6,72 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 
-import android.content.Context
 import android.media.MediaMetadataRetriever
-import android.os.Environment
-import android.os.storage.StorageManager
+import androidx.annotation.OptIn
+import androidx.media3.common.C
+import androidx.media3.common.Format
+import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Metadata
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.MetadataRetriever
 import java.util.concurrent.ExecutionException
 
+import com.cyanchill.missingcore.metadataretriever.models.MetadataReader
+import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
+import com.cyanchill.missingcore.metadataretriever.utils.Normalization
 
+
+@OptIn(UnstableApi::class)
 class MetadataRetrieverModule internal constructor(reactContext: ReactApplicationContext) :
   MetadataRetrieverSpec(reactContext) {
   private val context = reactContext
 
   @ReactMethod
   override fun getMetadata(uri: String, options: ReadableArray, promise: Promise) {
-    // Populate return object with default values based on input.
-    val metadataMap = Arguments.createMap()
+    val optionsList = mutableListOf<String>()
     for (i in 0 until options.size()) {
-      metadataMap.putNull(options.getString(i) as String)
+      optionsList.add(options.getString(i) as String)
     }
 
+    // Populate return object with default values based on input.
+    val metadataMap = Arguments.createMap()
+    optionsList.forEach { fieldName -> metadataMap.putNull(fieldName) }
+    var wantArtwork = optionsList.any { fieldName -> fieldName == "artworkData" }
+
+    // Move outside of try-catch block so we can release it in finally.
+    var mmrMetadata: MediaMetadataRetriever? = null
+
     try {
-      val formatList = getFormatList(context, uri)
+      val formatList = getFormatList(uri)
       val mediaMetadata = MediaMetadata.Builder()
-        .populateFromMetadata(getMetadataListFromFormatList(formatList))
+        .populateFromMetadata(getMetadataList(formatList))
         .build()
-      var mmrMetadata: MediaMetadataRetriever? = null
 
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever` (in the case
       // with `ID3v1` tags).
-      if (mediaMetadata.equals(MediaMetadata.EMPTY)) {
+      if (mediaMetadata == MediaMetadata.EMPTY) {
         mmrMetadata = MediaMetadataRetriever()
-        mmrMetadata.setDataSource(getSafeUri(uri))
+        mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
+      }
+
+      val formatMetadataDataMap = MetadataReader.fromFormat(formatList[0])
+      val metadataDataMap = when (mmrMetadata) {
+        null -> MetadataReader.fromMediaMetadata(mediaMetadata, wantArtwork)
+        else -> MetadataReader.fromMediaMetadataRetriever(mmrMetadata, wantArtwork)
       }
 
       var recheckBitRate = false
       // Populate return object with the metadata we found.
-      for (i in 0 until options.size()) {
-        val field = options.getString(i) as String
-        val fieldData = when (mmrMetadata) {
-          null -> readMediaMetadataField(mediaMetadata, field, uri)
-          else -> readMMRField(mmrMetadata, field)
-        }
-
+      for (field in optionsList) {
         // Use scope functions to help determine output.
         // SEE https://kotlinlang.org/docs/scope-functions.html
         when (field) {
           /** List of fields available on `Format`. */
           "bitrate" -> {
-            var foundBitRate = readFormatField(formatList[0], field)
+            var foundBitRate = MapUtils.getInt(formatMetadataDataMap, "bitrate")
             if (foundBitRate != null) {
-              metadataMap.putInt(field, foundBitRate as Int)
+              metadataMap.putInt(field, foundBitRate)
               // Recheck bitrate if less than 96kbps as the value should typically be greater than this.
               // This also handles the case where variable bitrate isn't probably returned as I've seen
               // it be set to `64000`.
@@ -65,29 +80,26 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           }
 
           "channelCount", "sampleRate" ->
-            readFormatField(formatList[0], field)?.let { metadataMap.putInt(field, it as Int) }
+            MapUtils.getInt(formatMetadataDataMap, field)?.let { metadataMap.putInt(field, it) }
 
           "codecs", "sampleMimeType" ->
-            readFormatField(formatList[0], field)?.let { metadataMap.putString(field, it as String) }
+            MapUtils.getString(formatMetadataDataMap, field)?.let { metadataMap.putString(field, it) }
 
           /** List of fields available on `MediaMetadata`. */
           "albumArtist", "albumTitle", "artist", "artworkData", "artworkDataType", "artworkUri",
           "compilation", "composer", "conductor", "description", "displayTitle", "genre", "mediaType",
           "station", "subtitle", "title", "writer" ->
-            fieldData?.let { metadataMap.putString(field, it as String) }
+            MapUtils.getString(metadataDataMap, field)?.let { metadataMap.putString(field, it) }
 
           "discNumber", "recordingDay", "recordingMonth", "recordingYear", "releaseDay", "releaseMonth",
           "releaseYear", "totalDiscCount", "totalTrackCount", "trackNumber", "year" ->
-            fieldData?.let { metadataMap.putInt(field, it as Int) }
+            MapUtils.getInt(metadataDataMap, field)?.let { metadataMap.putInt(field, it) }
 
           "isBrowsable", "isPlayable" ->
-            fieldData?.let { metadataMap.putBoolean(field, it as Boolean) }
+            MapUtils.getBoolean(metadataDataMap, field)?.let { metadataMap.putBoolean(field, it) }
 
           "overallRating", "userRating" ->
-            fieldData?.let { metadataMap.putDouble(field, it as Double) }
-
-//          "extras" ->
-//            metadataMap.putNull(field)
+            MapUtils.getDouble(metadataDataMap, field)?.let { metadataMap.putDouble(field, it) }
         }
       }
 
@@ -97,9 +109,9 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         // Ensure the `MediaMetadataRetriever` object exists.
         if (mmrMetadata == null) {
           mmrMetadata = MediaMetadataRetriever()
-          mmrMetadata.setDataSource(getSafeUri(uri))
+          mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
         }
-        mmrMetadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toIntOrNull()?.let { metadataMap.putInt("bitrate", it as Int) }
+        mmrMetadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toIntOrNull()?.let { metadataMap.putInt("bitrate", it) }
       }
 
       // Have `albumArtist` fallback to `artist` value if it's not defined, but only when certain
@@ -113,12 +125,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         }
       }
 
-      // Release `MediaMetadataRetriever` resources.
-      if (mmrMetadata !== null) mmrMetadata.release()
-
-      promise.resolve(metadataMap)
-    } catch (e: TrackGroupArrayException) {
-      // Return default wanted metadata map where all fields are `null`.
       promise.resolve(metadataMap)
     } catch (e: ExecutionException) {
       val isWantedException =
@@ -130,6 +136,9 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       }
     } catch (e: Exception) {
       promise.reject("ERR_METADATA", e.message, e)
+    } finally {
+      // Release `MediaMetadataRetriever` resources.
+      mmrMetadata?.release()
     }
   }
 
@@ -141,31 +150,33 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   @ReactMethod
   override fun getArtwork(uri: String, promise: Promise) {
     try {
-      val metadataList = getMetadataListFromFormatList(getFormatList(context, uri))
+      val metadataList = getMetadataList(getFormatList(uri))
 
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
-      if (metadataList.size == 0) {
+      if (metadataList.isEmpty()) {
         val mmrMetadata = MediaMetadataRetriever()
-        mmrMetadata.setDataSource(getSafeUri(uri))
-        promise.resolve(readMMRField(mmrMetadata, "artworkData") as String?)
+        mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
+        promise.resolve(MetadataReader.getBase64Image(mmrMetadata.getEmbeddedPicture()))
+        mmrMetadata.release()
         return
       }
 
-      // We'll want to return the image designated as "Cover (front)", otherwise return image for "Other".
+      // We'll want to return the image designated as "Cover (front)", otherwise return image for
+      // "32x32 pixels 'file icon' (PNG only)" or "Other".
       var coverImage: String? = null
       var backupImage: String? = null
       var backupImageCode: Int? = null
 
-      for (i in 0 until metadataList.size) {
+      for (metadataItem in metadataList) {
         val mediaMetadata = MediaMetadata.Builder()
-          .populateFromMetadata(metadataList[i])
+          .populateFromMetadata(metadataItem)
           .build()
 
         when (mediaMetadata.artworkDataType) {
           // "Other" Picture Type
-          0 -> {
+          MediaMetadata.PICTURE_TYPE_OTHER -> {
             if (backupImage == null || backupImageCode == 1) {
-              val newImg = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String?
+              val newImg = MetadataReader.getBase64Image(mediaMetadata.artworkData)
               if (newImg !== null) {
                 backupImage = newImg
                 backupImageCode = 3
@@ -173,15 +184,15 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
             }
           }
           // "32x32 pixels 'file icon' (PNG only)" Picture Type
-          1 -> {
+          MediaMetadata.PICTURE_TYPE_FILE_ICON -> {
             if (backupImage == null) {
-              backupImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String?
+              backupImage = MetadataReader.getBase64Image(mediaMetadata.artworkData)
               backupImageCode = 1
             }
           }
           // "Cover (front)" Picture Type
-          3 -> {
-            coverImage = readMediaMetadataField(mediaMetadata, "artworkData", uri) as String?
+          MediaMetadata.PICTURE_TYPE_FRONT_COVER -> {
+            coverImage = MetadataReader.getBase64Image(mediaMetadata.artworkData)
           }
         }
 
@@ -189,8 +200,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       }
 
       promise.resolve(coverImage ?: backupImage)
-    } catch (e: TrackGroupArrayException) {
-      promise.resolve(null)
     } catch (e: ExecutionException) {
       val isWantedException =
         e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
@@ -203,6 +212,43 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       promise.reject("ERR_ARTWORK", e.message, e)
     }
   }
+
+  //#region [Internal Helpers]
+  /**
+   * Returns a list of `Format` from an uri.
+   *
+   * @throws ExecutionException If file was not found from uri.
+   *
+   * @see <a href="https://developer.android.com/media/media3/exoplayer/retrieving-metadata#wo-playback">Link</a>
+   */
+  private fun getFormatList(uri: String): List<Format> {
+    val mediaItem = MediaItem.fromUri(Normalization.getSafeUri(uri))
+    MetadataRetriever.Builder(context, mediaItem).build().use { metadataRetriever ->
+      val trackGroupArray = metadataRetriever.retrieveTrackGroups().get()
+      val formatList = mutableListOf<Format>()
+      for (i in 0 until trackGroupArray.length) {
+        val trackGroup = trackGroupArray[i]
+        // Only care about `TrackGroup` containing audio.
+        if (trackGroup.type != C.TRACK_TYPE_AUDIO) continue
+        for (j in 0 until trackGroup.length) {
+          // By definition, a `TrackGroup` should have at least 1 `Format`.
+          // SEE https://developer.android.com/reference/androidx/media3/common/TrackGroup#TrackGroup(androidx.media3.common.Format...)
+          formatList.add(trackGroup.getFormat(j))
+        }
+      }
+      return formatList
+    }
+  }
+
+  /** Returns a list of `Metadata` from `List<Format>`. */
+  private fun getMetadataList(formatList: List<Format>): List<Metadata> {
+    val metadataList = mutableListOf<Metadata>()
+    formatList.forEach {
+      it.metadata?.let { metadataList.add(it) }
+    }
+    return metadataList
+  }
+  //#endregion
 
   companion object {
     const val NAME = "MetadataRetriever"
