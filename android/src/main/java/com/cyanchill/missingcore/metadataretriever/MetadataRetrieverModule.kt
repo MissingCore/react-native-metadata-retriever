@@ -37,7 +37,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     // Populate return object with default values based on input.
     val metadataMap = Arguments.createMap()
     optionsList.forEach { fieldName -> metadataMap.putNull(fieldName) }
-    var wantArtwork = optionsList.any { fieldName -> fieldName == "artworkData" }
+    val wantArtwork = optionsList.any { fieldName -> fieldName == "artworkData" }
 
     // Move outside of try-catch block so we can release it in finally.
     var mmrMetadata: MediaMetadataRetriever? = null
@@ -69,7 +69,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         when (field) {
           /** List of fields available on `Format`. */
           "bitrate" -> {
-            var foundBitRate = MapUtils.getInt(formatMetadataDataMap, "bitrate")
+            val foundBitRate = MapUtils.getInt(formatMetadataDataMap, "bitrate")
             if (foundBitRate != null) {
               metadataMap.putInt(field, foundBitRate)
               // Recheck bitrate if less than 96kbps as the value should typically be greater than this.
