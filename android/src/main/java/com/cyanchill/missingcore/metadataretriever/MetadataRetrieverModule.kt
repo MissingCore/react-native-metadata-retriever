@@ -161,7 +161,8 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         return
       }
 
-      // We'll want to return the image designated as "Cover (front)", otherwise return image for "Other".
+      // We'll want to return the image designated as "Cover (front)", otherwise return image for
+      // "32x32 pixels 'file icon' (PNG only)" or "Other".
       var coverImage: String? = null
       var backupImage: String? = null
       var backupImageCode: Int? = null

@@ -243,9 +243,12 @@ object MetadataReader {
    *
    * @see <a href="https://developer.android.com/reference/androidx/media3/common/Rating">Link</a>
    */
-  private fun getPercentageRating(rating: Rating?) = when (rating?.isRated()) {
-    true -> PercentageRating.fromBundle(rating.toBundle()).getPercent().toDouble()
-    else -> null
+  private fun getPercentageRating(rating: Rating?): Double? {
+    // Kotlin's interoperability with Java lets `get*` & `is*` functions to be accessed via property syntax.
+    return when (rating?.isRated) {
+      true -> PercentageRating.fromBundle(rating.toBundle()).percent.toDouble()
+      else -> null
+    }
   }
 
   /** Returns the year from ISO 8601 format (ie: `YYYY-MM-DD`). */
