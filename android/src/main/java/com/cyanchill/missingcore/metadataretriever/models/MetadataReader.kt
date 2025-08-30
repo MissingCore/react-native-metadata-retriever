@@ -161,17 +161,14 @@ object MetadataReader {
    *
    * @see <a href="https://developer.android.com/reference/androidx/media3/common/Format#NO_VALUE()">Link</a>
    */
-  private fun fixNoValue(intVal: Int?): Int? = when (intVal) {
-    null, Format.NO_VALUE -> null
-    else -> intVal
-  }
+  private fun fixNoValue(intVal: Int?) = if (intVal == Format.NO_VALUE) null else intVal
 
   /**
    * Convert integer picture type to a human-readable string.
    *
    * @see <a href="https://developer.android.com/reference/androidx/media3/common/MediaMetadata.PictureType">Link</a>
    */
-  private fun getID3PictureType(code: Int?): String? = when (code) {
+  private fun getID3PictureType(code: Int?) = when (code) {
     0 -> "Other"
     1 -> "32x32 pixels 'file icon' (PNG only)"
     2 -> "Other file icon"
@@ -201,7 +198,7 @@ object MetadataReader {
    *
    * @see <a href="https://developer.android.com/reference/androidx/media3/common/MediaMetadata.MediaType">Link</a>
    */
-  private fun getMediaType(code: Int?): String? = when (code) {
+  private fun getMediaType(code: Int?) = when (code) {
     0 -> "Mixed"
     1 -> "Music"
     2 -> "Audio book chapter"
@@ -246,7 +243,7 @@ object MetadataReader {
    *
    * @see <a href="https://developer.android.com/reference/androidx/media3/common/Rating">Link</a>
    */
-  private fun getPercentageRating(rating: Rating?): Double? = when (rating?.isRated()) {
+  private fun getPercentageRating(rating: Rating?) = when (rating?.isRated()) {
     true -> PercentageRating.fromBundle(rating.toBundle()).getPercent().toDouble()
     else -> null
   }

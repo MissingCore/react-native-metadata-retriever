@@ -18,7 +18,6 @@ import androidx.media3.exoplayer.MetadataRetriever
 import java.util.concurrent.ExecutionException
 
 import com.cyanchill.missingcore.metadataretriever.models.MetadataReader
-import com.cyanchill.missingcore.metadataretriever.utils.BridgeUtils
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
 
@@ -30,7 +29,10 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
 
   @ReactMethod
   override fun getMetadata(uri: String, options: ReadableArray, promise: Promise) {
-    val optionsList = BridgeUtils.readableStringArrayToList(options)
+    val optionsList = mutableListOf<String>()
+    for (i in 0 until options.size()) {
+      optionsList.add(options.getString(i) as String)
+    }
 
     // Populate return object with default values based on input.
     val metadataMap = Arguments.createMap()
