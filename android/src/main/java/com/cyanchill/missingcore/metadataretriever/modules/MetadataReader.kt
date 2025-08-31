@@ -141,7 +141,7 @@ class MetadataReader: APIConfigs {
 
   //#region [Exposed Helpers To Parse Metadata Values]
   /** Returns a base64 image string from a `ByteArray`. */
-  fun getBase64Image(bytes: ByteArray? = null, maxSizeMB: Double = 5.0): String? {
+  fun getBase64Image(bytes: ByteArray? = null): String? {
     if (bytes == null) return null
     // Determine the mimetype from bytes.
     val mimeType = URLConnection.guessContentTypeFromStream(bytes.inputStream())?.let {
@@ -151,6 +151,7 @@ class MetadataReader: APIConfigs {
     if (!MimeTypes.isImage(mimeType)) return null
     // Convert max MB to bytes. We take 3/4 of the max MB as converting a byte array to a base64
     // string causes a 33% increase in size.
+    val maxSizeMB = apiConfigs.getDouble(MAX_IMAGE_SIZE_MB, 5.0)
     val maxSizeBytes = maxSizeMB * 0.75 * 1024 * 1024
     if (bytes.size > maxSizeBytes) return null
     return "data:$mimeType;base64,${Base64.encodeToString(bytes, Base64.DEFAULT)}"
