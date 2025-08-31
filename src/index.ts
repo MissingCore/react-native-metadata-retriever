@@ -19,15 +19,13 @@ export function getMetadata<TOptions extends MediaMetadataPublicFields>(
 }
 
 /**
- * Returns the artwork of the specified media file from its uri. Has ~5MB
- * cap on what's returned (image must be at most 3.75MB due to 33-37%
- * increase to base64).
+ * Returns the artwork of the specified media file from its uri.
+ * - Defaults to returning up to `5 MB` of data.
  */
 export function getArtwork(uri: string): Promise<string | null> {
   return MetadataRetriever.getArtwork(uri);
 }
 
-/** Expose to the user the ability to update internal configuration options. */
 export function updateConfigs(options: ConfigOptions): Promise<void> {
   return MetadataRetriever.updateConfigs(options);
 }

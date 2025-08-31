@@ -63,7 +63,7 @@ function getArtwork(uri: string): Promise<string | null>;
 
 Returns the base64 image string for the media file of the provided uri.
 
-> **Note:** Has a `5MB` return limit (so a `3.75MB` image size limit as converting it to base64 increases its size by 33-37%).
+> **Note:** Defaults to returning up to `5 MB` of data. Can be configured with [`updateConfigs`](#updateConfigs).
 
 ### getMetadata
 
@@ -84,7 +84,7 @@ Returns the specified metadata of the provided uri based on the `options` argume
 function updateConfigs(options: ConfigOptions): Promise<void>;
 ```
 
-Update internal configuration options such as the max base64 image size returned.
+Update internal configuration options such as the max size of the returned base64 image.
 
 ## Types
 
