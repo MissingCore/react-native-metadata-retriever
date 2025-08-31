@@ -7,6 +7,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 
 import android.media.MediaMetadataRetriever
+import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
@@ -18,6 +19,7 @@ import androidx.media3.exoplayer.MetadataRetriever
 import java.util.concurrent.ExecutionException
 
 import com.cyanchill.missingcore.metadataretriever.models.MetadataReader
+import com.cyanchill.missingcore.metadataretriever.utils.BundleUtils
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
 
@@ -26,6 +28,12 @@ import com.cyanchill.missingcore.metadataretriever.utils.Normalization
 class MetadataRetrieverModule internal constructor(reactContext: ReactApplicationContext) :
   MetadataRetrieverSpec(reactContext) {
   private val context = reactContext
+
+  /**
+   * Supported values:
+   *  - MAX_IMAGE_SIZE_MB: Double?
+   */
+  private var apiConfigs = Bundle()
 
   @ReactMethod
   override fun getMetadata(uri: String, options: ReadableArray, promise: Promise) {
@@ -213,6 +221,12 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     }
   }
 
+  /** Expose to the user the ability to update internal configuration options. */
+  @ReactMethod
+  override fun updateConfigs(options: Bundle) {
+    BundleUtils.putDoubleIfExists(MAX_IMAGE_SIZE_MB, options, apiConfigs)
+  }
+
   //#region [Internal Helpers]
   /**
    * Returns a list of `Format` from an uri.
@@ -252,6 +266,10 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
 
   companion object {
     const val NAME = "MetadataRetriever"
+
+    //#region [Config Option Keys]
+    const val MAX_IMAGE_SIZE_MB = "maxImageSizeMB"
+    //#endregion
   }
 
   override fun getName(): String = NAME
