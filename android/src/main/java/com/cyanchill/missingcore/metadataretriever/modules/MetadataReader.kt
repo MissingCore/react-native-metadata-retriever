@@ -1,4 +1,4 @@
-package com.cyanchill.missingcore.metadataretriever.models
+package com.cyanchill.missingcore.metadataretriever.modules
 
 import android.media.MediaMetadataRetriever
 import android.util.Base64
@@ -15,7 +15,9 @@ import java.net.URLConnection
  * Utilities to format & normalize sources of metadata as a map.
  */
 @OptIn(UnstableApi::class)
-object MetadataReader {
+class MetadataReader: APIConfigs {
+  constructor(): super()
+
   /**
    * Relevant metadata fields found on `Format`.
    *

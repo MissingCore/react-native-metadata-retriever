@@ -18,8 +18,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.MetadataRetriever
 import java.util.concurrent.ExecutionException
 
-import com.cyanchill.missingcore.metadataretriever.models.MetadataReader
-import com.cyanchill.missingcore.metadataretriever.modules.APIConfigs
+import com.cyanchill.missingcore.metadataretriever.modules.MetadataReader
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
 
@@ -29,7 +28,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   MetadataRetrieverSpec(reactContext) {
   private val context = reactContext
 
-  private var apiConfigs = APIConfigs()
+  private var reader = MetadataReader()
 
   @ReactMethod
   override fun getMetadata(uri: String, options: ReadableArray, promise: Promise) {
@@ -59,10 +58,10 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
       }
 
-      val formatMetadataDataMap = MetadataReader.fromFormat(formatList[0])
+      val formatMetadataDataMap = reader.fromFormat(formatList[0])
       val metadataDataMap = when (mmrMetadata) {
-        null -> MetadataReader.fromMediaMetadata(mediaMetadata, wantArtwork)
-        else -> MetadataReader.fromMediaMetadataRetriever(mmrMetadata, wantArtwork)
+        null -> reader.fromMediaMetadata(mediaMetadata, wantArtwork)
+        else -> reader.fromMediaMetadataRetriever(mmrMetadata, wantArtwork)
       }
 
       var recheckBitRate = false
@@ -160,7 +159,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       if (metadataList.isEmpty()) {
         val mmrMetadata = MediaMetadataRetriever()
         mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
-        promise.resolve(MetadataReader.getBase64Image(mmrMetadata.getEmbeddedPicture()))
+        promise.resolve(reader.getBase64Image(mmrMetadata.getEmbeddedPicture()))
         mmrMetadata.release()
         return
       }
@@ -180,7 +179,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           // "Other" Picture Type
           MediaMetadata.PICTURE_TYPE_OTHER -> {
             if (backupImage == null || backupImageCode == 1) {
-              val newImg = MetadataReader.getBase64Image(mediaMetadata.artworkData)
+              val newImg = reader.getBase64Image(mediaMetadata.artworkData)
               if (newImg !== null) {
                 backupImage = newImg
                 backupImageCode = 3
@@ -190,13 +189,13 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           // "32x32 pixels 'file icon' (PNG only)" Picture Type
           MediaMetadata.PICTURE_TYPE_FILE_ICON -> {
             if (backupImage == null) {
-              backupImage = MetadataReader.getBase64Image(mediaMetadata.artworkData)
+              backupImage = reader.getBase64Image(mediaMetadata.artworkData)
               backupImageCode = 1
             }
           }
           // "Cover (front)" Picture Type
           MediaMetadata.PICTURE_TYPE_FRONT_COVER -> {
-            coverImage = MetadataReader.getBase64Image(mediaMetadata.artworkData)
+            coverImage = reader.getBase64Image(mediaMetadata.artworkData)
           }
         }
 
@@ -221,7 +220,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   @ReactMethod
   override fun updateConfigs(options: ReadableMap, promise: Promise) {
     Arguments.toBundle(options)?.let {
-      apiConfigs.updateConfigs(it)
+      reader.updateConfigs(it)
     }
     promise.resolve(null)
   }

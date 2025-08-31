@@ -4,7 +4,7 @@ import android.os.Bundle
 
 import com.cyanchill.missingcore.metadataretriever.utils.BundleUtils
 
-class APIConfigs {
+open class APIConfigs {
   /**
    * Supported values:
    *  - MAX_IMAGE_SIZE_MB: Double?
