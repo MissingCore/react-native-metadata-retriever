@@ -9,7 +9,7 @@ export interface Spec extends TurboModule {
 
   getArtwork(uri: string): Promise<string | null>;
 
-  updateConfigs(options: Record<string, any>): void;
+  updateConfigs(options: Record<string, any>): Promise<void>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('MetadataRetriever');

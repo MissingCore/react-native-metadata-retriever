@@ -28,7 +28,7 @@ export function getArtwork(uri: string): Promise<string | null> {
 }
 
 /** Expose to the user the ability to update internal configuration options. */
-export function updateConfigs(options: ConfigOptions): void {
+export function updateConfigs(options: ConfigOptions): Promise<void> {
   return MetadataRetriever.updateConfigs(options);
 }
 

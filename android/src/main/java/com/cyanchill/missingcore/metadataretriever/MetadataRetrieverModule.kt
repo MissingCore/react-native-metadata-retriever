@@ -3,11 +3,11 @@ package com.cyanchill.missingcore.metadataretriever
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableArray
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 
 import android.media.MediaMetadataRetriever
-import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
@@ -219,8 +219,11 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
 
   /** Expose to the user the ability to update internal configuration options. */
   @ReactMethod
-  override fun updateConfigs(options: Bundle) {
-    apiConfigs.updateConfigs(options)
+  override fun updateConfigs(options: ReadableMap, promise: Promise) {
+    Arguments.toBundle(options)?.let {
+      apiConfigs.updateConfigs(it)
+    }
+    promise.resolve(null)
   }
 
   //#region [Internal Helpers]

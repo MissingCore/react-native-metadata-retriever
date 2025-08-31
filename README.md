@@ -81,7 +81,7 @@ Returns the specified metadata of the provided uri based on the `options` argume
 ### updateConfigs
 
 ```ts
-function updateConfigs(options: ConfigOptions): void;
+function updateConfigs(options: ConfigOptions): Promise<void>;
 ```
 
 Update internal configuration options such as the max base64 image size returned.
