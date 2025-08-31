@@ -15,9 +15,7 @@ import java.net.URLConnection
  * Utilities to format & normalize sources of metadata as a map.
  */
 @OptIn(UnstableApi::class)
-class MetadataReader: APIConfigs {
-  constructor(): super()
-
+class MetadataReader: APIConfigs() {
   /**
    * Relevant metadata fields found on `Format`.
    *
