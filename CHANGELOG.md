@@ -15,7 +15,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### 🎉 Added
 
 - New `updateConfigs` function.
-  - Change the max base64 image size that can be returned with `maxImageSizeMB` option.
+  - Customize the max size of the returned base64 image with the `maxImageSizeMB` option.
 
 ### ⚙️ Internal Changes
 
