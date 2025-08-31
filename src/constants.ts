@@ -122,5 +122,9 @@ export type MediaMetadataExcerpt<TKeys extends MediaMetadataPublicFields> =
   Prettify<Pick<MediaMetadata, TKeys[number]>>;
 
 export type ConfigOptions = {
+  /**
+   * Size of the returned base64 image in MB.
+   * - Defaults to `5`.
+   */
   maxImageSizeMB?: number | null;
 };

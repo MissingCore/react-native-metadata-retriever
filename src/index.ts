@@ -33,6 +33,7 @@ export function updateConfigs(options: ConfigOptions): void {
 }
 
 export {
+  type ConfigOptions,
   type MediaMetadata,
   type MediaMetadataExcerpt,
   type MediaMetadataPublicField,

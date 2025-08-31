@@ -78,7 +78,29 @@ Returns the specified metadata of the provided uri based on the `options` argume
 
 > **Note:** The "complicated" typing is to make the resulting promise type-safe and be based off the provided `options`.
 
+### updateConfigs
+
+```ts
+function updateConfigs(options: ConfigOptions): void;
+```
+
+Update internal configuration options such as the max base64 image size returned.
+
 ## Types
+
+### ConfigOptions
+
+```ts
+type ConfigOptions = {
+  /**
+   * Size of the returned base64 image in MB.
+   * - Defaults to `5`.
+   */
+  maxImageSizeMB?: number | null;
+};
+```
+
+Configuration options we can set to modify the behavior of the package.
 
 ### MediaMetadata
 
