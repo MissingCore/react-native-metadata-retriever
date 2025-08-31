@@ -9,7 +9,7 @@ open class APIConfigs {
    * Supported values:
    *  - MAX_IMAGE_SIZE_MB: Double?
    */
-  var apiConfigs = Bundle()
+  protected var apiConfigs = Bundle()
 
   /** Partially update `apiConfigs` based on set values. */
   fun updateConfigs(options: Bundle) {
