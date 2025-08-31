@@ -8,6 +8,8 @@ export interface Spec extends TurboModule {
   ): Promise<Record<string, unknown>>;
 
   getArtwork(uri: string): Promise<string | null>;
+
+  updateConfigs(options: Record<string, any>): void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('MetadataRetriever');

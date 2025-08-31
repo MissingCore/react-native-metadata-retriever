@@ -1,6 +1,7 @@
 import MetadataRetriever from './MetadataRetriever';
 
 import type {
+  ConfigOptions,
   MediaMetadata,
   MediaMetadataExcerpt,
   MediaMetadataPublicField,
@@ -24,6 +25,11 @@ export function getMetadata<TOptions extends MediaMetadataPublicFields>(
  */
 export function getArtwork(uri: string): Promise<string | null> {
   return MetadataRetriever.getArtwork(uri);
+}
+
+/** Expose to the user the ability to update internal configuration options. */
+export function updateConfigs(options: ConfigOptions): void {
+  return MetadataRetriever.updateConfigs(options);
 }
 
 export {

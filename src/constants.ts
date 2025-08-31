@@ -120,3 +120,7 @@ export type MediaMetadata = {
 /** Returns a type-safe excerpt of `MediaMetadata`. */
 export type MediaMetadataExcerpt<TKeys extends MediaMetadataPublicFields> =
   Prettify<Pick<MediaMetadata, TKeys[number]>>;
+
+export type ConfigOptions = {
+  maxImageSizeMB?: number | null;
+};
