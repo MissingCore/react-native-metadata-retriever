@@ -16,13 +16,15 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - New `updateConfigs` function.
   - Customize the max size of the returned base64 image with the `maxImageSizeMB` option.
+- New `getBulkMetadata` function.
+  - Slightly different than `getMetadata` as this function won't throw an error. It'll return an object with 2 fields, `results` & `errors` which contain an array of objects containing the URI & data/error associated with it.
 
 ### ⚙️ Internal Changes
 
 - Reorganization of code.
   - Now "normalize" and put all the field-value pairs inside a map, which we then send the ones we want to return.
 - Ensure we release `MetadataRetriever` & `MediaMetadataRetriever` when we're done using them.
-- Update example app.
+- Updated example app to use `getBulkMetadata` instead of `getMetadata`.
 
 ## [1.1.0] - 2025-08-21
 
