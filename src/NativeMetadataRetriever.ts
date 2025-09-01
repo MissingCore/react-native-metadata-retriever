@@ -1,11 +1,9 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
-import type {
-  BulkMetadata,
-  ConfigOptions,
-  MediaMetadataPublicFields,
-} from './constants';
+import type { ConfigOptions } from './types/ConfigOptions';
+import type { BulkMetadata } from './types/GetMetadata';
+import type { MediaMetadataPublicFields } from './types/MediaMetadataPublicField';
 
 export interface Spec extends TurboModule {
   getBulkMetadata<TOptions extends MediaMetadataPublicFields>(

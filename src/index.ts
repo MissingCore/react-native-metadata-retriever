@@ -1,13 +1,14 @@
 import MetadataRetriever from './MetadataRetriever';
 
+import { MetadataPresets } from './constants';
+
+import type { ConfigOptions } from './types/ConfigOptions';
+import type { BulkMetadata, MediaMetadataExcerpt } from './types/GetMetadata';
+import type { MediaMetadata } from './types/MediaMetadata';
 import type {
-  BulkMetadata,
-  ConfigOptions,
-  MediaMetadata,
-  MediaMetadataExcerpt,
   MediaMetadataPublicField,
-} from './constants';
-import { MediaMetadataPublicFields, MetadataPresets } from './constants';
+  MediaMetadataPublicFields,
+} from './types/MediaMetadataPublicField';
 
 /** Returns the specified metadata of a media file from its uri. */
 export async function getBulkMetadata<
@@ -49,6 +50,5 @@ export {
   type MediaMetadata,
   type MediaMetadataExcerpt,
   type MediaMetadataPublicField,
-  MediaMetadataPublicFields,
   MetadataPresets,
 };

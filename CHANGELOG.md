@@ -11,6 +11,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - Remove additional fallback when getting the `year` metadata field for `MetadataRetriever` method.
   - No longer fallbacks to using `MediaMetadataRetriever` if everything else fails.
+- Remove `MediaMetadataPublicFields` array & type export.
 
 ### 🎉 Added
 
