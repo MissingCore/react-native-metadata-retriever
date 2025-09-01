@@ -121,6 +121,13 @@ export type MediaMetadata = {
 export type MediaMetadataExcerpt<TKeys extends MediaMetadataPublicFields> =
   Prettify<Pick<MediaMetadata, TKeys[number]>>;
 
+type ResultObject<TData> = { uri: string; data: TData };
+
+export type BulkMetadata<TKeys extends MediaMetadataPublicFields> = {
+  success: Array<ResultObject<MediaMetadataExcerpt<TKeys>>>;
+  error: Array<ResultObject<{ name: string; message: string }>>;
+};
+
 export type ConfigOptions = {
   /**
    * Size of the returned base64 image in MB.
