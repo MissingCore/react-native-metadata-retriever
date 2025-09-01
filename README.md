@@ -37,18 +37,10 @@ const base64Artwork = await getArtwork(uri);
 
 ## Constants
 
-### MediaMetadataPublicFields
-
-```ts
-const MediaMetadataPublicFields: string[];
-```
-
-An array containing the keys of supported metadata fields.
-
 ### MetadataPresets
 
 ```ts
-const MetadataPresets: Record<string, MediaMetadataPublicField[]>;
+const MetadataPresets: Record<string, MediaMetadataPublicFields>;
 ```
 
 An object containing several metadata presets we can use to retrieve metadata.
@@ -74,7 +66,7 @@ function getBulkMetadata<TOptions extends MediaMetadataPublicFields>(
 ): Promise<BulkMetadata<TOptions>>;
 ```
 
-Get the metadata of multiple URIs.
+Get the metadata of multiple uris.
 
 ### getMetadata
 
@@ -189,22 +181,6 @@ type MediaMetadataExcerpt<TKeys extends MediaMetadataPublicFields> = Prettify<
 ```
 
 Narrow down the returned types in `MediaMetadata` based on the `MediaMetadataPublicFields` provided.
-
-### MediaMetadataPublicField
-
-```ts
-type MediaMetadataPublicField = (typeof MediaMetadataPublicFields)[number];
-```
-
-All the constant strings in the `MediaMetadataPublicFields` array as a type.
-
-### MediaMetadataPublicFields
-
-```ts
-type MediaMetadataPublicFields = ReadonlyArray<MediaMetadataPublicField>;
-```
-
-`MediaMetadataPublicFields` array in the form of a type.
 
 ## References
 
