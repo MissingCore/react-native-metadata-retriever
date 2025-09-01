@@ -1,6 +1,7 @@
 import MetadataRetriever from './MetadataRetriever';
 
 import type {
+  BulkMetadata,
   ConfigOptions,
   MediaMetadata,
   MediaMetadataExcerpt,
@@ -9,13 +10,25 @@ import type {
 import { MediaMetadataPublicFields, MetadataPresets } from './constants';
 
 /** Returns the specified metadata of a media file from its uri. */
+export async function getBulkMetadata<
+  TOptions extends MediaMetadataPublicFields,
+>(uris: string[], options: TOptions) {
+  return MetadataRetriever.getBulkMetadata(uris, options);
+}
+
+/** Returns the specified metadata of a media file from its uri. */
 export async function getMetadata<TOptions extends MediaMetadataPublicFields>(
   uri: string,
   options: TOptions
 ): Promise<MediaMetadataExcerpt<TOptions>> {
-  return MetadataRetriever.getMetadata(uri, options) as Promise<
-    MediaMetadataExcerpt<TOptions>
-  >;
+  const result = await MetadataRetriever.getBulkMetadata([uri], options);
+  if (result.errors.length) {
+    const { message, name } = result.errors[0]!.data;
+    const error = Error(message);
+    error.name = name;
+    throw error;
+  }
+  return result.results[0]!.data;
 }
 
 /**
@@ -31,6 +44,7 @@ export async function updateConfigs(options: ConfigOptions): Promise<void> {
 }
 
 export {
+  type BulkMetadata,
   type ConfigOptions,
   type MediaMetadata,
   type MediaMetadataExcerpt,

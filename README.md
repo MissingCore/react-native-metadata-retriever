@@ -65,6 +65,17 @@ Returns the base64 image string for the media file of the provided uri.
 
 > **Note:** Defaults to returning up to `5 MB` of data. Can be configured with [`updateConfigs`](#updateConfigs).
 
+### getBulkMetadata
+
+```ts
+function getBulkMetadata<TOptions extends MediaMetadataPublicFields>(
+  uris: string[],
+  options: TOptions
+): Promise<BulkMetadata<TOptions>>;
+```
+
+Get the metadata of multiple URIs.
+
 ### getMetadata
 
 ```ts
@@ -74,7 +85,7 @@ function getMetadata<TOptions extends MediaMetadataPublicFields>(
 ): Promise<MediaMetadataExcerpt<TOptions>>;
 ```
 
-Returns the specified metadata of the provided uri based on the `options` argument.
+Returns the specified metadata of the provided uri based on the `options` argument. Throws error if something went wrong.
 
 > **Note:** The "complicated" typing is to make the resulting promise type-safe and be based off the provided `options`.
 
@@ -87,6 +98,23 @@ function updateConfigs(options: ConfigOptions): Promise<void>;
 Update internal configuration options such as the max size of the returned base64 image.
 
 ## Types
+
+### BulkMetadata
+
+```ts
+type BulkMetadata<TKeys extends MediaMetadataPublicFields> = {
+  results: Array<{
+    uri: string;
+    data: MediaMetadataExcerpt<TKeys>;
+  }>;
+  errors: Array<{
+    uri: string;
+    data: { name: string; message: string };
+  }>;
+};
+```
+
+Structure returned when using `getBulkMetadata`.
 
 ### ConfigOptions
 

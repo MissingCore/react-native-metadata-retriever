@@ -8,7 +8,7 @@ import com.facebook.react.bridge.Promise
 
 abstract class MetadataRetrieverSpec internal constructor(context: ReactApplicationContext) :
   ReactContextBaseJavaModule(context) {
-  abstract fun getMetadata(uri: String, options: ReadableArray, promise: Promise)
+  abstract fun getBulkMetadata(uris: ReadableArray, options: ReadableArray, promise: Promise)
 
   abstract fun getArtwork(uri: String, promise: Promise)
 

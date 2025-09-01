@@ -17,11 +17,9 @@ import {
 
 import {
   MetadataPresets,
-  getMetadata,
+  getBulkMetadata,
   updateConfigs,
 } from '@missingcore/react-native-metadata-retriever';
-
-import { isFulfilled, isRejected } from './utils/promise';
 
 const queryClient = new QueryClient();
 
@@ -45,22 +43,26 @@ async function getTracks() {
     `Got list of audio files in ${((performance.now() - start) / 1000).toFixed(4)}s.`
   );
 
-  const tracksMetadata = await Promise.allSettled(
-    audioFiles.map(async ({ id, filename, uri }) => {
-      const data = await getMetadata(uri, MetadataPresets.standardArtwork);
-      return { id, filename, ...data };
-    })
+  const assetURIMap = Object.fromEntries(
+    audioFiles.map((asset) => [asset.uri, asset])
   );
+
+  const results = await getBulkMetadata(
+    audioFiles.map(({ uri }) => uri),
+    MetadataPresets.standardArtwork
+  );
+  const tracksMetadata = results.results.map(({ uri, data }) => {
+    const { id, filename } = assetURIMap[uri]!;
+    return { id, filename, ...data };
+  });
   console.log(
     `Got metadata of ${audioFiles.length} tracks in ${((performance.now() - start) / 1000).toFixed(4)}s.`
   );
-
-  const errors = tracksMetadata.filter(isRejected).map(({ reason }) => reason);
-  console.log('Errors:', errors);
+  console.log('Errors:', results.errors);
 
   return {
     duration: ((performance.now() - start) / 1000).toFixed(4),
-    tracks: tracksMetadata.filter(isFulfilled).map(({ value }) => value),
+    tracks: tracksMetadata,
   };
 }
 
