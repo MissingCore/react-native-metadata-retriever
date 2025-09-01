@@ -1,6 +1,11 @@
 package com.cyanchill.missingcore.metadataretriever.modules
 
+import com.facebook.react.bridge.ReactApplicationContext
+
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.util.Base64
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
@@ -9,13 +14,26 @@ import androidx.media3.common.PercentageRating
 import androidx.media3.common.Rating
 import androidx.media3.common.MediaMetadata as AndroidXMediaMetadata
 import androidx.media3.common.util.UnstableApi
+import java.io.File
+import java.io.FileOutputStream
 import java.net.URLConnection
+import java.util.UUID
 
 /**
  * Utilities to format & normalize sources of metadata as a map.
  */
 @OptIn(UnstableApi::class)
-class MetadataReader: APIConfigs() {
+class MetadataReader(reactContext: ReactApplicationContext): APIConfigs() {
+  private val saveDirectory = "${reactContext.cacheDir.absolutePath}${File.separator}MetadataRetriever"
+
+  /** Create `saveDirectory` if it doesn't exist. */
+  init {
+    try {
+      val directory = File(saveDirectory)
+      if (!directory.exists()) directory.mkdirs()
+    } catch (e: Exception) {}
+  }
+
   /**
    * Relevant metadata fields found on `Format`.
    *
@@ -103,7 +121,7 @@ class MetadataReader: APIConfigs() {
     val dataMap = hashMapOf<String, Any?>()
 
     // Pre-compute values to put in hash map.
-    val artworkData = if (getArtworkData) getBase64Image(mmr.getEmbeddedPicture()) else null
+    val artworkData = if (getArtworkData) getBase64Image(mmr.embeddedPicture) else null
     val trackNumber = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER)
       ?.let { if (it.toIntOrNull() == 0) null else it.toIntOrNull() }
     val year = parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)) ?: run {
@@ -111,7 +129,7 @@ class MetadataReader: APIConfigs() {
         // The "date" format should start with 4 digits representing the year.
         parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE))
           ?.let { if (it > 999) it else null }
-      } catch (err: Exception) {
+      } catch (e: Exception) {
         null
       }
     }
@@ -153,6 +171,26 @@ class MetadataReader: APIConfigs() {
     val maxSizeBytes = maxSizeMB * 0.75 * 1024 * 1024
     if (bytes.size > maxSizeBytes) return null
     return "data:$mimeType;base64,${Base64.encodeToString(bytes, Base64.DEFAULT)}"
+  }
+
+  /** Save `ByteArray` as image, returning the URI if it was saved correctly. */
+  fun saveImage(bytes: ByteArray, savePath: String? = null, compress: Boolean = false): String? {
+    try {
+      // Generate path to save image if we didn't provide one.
+      val imgUri = savePath ?: "$saveDirectory${File.separator}${UUID.randomUUID()}.jpeg"
+      val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+      FileOutputStream(imgUri).use { fos ->
+        bitmap.compress(
+          Bitmap.CompressFormat.JPEG,
+          if (compress) 80 else 100,
+          fos,
+        )
+        fos.flush()
+      }
+      return Uri.fromFile(File(imgUri)).toString()
+    } catch (e: Exception) {
+      return null
+    }
   }
   //#endregion
 
