@@ -1,4 +1,4 @@
-package com.cyanchill.missingcore.metadataretriever
+package com.cyanchill.missingcore.metadataretriever.modules
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
@@ -19,8 +19,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.MetadataRetriever
 import java.util.concurrent.ExecutionException
 
+import com.cyanchill.missingcore.metadataretriever.MetadataRetrieverSpec
 import com.cyanchill.missingcore.metadataretriever.models.BridgeReturnables.*
-import com.cyanchill.missingcore.metadataretriever.modules.MetadataReader
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
 
