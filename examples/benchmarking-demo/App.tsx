@@ -51,14 +51,14 @@ async function getTracks() {
     audioFiles.map(({ uri }) => uri),
     MetadataPresets.standardArtwork
   );
-  const tracksMetadata = results.success.map(({ uri, data }) => {
+  const tracksMetadata = results.results.map(({ uri, data }) => {
     const { id, filename } = assetURIMap[uri]!;
     return { id, filename, ...data };
   });
   console.log(
     `Got metadata of ${audioFiles.length} tracks in ${((performance.now() - start) / 1000).toFixed(4)}s.`
   );
-  console.log('Errors:', results.error);
+  console.log('Errors:', results.errors);
 
   return {
     duration: ((performance.now() - start) / 1000).toFixed(4),

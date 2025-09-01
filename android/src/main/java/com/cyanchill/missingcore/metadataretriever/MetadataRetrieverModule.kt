@@ -152,8 +152,8 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
     // Release `MediaMetadataRetriever` resources.
     mmrMetadata.release()
 
-    returnObj.putArray("success", successArr)
-    returnObj.putArray("error", errorArr)
+    returnObj.putArray("results", successArr)
+    returnObj.putArray("errors", errorArr)
 
     promise.resolve(returnObj)
   }

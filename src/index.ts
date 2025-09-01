@@ -21,13 +21,13 @@ export async function getMetadata<TOptions extends MediaMetadataPublicFields>(
   options: TOptions
 ): Promise<MediaMetadataExcerpt<TOptions>> {
   const result = await MetadataRetriever.getBulkMetadata([uri], options);
-  if (result.error.length) {
-    const { message, name } = result.error[0]!.data;
+  if (result.errors.length) {
+    const { message, name } = result.errors[0]!.data;
     const error = Error(message);
     error.name = name;
     throw error;
   }
-  return result.success[0]!.data;
+  return result.results[0]!.data;
 }
 
 /**

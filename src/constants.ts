@@ -124,8 +124,8 @@ export type MediaMetadataExcerpt<TKeys extends MediaMetadataPublicFields> =
 type ResultObject<TData> = { uri: string; data: TData };
 
 export type BulkMetadata<TKeys extends MediaMetadataPublicFields> = {
-  success: Array<ResultObject<MediaMetadataExcerpt<TKeys>>>;
-  error: Array<ResultObject<{ name: string; message: string }>>;
+  results: Array<ResultObject<MediaMetadataExcerpt<TKeys>>>;
+  errors: Array<ResultObject<{ name: string; message: string }>>;
 };
 
 export type ConfigOptions = {
