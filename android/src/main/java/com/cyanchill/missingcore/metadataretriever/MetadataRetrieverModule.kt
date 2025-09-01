@@ -8,6 +8,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 
 import android.media.MediaMetadataRetriever
+import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
@@ -32,10 +33,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
 
   @ReactMethod
   override fun getMetadata(uri: String, options: ReadableArray, promise: Promise) {
-    val optionsList = mutableListOf<String>()
-    for (i in 0 until options.size()) {
-      optionsList.add(options.getString(i) as String)
-    }
+    val optionsList = Arguments.toList(options) as List<String>
 
     // Populate return object with default values based on input.
     val metadataMap = Arguments.createMap()
@@ -219,9 +217,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   /** Expose to the user the ability to update internal configuration options. */
   @ReactMethod
   override fun updateConfigs(options: ReadableMap, promise: Promise) {
-    Arguments.toBundle(options)?.let {
-      reader.updateConfigs(it)
-    }
+    reader.updateConfigs(Arguments.toBundle(options) as Bundle)
     promise.resolve(null)
   }
 
