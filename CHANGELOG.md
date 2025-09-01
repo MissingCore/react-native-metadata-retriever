@@ -12,11 +12,17 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 - Remove additional fallback when getting the `year` metadata field for `MetadataRetriever` method.
   - No longer fallbacks to using `MediaMetadataRetriever` if everything else fails.
 
+### 🎉 Added
+
+- New `updateConfigs` function.
+  - Customize the max size of the returned base64 image with the `maxImageSizeMB` option.
+
 ### ⚙️ Internal Changes
 
 - Reorganization of code.
   - Now "normalize" and put all the field-value pairs inside a map, which we then send the ones we want to return.
 - Ensure we release `MetadataRetriever` & `MediaMetadataRetriever` when we're done using them.
+- Update example app.
 
 ## [1.1.0] - 2025-08-21
 

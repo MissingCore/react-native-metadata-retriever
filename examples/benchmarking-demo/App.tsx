@@ -18,6 +18,7 @@ import {
 import {
   MetadataPresets,
   getMetadata,
+  updateConfigs,
 } from '@missingcore/react-native-metadata-retriever';
 
 import { isFulfilled, isRejected } from './utils/promise';
@@ -25,6 +26,8 @@ import { isFulfilled, isRejected } from './utils/promise';
 const queryClient = new QueryClient();
 
 async function getTracks() {
+  await updateConfigs({ maxImageSizeMB: 0.5 });
+
   const start = performance.now();
 
   const { totalCount } = await MediaLibrary.getAssetsAsync({
