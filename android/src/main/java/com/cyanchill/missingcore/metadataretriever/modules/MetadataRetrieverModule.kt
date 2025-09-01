@@ -162,77 +162,13 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
    * Get artwork of audio file from its uri. Unlike getting the artwork from `getMetadata()`, whose
    * artwork is based on the last `artworkData` found, `getArtwork()` returns the artwork designated
    * as "Cover (front)" and falls back to "Other".
+   *
+   * Either returns the URI to the saved artwork or a base64 image string.
    */
   @ReactMethod
-  override fun getArtwork(uri: String, promise: Promise) {
-    try {
-      val metadataList = getMetadataList(getFormatList(uri))
-
-      // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
-      if (metadataList.isEmpty()) {
-        val mmrMetadata = MediaMetadataRetriever()
-        mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
-        promise.resolve(reader.getBase64Image(mmrMetadata.embeddedPicture))
-        mmrMetadata.release()
-        return
-      }
-
-      // We'll want to return the image designated as "Cover (front)", otherwise return image for
-      // "32x32 pixels 'file icon' (PNG only)" or "Other".
-      var coverImage: String? = null
-      var backupImage: String? = null
-      var backupImageCode: Int? = null
-
-      for (metadataItem in metadataList) {
-        val mediaMetadata = MediaMetadata.Builder()
-          .populateFromMetadata(metadataItem)
-          .build()
-
-        when (mediaMetadata.artworkDataType) {
-          // "Other" Picture Type
-          MediaMetadata.PICTURE_TYPE_OTHER -> {
-            if (backupImage == null || backupImageCode == 1) {
-              val newImg = reader.getBase64Image(mediaMetadata.artworkData)
-              if (newImg !== null) {
-                backupImage = newImg
-                backupImageCode = 3
-              }
-            }
-          }
-          // "32x32 pixels 'file icon' (PNG only)" Picture Type
-          MediaMetadata.PICTURE_TYPE_FILE_ICON -> {
-            if (backupImage == null) {
-              backupImage = reader.getBase64Image(mediaMetadata.artworkData)
-              backupImageCode = 1
-            }
-          }
-          // "Cover (front)" Picture Type
-          MediaMetadata.PICTURE_TYPE_FRONT_COVER -> {
-            coverImage = reader.getBase64Image(mediaMetadata.artworkData)
-          }
-        }
-
-        if (coverImage !== null) break
-      }
-
-      promise.resolve(coverImage ?: backupImage)
-    } catch (e: ExecutionException) {
-      val isWantedException =
-        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
-          ?: false
-      when (isWantedException) {
-        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
-        false -> promise.reject("ERR_ARTWORK", e.message, e)
-      }
-    } catch (e: Exception) {
-      promise.reject("ERR_ARTWORK", e.message, e)
-    }
-  }
-
-  /** Saves artwork to specified URI or cache directory. */
-  @ReactMethod
-  override fun saveArtwork(uri: String, options: ReadableMap, promise: Promise) {
+  override fun getArtwork(uri: String, options: ReadableMap, promise: Promise) {
     val optionsBundle = Arguments.toBundle(options) as Bundle
+    val asBase64 = optionsBundle.getBoolean("base64")
     val saveUri = optionsBundle.getString("saveUri")
     val compress = optionsBundle.getBoolean("compress")
 
@@ -241,15 +177,15 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
 
       // We'll want to return the image designated as "Cover (front)", otherwise return image for
       // "32x32 pixels 'file icon' (PNG only)" or "Other".
-      var coverImage: ByteArray? = null
-      var backupImage: ByteArray? = null
+      var coverImage: Any? = null
+      var backupImage: Any? = null
       var backupImageCode: Int? = null
 
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
       if (metadataList.isEmpty()) {
         val mmrMetadata = MediaMetadataRetriever()
         mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
-        coverImage = mmrMetadata.embeddedPicture
+        coverImage = if (asBase64) reader.getBase64Image(mmrMetadata.embeddedPicture) else mmrMetadata.embeddedPicture
         mmrMetadata.release()
       }
 
@@ -262,7 +198,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           // "Other" Picture Type
           MediaMetadata.PICTURE_TYPE_OTHER -> {
             if (backupImage == null || backupImageCode == 1) {
-              val newImg = mediaMetadata.artworkData
+              val newImg = if (asBase64) reader.getBase64Image(mediaMetadata.artworkData) else mediaMetadata.artworkData
               if (newImg !== null) {
                 backupImage = newImg
                 backupImageCode = 3
@@ -272,21 +208,26 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
           // "32x32 pixels 'file icon' (PNG only)" Picture Type
           MediaMetadata.PICTURE_TYPE_FILE_ICON -> {
             if (backupImage == null) {
-              backupImage = mediaMetadata.artworkData
+              backupImage = if (asBase64) reader.getBase64Image(mediaMetadata.artworkData) else mediaMetadata.artworkData
               backupImageCode = 1
             }
           }
           // "Cover (front)" Picture Type
           MediaMetadata.PICTURE_TYPE_FRONT_COVER -> {
-            coverImage = mediaMetadata.artworkData
+            coverImage = if (asBase64) reader.getBase64Image(mediaMetadata.artworkData) else mediaMetadata.artworkData
           }
         }
 
         if (coverImage !== null) break
       }
 
-      val imgUri = (coverImage ?: backupImage)?.let { reader.saveImage(it, saveUri, compress) }
-      promise.resolve(imgUri)
+      if (asBase64) {
+        // `coverImage` or `backupImage` should be a base64 string or `null`.
+        promise.resolve(coverImage ?: backupImage)
+      } else {
+        val imgUri = (coverImage ?: backupImage)?.let { reader.saveImage(it as ByteArray, saveUri, compress) }
+        promise.resolve(imgUri)
+      }
     } catch (e: ExecutionException) {
       val isWantedException =
         e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
