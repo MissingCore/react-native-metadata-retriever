@@ -18,8 +18,11 @@ import {
 import {
   MetadataPresets,
   getBulkMetadata,
+  saveArtwork,
   updateConfigs,
 } from '@missingcore/react-native-metadata-retriever';
+
+import { isFulfilled } from './utils/promise';
 
 const queryClient = new QueryClient();
 
@@ -49,12 +52,15 @@ async function getTracks() {
 
   const results = await getBulkMetadata(
     audioFiles.map(({ uri }) => uri),
-    MetadataPresets.standardArtwork
+    MetadataPresets.standard
   );
-  const tracksMetadata = results.results.map(({ uri, data }) => {
-    const { id, filename } = assetURIMap[uri]!;
-    return { id, filename, ...data };
-  });
+  const tracksMetadata = await Promise.allSettled(
+    results.results.map(async ({ uri, data }) => {
+      const { id, filename } = assetURIMap[uri]!;
+      const imgUri = await saveArtwork(uri, { compress: true });
+      return { id, filename, artworkData: imgUri, ...data };
+    })
+  );
   console.log(
     `Got metadata of ${audioFiles.length} tracks in ${((performance.now() - start) / 1000).toFixed(4)}s.`
   );
@@ -62,7 +68,7 @@ async function getTracks() {
 
   return {
     duration: ((performance.now() - start) / 1000).toFixed(4),
-    tracks: tracksMetadata,
+    tracks: tracksMetadata.filter(isFulfilled).map(({ value }) => value),
   };
 }
 
