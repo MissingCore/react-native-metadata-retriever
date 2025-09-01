@@ -30,7 +30,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   MetadataRetrieverSpec(reactContext) {
   private val context = reactContext
 
-  private var reader = MetadataReader()
+  private var reader = MetadataReader(reactContext)
 
   @ReactMethod
   override fun getBulkMetadata(uris: ReadableArray, options: ReadableArray, promise: Promise) {
@@ -172,7 +172,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       if (metadataList.isEmpty()) {
         val mmrMetadata = MediaMetadataRetriever()
         mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
-        promise.resolve(reader.getBase64Image(mmrMetadata.getEmbeddedPicture()))
+        promise.resolve(reader.getBase64Image(mmrMetadata.embeddedPicture))
         mmrMetadata.release()
         return
       }
@@ -216,6 +216,77 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
       }
 
       promise.resolve(coverImage ?: backupImage)
+    } catch (e: ExecutionException) {
+      val isWantedException =
+        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
+          ?: false
+      when (isWantedException) {
+        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
+        false -> promise.reject("ERR_ARTWORK", e.message, e)
+      }
+    } catch (e: Exception) {
+      promise.reject("ERR_ARTWORK", e.message, e)
+    }
+  }
+
+  /** Saves artwork to specified URI or cache directory. */
+  @ReactMethod
+  override fun saveArtwork(uri: String, options: ReadableMap, promise: Promise) {
+    val optionsBundle = Arguments.toBundle(options) as Bundle
+    val saveUri = optionsBundle.getString("saveUri")
+    val compress = optionsBundle.getBoolean("compress")
+
+    try {
+      val metadataList = getMetadataList(getFormatList(uri))
+
+      // We'll want to return the image designated as "Cover (front)", otherwise return image for
+      // "32x32 pixels 'file icon' (PNG only)" or "Other".
+      var coverImage: ByteArray? = null
+      var backupImage: ByteArray? = null
+      var backupImageCode: Int? = null
+
+      // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
+      if (metadataList.isEmpty()) {
+        val mmrMetadata = MediaMetadataRetriever()
+        mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
+        coverImage = mmrMetadata.embeddedPicture
+        mmrMetadata.release()
+      }
+
+      for (metadataItem in metadataList) {
+        val mediaMetadata = MediaMetadata.Builder()
+          .populateFromMetadata(metadataItem)
+          .build()
+
+        when (mediaMetadata.artworkDataType) {
+          // "Other" Picture Type
+          MediaMetadata.PICTURE_TYPE_OTHER -> {
+            if (backupImage == null || backupImageCode == 1) {
+              val newImg = mediaMetadata.artworkData
+              if (newImg !== null) {
+                backupImage = newImg
+                backupImageCode = 3
+              }
+            }
+          }
+          // "32x32 pixels 'file icon' (PNG only)" Picture Type
+          MediaMetadata.PICTURE_TYPE_FILE_ICON -> {
+            if (backupImage == null) {
+              backupImage = mediaMetadata.artworkData
+              backupImageCode = 1
+            }
+          }
+          // "Cover (front)" Picture Type
+          MediaMetadata.PICTURE_TYPE_FRONT_COVER -> {
+            coverImage = mediaMetadata.artworkData
+          }
+        }
+
+        if (coverImage !== null) break
+      }
+
+      val imgUri = (coverImage ?: backupImage)?.let { reader.saveImage(it, saveUri, compress) }
+      promise.resolve(imgUri)
     } catch (e: ExecutionException) {
       val isWantedException =
         e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")

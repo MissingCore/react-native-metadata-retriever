@@ -11,6 +11,7 @@ abstract class MetadataRetrieverSpec internal constructor(context: ReactApplicat
   abstract fun getBulkMetadata(uris: ReadableArray, options: ReadableArray, promise: Promise)
 
   abstract fun getArtwork(uri: String, promise: Promise)
+  abstract fun saveArtwork(uri: String, options: ReadableMap, promise: Promise)
 
   abstract fun updateConfigs(options: ReadableMap, promise: Promise)
 }
