@@ -1,11 +1,11 @@
 package com.cyanchill.missingcore.metadataretriever
 
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.Promise
 
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
@@ -19,6 +19,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.MetadataRetriever
 import java.util.concurrent.ExecutionException
 
+import com.cyanchill.missingcore.metadataretriever.models.BridgeReturnables.*
 import com.cyanchill.missingcore.metadataretriever.modules.MetadataReader
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
@@ -32,115 +33,129 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   private var reader = MetadataReader()
 
   @ReactMethod
-  override fun getMetadata(uri: String, options: ReadableArray, promise: Promise) {
+  override fun getBulkMetadata(uris: ReadableArray, options: ReadableArray, promise: Promise) {
+    val uriList = Arguments.toList(uris) as List<String>
     val optionsList = Arguments.toList(options) as List<String>
 
-    // Populate return object with default values based on input.
-    val metadataMap = Arguments.createMap()
-    optionsList.forEach { fieldName -> metadataMap.putNull(fieldName) }
+    val returnObj = Arguments.createMap()
+    val successArr = Arguments.createArray()
+    val errorArr = Arguments.createArray()
+
+    // Generate the structure of the object we want to return.
+    val returnMetadataStructure = Arguments.createMap()
+    optionsList.forEach { fieldName -> returnMetadataStructure.putNull(fieldName) }
+
     val wantArtwork = optionsList.any { fieldName -> fieldName == "artworkData" }
 
     // Move outside of try-catch block so we can release it in finally.
-    var mmrMetadata: MediaMetadataRetriever? = null
+    var mmrMetadata = MediaMetadataRetriever()
+    var mmrSource: String? = null
 
-    try {
-      val formatList = getFormatList(uri)
-      val mediaMetadata = MediaMetadata.Builder()
-        .populateFromMetadata(getMetadataList(formatList))
-        .build()
+    for (uri in uriList) {
+      try {
+        val metadataMap = returnMetadataStructure.copy()
 
-      // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever` (in the case
-      // with `ID3v1` tags).
-      if (mediaMetadata == MediaMetadata.EMPTY) {
-        mmrMetadata = MediaMetadataRetriever()
-        mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
-      }
+        val formatList = getFormatList(uri)
+        val mediaMetadata = MediaMetadata.Builder()
+          .populateFromMetadata(getMetadataList(formatList))
+          .build()
 
-      val formatMetadataDataMap = reader.fromFormat(formatList[0])
-      val metadataDataMap = when (mmrMetadata) {
-        null -> reader.fromMediaMetadata(mediaMetadata, wantArtwork)
-        else -> reader.fromMediaMetadataRetriever(mmrMetadata, wantArtwork)
-      }
-
-      var recheckBitRate = false
-      // Populate return object with the metadata we found.
-      for (field in optionsList) {
-        // Use scope functions to help determine output.
-        // SEE https://kotlinlang.org/docs/scope-functions.html
-        when (field) {
-          /** List of fields available on `Format`. */
-          "bitrate" -> {
-            val foundBitRate = MapUtils.getInt(formatMetadataDataMap, "bitrate")
-            if (foundBitRate != null) {
-              metadataMap.putInt(field, foundBitRate)
-              // Recheck bitrate if less than 96kbps as the value should typically be greater than this.
-              // This also handles the case where variable bitrate isn't probably returned as I've seen
-              // it be set to `64000`.
-              if (foundBitRate < 96000) recheckBitRate = true
-            } else recheckBitRate = true
-          }
-
-          "channelCount", "sampleRate" ->
-            MapUtils.getInt(formatMetadataDataMap, field)?.let { metadataMap.putInt(field, it) }
-
-          "codecs", "sampleMimeType" ->
-            MapUtils.getString(formatMetadataDataMap, field)?.let { metadataMap.putString(field, it) }
-
-          /** List of fields available on `MediaMetadata`. */
-          "albumArtist", "albumTitle", "artist", "artworkData", "artworkDataType", "artworkUri",
-          "compilation", "composer", "conductor", "description", "displayTitle", "genre", "mediaType",
-          "station", "subtitle", "title", "writer" ->
-            MapUtils.getString(metadataDataMap, field)?.let { metadataMap.putString(field, it) }
-
-          "discNumber", "recordingDay", "recordingMonth", "recordingYear", "releaseDay", "releaseMonth",
-          "releaseYear", "totalDiscCount", "totalTrackCount", "trackNumber", "year" ->
-            MapUtils.getInt(metadataDataMap, field)?.let { metadataMap.putInt(field, it) }
-
-          "isBrowsable", "isPlayable" ->
-            MapUtils.getBoolean(metadataDataMap, field)?.let { metadataMap.putBoolean(field, it) }
-
-          "overallRating", "userRating" ->
-            MapUtils.getDouble(metadataDataMap, field)?.let { metadataMap.putDouble(field, it) }
-        }
-      }
-
-      // Compute bitrate using `MediaMetadataRetriever` if wanted and not found. Necessary for FLAC
-      // files as `Format` doesn't populate that field for whatever reason.
-      if (recheckBitRate) {
-        // Ensure the `MediaMetadataRetriever` object exists.
-        if (mmrMetadata == null) {
-          mmrMetadata = MediaMetadataRetriever()
+        // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever` (in the case
+        // with `ID3v1` tags).
+        if (mediaMetadata == MediaMetadata.EMPTY) {
           mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
+          mmrSource = uri
         }
-        mmrMetadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toIntOrNull()?.let { metadataMap.putInt("bitrate", it) }
-      }
 
-      // Have `albumArtist` fallback to `artist` value if it's not defined, but only when certain
-      // conditions are met (`artist` & `albumTitle` fields are defined).
-      if (metadataMap.hasKey("albumArtist") && metadataMap.isNull("albumArtist")) {
-        if (
-          metadataMap.hasKey("artist") && !metadataMap.isNull("artist") &&
-          metadataMap.hasKey("albumTitle") && !metadataMap.isNull("albumTitle")
+        val formatMetadataDataMap = reader.fromFormat(formatList[0])
+        val metadataDataMap = when (mmrSource == uri) {
+          true -> reader.fromMediaMetadataRetriever(mmrMetadata, wantArtwork)
+          false -> reader.fromMediaMetadata(mediaMetadata, wantArtwork)
+        }
+
+        var recheckBitRate = false
+        // Populate return object with the metadata we found.
+        for (field in optionsList) {
+          // Use scope functions to help determine output.
+          // SEE https://kotlinlang.org/docs/scope-functions.html
+          when (field) {
+            /** List of fields available on `Format`. */
+            "bitrate" -> {
+              val foundBitRate = MapUtils.getInt(formatMetadataDataMap, "bitrate")
+              if (foundBitRate != null) {
+                metadataMap.putInt(field, foundBitRate)
+                // Recheck bitrate if less than 96kbps as the value should typically be greater than this.
+                // This also handles the case where variable bitrate isn't probably returned as I've seen
+                // it be set to `64000`.
+                if (foundBitRate < 96000) recheckBitRate = true
+              } else recheckBitRate = true
+            }
+
+            "channelCount", "sampleRate" ->
+              MapUtils.getInt(formatMetadataDataMap, field)?.let { metadataMap.putInt(field, it) }
+
+            "codecs", "sampleMimeType" ->
+              MapUtils.getString(formatMetadataDataMap, field)?.let { metadataMap.putString(field, it) }
+
+            /** List of fields available on `MediaMetadata`. */
+            "albumArtist", "albumTitle", "artist", "artworkData", "artworkDataType", "artworkUri",
+            "compilation", "composer", "conductor", "description", "displayTitle", "genre", "mediaType",
+            "station", "subtitle", "title", "writer" ->
+              MapUtils.getString(metadataDataMap, field)?.let { metadataMap.putString(field, it) }
+
+            "discNumber", "recordingDay", "recordingMonth", "recordingYear", "releaseDay", "releaseMonth",
+            "releaseYear", "totalDiscCount", "totalTrackCount", "trackNumber", "year" ->
+              MapUtils.getInt(metadataDataMap, field)?.let { metadataMap.putInt(field, it) }
+
+            "isBrowsable", "isPlayable" ->
+              MapUtils.getBoolean(metadataDataMap, field)?.let { metadataMap.putBoolean(field, it) }
+
+            "overallRating", "userRating" ->
+              MapUtils.getDouble(metadataDataMap, field)?.let { metadataMap.putDouble(field, it) }
+          }
+        }
+
+        // Compute bitrate using `MediaMetadataRetriever` if wanted and not found. Necessary for FLAC
+        // files as `Format` doesn't populate that field for whatever reason.
+        if (recheckBitRate) {
+          // Ensure the `MediaMetadataRetriever` uses the current URI.
+          if (mmrSource != uri) mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
+          mmrMetadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toIntOrNull()?.let { metadataMap.putInt("bitrate", it) }
+        }
+
+        // Have `albumArtist` fallback to `artist` value if it's not defined, but only when certain
+        // conditions are met (`artist` & `albumTitle` fields are defined).
+        if (metadataMap.hasKey("albumArtist") && metadataMap.isNull("albumArtist")) {
+          if (
+            metadataMap.hasKey("artist") && !metadataMap.isNull("artist") &&
+            metadataMap.hasKey("albumTitle") && !metadataMap.isNull("albumTitle")
           ) {
-          metadataMap.putString("albumArtist", metadataMap.getString("artist"))
+            metadataMap.putString("albumArtist", metadataMap.getString("artist"))
+          }
         }
-      }
 
-      promise.resolve(metadataMap)
-    } catch (e: ExecutionException) {
-      val isWantedException =
-        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
-          ?: false
-      when (isWantedException) {
-        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
-        false -> promise.reject("ERR_METADATA", e.message, e)
+        successArr.pushMap(ResultObject(uri, metadataMap))
+      } catch (e: ExecutionException) {
+        val isWantedException =
+          e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
+            ?: false
+        val errObj = ErrorObject(
+          if (isWantedException) "ENOENT" else "ERR_METADATA",
+          if (isWantedException) "ENOENT: No such file or directory (${uri})" else e.message ?: "",
+        )
+        errorArr.pushMap(ResultObject(uri, errObj))
+      } catch (e: Exception) {
+        errorArr.pushMap(ResultObject(uri, ErrorObject("ERR_METADATA", e.message ?: "")))
       }
-    } catch (e: Exception) {
-      promise.reject("ERR_METADATA", e.message, e)
-    } finally {
-      // Release `MediaMetadataRetriever` resources.
-      mmrMetadata?.release()
     }
+
+    // Release `MediaMetadataRetriever` resources.
+    mmrMetadata.release()
+
+    returnObj.putArray("success", successArr)
+    returnObj.putArray("error", errorArr)
+
+    promise.resolve(returnObj)
   }
 
   /**
