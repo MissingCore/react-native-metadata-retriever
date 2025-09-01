@@ -1,6 +1,7 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
+import type { ArtworkOptions } from './types/ArtworkOptions';
 import type { ConfigOptions } from './types/ConfigOptions';
 import type { BulkMetadata } from './types/GetMetadata';
 import type { MediaMetadataPublicFields } from './types/MediaMetadataPublicField';
@@ -11,7 +12,10 @@ export interface Spec extends TurboModule {
     options: TOptions
   ): Promise<BulkMetadata<TOptions>>;
 
-  getArtwork(uri: string): Promise<string | null>;
+  getArtwork(
+    uri: string,
+    options: ArtworkOptions & { base64?: boolean }
+  ): Promise<string | null>;
 
   updateConfigs(options: ConfigOptions): Promise<void>;
 }
