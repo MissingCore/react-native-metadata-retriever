@@ -1,6 +1,7 @@
 import MetadataRetriever from './MetadataRetriever';
 
 import type {
+  BulkMetadata,
   ConfigOptions,
   MediaMetadata,
   MediaMetadataExcerpt,
@@ -43,6 +44,7 @@ export async function updateConfigs(options: ConfigOptions): Promise<void> {
 }
 
 export {
+  type BulkMetadata,
   type ConfigOptions,
   type MediaMetadata,
   type MediaMetadataExcerpt,
