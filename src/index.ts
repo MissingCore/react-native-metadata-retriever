@@ -54,6 +54,7 @@ export async function updateConfigs(options: ConfigOptions): Promise<void> {
 }
 
 export {
+  type ArtworkOptions,
   type BulkMetadata,
   type ConfigOptions,
   type MediaMetadata,
