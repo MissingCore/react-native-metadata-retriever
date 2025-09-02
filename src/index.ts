@@ -11,7 +11,7 @@ import type {
   MediaMetadataPublicFields,
 } from './types/MediaMetadataPublicField';
 
-/** Returns the specified metadata of a media file from its uri. */
+/** Get the metadata from multiple uris. */
 export async function getBulkMetadata<
   TOptions extends MediaMetadataPublicFields,
 >(uris: string[], options: TOptions) {
@@ -52,6 +52,7 @@ export async function saveArtwork(
   return MetadataRetriever.getArtwork(uri, options ?? {});
 }
 
+/** Update internal configuration options. */
 export async function updateConfigs(options: ConfigOptions): Promise<void> {
   return MetadataRetriever.updateConfigs(options);
 }
