@@ -41,7 +41,10 @@ export async function getArtwork(uri: string): Promise<string | null> {
   return MetadataRetriever.getArtwork(uri, { base64: true });
 }
 
-/** Returns the uri of the saved artwork. */
+/**
+ * Returns the uri of the saved artwork.
+ * - Ignores the hard-limit on the max size of the image that can be saved.
+ */
 export async function saveArtwork(
   uri: string,
   options?: ArtworkOptions

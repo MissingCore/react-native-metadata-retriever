@@ -92,6 +92,8 @@ function saveArtwork(
 
 Returns the uri of the saved artwork.
 
+> **Note:** Ignores the hard-limit of the max size of the image that can be saved.
+
 ### updateConfigs
 
 ```ts
