@@ -12,6 +12,8 @@ export function useTracksWithBase64Artwork(hasPermissions: boolean) {
     queryKey: ['tracks', 'base64Artwork'],
     queryFn: getTracksWithBase64Artwork,
     enabled: hasPermissions,
+    gcTime: Infinity,
+    staleTime: Infinity,
   });
 }
 

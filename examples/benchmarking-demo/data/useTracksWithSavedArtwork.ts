@@ -14,6 +14,8 @@ export function useTracksWithSavedArtwork(hasPermissions: boolean) {
     queryKey: ['tracks', 'savedArtwork'],
     queryFn: getTracksWithSavedArtwork,
     enabled: hasPermissions,
+    gcTime: Infinity,
+    staleTime: Infinity,
   });
 }
 
