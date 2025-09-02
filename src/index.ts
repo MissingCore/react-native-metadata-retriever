@@ -2,6 +2,7 @@ import MetadataRetriever from './MetadataRetriever';
 
 import { MetadataPresets } from './constants';
 
+import type { ArtworkOptions } from './types/ArtworkOptions';
 import type { ConfigOptions } from './types/ConfigOptions';
 import type { BulkMetadata, MediaMetadataExcerpt } from './types/GetMetadata';
 import type { MediaMetadata } from './types/MediaMetadata';
@@ -33,11 +34,19 @@ export async function getMetadata<TOptions extends MediaMetadataPublicFields>(
 }
 
 /**
- * Returns the artwork of the specified media file from its uri.
+ * Returns a base64 string representing the embedded artwork.
  * - Defaults to returning up to `5 MB` of data.
  */
 export async function getArtwork(uri: string): Promise<string | null> {
-  return MetadataRetriever.getArtwork(uri);
+  return MetadataRetriever.getArtwork(uri, { base64: true });
+}
+
+/** Returns the uri of the saved artwork. */
+export async function saveArtwork(
+  uri: string,
+  options?: ArtworkOptions
+): Promise<string | null> {
+  return MetadataRetriever.getArtwork(uri, options ?? {});
 }
 
 export async function updateConfigs(options: ConfigOptions): Promise<void> {
@@ -45,6 +54,7 @@ export async function updateConfigs(options: ConfigOptions): Promise<void> {
 }
 
 export {
+  type ArtworkOptions,
   type BulkMetadata,
   type ConfigOptions,
   type MediaMetadata,

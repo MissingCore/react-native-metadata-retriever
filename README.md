@@ -53,7 +53,7 @@ An object containing several metadata presets we can use to retrieve metadata.
 function getArtwork(uri: string): Promise<string | null>;
 ```
 
-Returns the base64 image string for the media file of the provided uri.
+Returns a base64 string representing the embedded artwork.
 
 > **Note:** Defaults to returning up to `5 MB` of data. Can be configured with [`updateConfigs`](#updateConfigs).
 
@@ -81,6 +81,17 @@ Returns the specified metadata of the provided uri based on the `options` argume
 
 > **Note:** The "complicated" typing is to make the resulting promise type-safe and be based off the provided `options`.
 
+### saveArtwork
+
+```ts
+function saveArtwork(
+  uri: string,
+  options?: ArtworkOptions
+): Promise<string | null>;
+```
+
+Returns the uri of the saved artwork.
+
 ### updateConfigs
 
 ```ts
@@ -90,6 +101,19 @@ function updateConfigs(options: ConfigOptions): Promise<void>;
 Update internal configuration options such as the max size of the returned base64 image.
 
 ## Types
+
+### ArtworkOptions
+
+```ts
+type ArtworkOptions = {
+  /** Uri we want to save the artwork to instead of the cache directory. */
+  saveUri?: string;
+  /** Whether we should compress the saved image to 80% image quality. */
+  compress?: boolean;
+};
+```
+
+Options to change the behavior of `saveArtwork`.
 
 ### BulkMetadata
 
