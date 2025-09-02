@@ -19,6 +19,8 @@ import java.io.FileOutputStream
 import java.net.URLConnection
 import java.util.UUID
 
+import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
+
 /**
  * Utilities to format & normalize sources of metadata as a map.
  */
@@ -155,7 +157,7 @@ class MetadataReader(reactContext: ReactApplicationContext): APIConfigs() {
     return dataMap
   }
 
-  //#region [Exposed Helpers To Parse Metadata Values]
+  //#region [Artwork Utils]
   /** Returns a base64 image string from a `ByteArray`. */
   fun getBase64Image(bytes: ByteArray? = null): String? {
     if (bytes == null) return null
@@ -174,16 +176,15 @@ class MetadataReader(reactContext: ReactApplicationContext): APIConfigs() {
   }
 
   /** Save `ByteArray` as image, returning the URI if it was saved correctly. */
-  fun saveImage(bytes: ByteArray, savePath: String? = null, compress: Boolean = false): String? {
+  fun saveImage(bytes: ByteArray, options: ArtworkOptions): String? {
     try {
       // Generate path to save image if we didn't provide one.
-      val formattedSavePath = if (savePath !== null) Uri.parse(savePath).path else null
-      val imgUri = formattedSavePath ?: "$saveDirectory${File.separator}${UUID.randomUUID()}.jpeg"
+      val imgUri = options.saveUri ?: "$saveDirectory${File.separator}${UUID.randomUUID()}.jpeg"
       val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
       FileOutputStream(imgUri).use { fos ->
         bitmap.compress(
           Bitmap.CompressFormat.JPEG,
-          if (compress) 80 else 100,
+          if (options.compress) 80 else 100,
           fos,
         )
         fos.flush()

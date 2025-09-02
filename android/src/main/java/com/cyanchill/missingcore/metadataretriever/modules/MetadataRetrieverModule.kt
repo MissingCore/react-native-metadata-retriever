@@ -20,10 +20,10 @@ import androidx.media3.exoplayer.MetadataRetriever
 import java.util.concurrent.ExecutionException
 
 import com.cyanchill.missingcore.metadataretriever.MetadataRetrieverSpec
+import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
 import com.cyanchill.missingcore.metadataretriever.models.BridgeReturnables.*
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
-
 
 @OptIn(UnstableApi::class)
 class MetadataRetrieverModule internal constructor(reactContext: ReactApplicationContext) :
@@ -167,10 +167,8 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
    */
   @ReactMethod
   override fun getArtwork(uri: String, options: ReadableMap, promise: Promise) {
-    val optionsBundle = Arguments.toBundle(options) as Bundle
-    val asBase64 = optionsBundle.getBoolean("base64")
-    val saveUri = optionsBundle.getString("saveUri")
-    val compress = optionsBundle.getBoolean("compress")
+    val artworkOptions = ArtworkOptions(options)
+    val asBase64 = artworkOptions.asBase64
 
     try {
       val metadataList = getMetadataList(getFormatList(uri))
@@ -225,7 +223,7 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
         // `coverImage` or `backupImage` should be a base64 string or `null`.
         promise.resolve(coverImage ?: backupImage)
       } else {
-        val imgUri = (coverImage ?: backupImage)?.let { reader.saveImage(it as ByteArray, saveUri, compress) }
+        val imgUri = (coverImage ?: backupImage)?.let { reader.saveImage(it as ByteArray, artworkOptions) }
         promise.resolve(imgUri)
       }
     } catch (e: ExecutionException) {
