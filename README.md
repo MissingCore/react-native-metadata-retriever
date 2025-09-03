@@ -45,6 +45,18 @@ const MetadataPresets: Record<string, MediaMetadataPublicFields>;
 
 An object containing several metadata presets we can use to retrieve metadata.
 
+### SaveFormat
+
+```ts
+const SaveFormat = {
+  JPEG: 'jpeg',
+  PNG: 'png',
+  WEBP: 'webp',
+};
+```
+
+Formats that we can save the image as.
+
 ## Functions
 
 ### getArtwork
@@ -108,10 +120,18 @@ Update internal configuration options such as the max size of the returned base6
 
 ```ts
 type ArtworkOptions = {
+  /**
+   * A value in the range `0.0` - `1.0` specifying the quality of the resulting image.
+   * - Defaults to `1`.
+   */
+  compress?: number;
+  /**
+   * Specifies the format the image will be saved in.
+   * - Defaults to `SaveFormat.JPEG`.
+   */
+  format?: SaveFormat;
   /** Uri we want to save the artwork to instead of the cache directory. */
   saveUri?: string;
-  /** Whether we should compress the saved image to 80% image quality. */
-  compress?: boolean;
 };
 ```
 

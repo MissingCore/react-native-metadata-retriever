@@ -3,6 +3,7 @@ import MetadataRetriever from './MetadataRetriever';
 import { MetadataPresets } from './constants';
 
 import type { ArtworkOptions } from './types/ArtworkOptions';
+import { SaveFormat } from './types/ArtworkOptions';
 import type { ConfigOptions } from './types/ConfigOptions';
 import type { BulkMetadata, MediaMetadataExcerpt } from './types/GetMetadata';
 import type { MediaMetadata } from './types/MediaMetadata';
@@ -65,4 +66,5 @@ export {
   type MediaMetadataExcerpt,
   type MediaMetadataPublicField,
   MetadataPresets,
+  SaveFormat,
 };
