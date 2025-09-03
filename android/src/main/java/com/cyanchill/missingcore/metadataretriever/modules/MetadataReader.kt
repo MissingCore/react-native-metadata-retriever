@@ -2,7 +2,6 @@ package com.cyanchill.missingcore.metadataretriever.modules
 
 import com.facebook.react.bridge.ReactApplicationContext
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
