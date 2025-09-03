@@ -7,6 +7,13 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ❗ Breaking Changes
+
+- Revised "compression" option for `saveArtwork`.
+- Changed `ArtworkOptions` type.
+  - `compress` is now a number between `0.0` & `1.0` specifying the quality of the saved image (defaults to `1`).
+  - New `format` option specifying the file format the image will be saved as (defaults to `jpeg`).
+
 ## [2.0.0-beta.1] - 2025-09-02
 
 ### ❗ Breaking Changes
