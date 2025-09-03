@@ -12,7 +12,7 @@ import androidx.media3.common.Format
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.PercentageRating
 import androidx.media3.common.Rating
-import androidx.media3.common.MediaMetadata as AndroidXMediaMetadata
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.UnstableApi
 import java.io.File
 import java.io.FileOutputStream
@@ -61,7 +61,7 @@ class MetadataReader(reactContext: ReactApplicationContext): APIConfigs() {
    * @see <a href="https://developer.android.com/reference/androidx/media3/common/MediaMetadata">Link</a>
    */
   fun fromMediaMetadata(
-    mediaMetadata: AndroidXMediaMetadata,
+    mediaMetadata: MediaMetadata,
     getArtworkData: Boolean = false,
   ): HashMap<String, Any?> {
     val dataMap = hashMapOf<String, Any?>()
