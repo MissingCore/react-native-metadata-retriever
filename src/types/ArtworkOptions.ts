@@ -1,4 +1,4 @@
-import type { ObjectValues } from 'src/types.utils';
+import type { ObjectValues } from '../types.utils';
 
 export const SaveFormat = {
   JPEG: 'jpeg',
