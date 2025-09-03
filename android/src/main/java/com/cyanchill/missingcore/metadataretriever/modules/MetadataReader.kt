@@ -179,12 +179,12 @@ class MetadataReader(reactContext: ReactApplicationContext): APIConfigs() {
   fun saveImage(bytes: ByteArray, options: ArtworkOptions): String? {
     try {
       // Generate path to save image if we didn't provide one.
-      val imgUri = options.saveUri ?: "$saveDirectory${File.separator}${UUID.randomUUID()}.jpeg"
+      val imgUri = options.saveUri ?: "$saveDirectory${File.separator}${UUID.randomUUID()}${options.format.fileExtension}"
       val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
       FileOutputStream(imgUri).use { fos ->
         bitmap.compress(
-          Bitmap.CompressFormat.JPEG,
-          if (options.compress) 80 else 100,
+          options.format.compressFormat,
+          (options.compress * 100).toInt(),
           fos,
         )
         fos.flush()
