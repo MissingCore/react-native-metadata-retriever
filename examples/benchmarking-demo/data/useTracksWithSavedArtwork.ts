@@ -38,7 +38,7 @@ async function getTracksWithSavedArtwork() {
   const tracksMetadata = await Promise.allSettled(
     results.results.map(async ({ uri, data }) => {
       const { id, filename } = assetURIMap[uri]!;
-      const imgUri = await saveArtwork(uri, { compress: true });
+      const imgUri = await saveArtwork(uri, { compress: 0.8 });
       return { id, filename, artworkData: imgUri, ...data };
     })
   );
