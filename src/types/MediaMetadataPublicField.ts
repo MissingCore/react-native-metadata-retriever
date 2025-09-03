@@ -1,5 +1,3 @@
-import type { ObjectValues } from 'src/types.utils';
-
 /**
  * Fields that can be extracted from media file.
  *
@@ -49,8 +47,7 @@ const MediaMetadataPublicFields = [
   'year',
 ] as const;
 
-export type MediaMetadataPublicField = ObjectValues<
-  typeof MediaMetadataPublicFields
->;
+export type MediaMetadataPublicField =
+  (typeof MediaMetadataPublicFields)[number];
 
 export type MediaMetadataPublicFields = ReadonlyArray<MediaMetadataPublicField>;
