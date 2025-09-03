@@ -120,9 +120,15 @@ Update internal configuration options such as the max size of the returned base6
 
 ```ts
 type ArtworkOptions = {
-  /** A value in the range `0.0` - `1.0` specifying the compression level of the resulting image. */
+  /**
+   * A value in the range `0.0` - `1.0` specifying the quality of the resulting image.
+   * - Defaults to `1`.
+   */
   compress?: number;
-  /** Specifies the format the image will be saved in. */
+  /**
+   * Specifies the format the image will be saved in.
+   * - Defaults to `SaveFormat.JPEG`.
+   */
   format?: SaveFormat;
   /** Uri we want to save the artwork to instead of the cache directory. */
   saveUri?: string;

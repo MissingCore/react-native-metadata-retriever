@@ -11,7 +11,7 @@ class ArtworkOptions(options: ReadableMap) {
   /** If we want to return the artwork as a base64 string. */
   val asBase64: Boolean
 
-  /** A value in the range `0.0` - `1.0` specifying the compression level of the resulting image. */
+  /** A value in the range `0.0` - `1.0` specifying the quality of the resulting image. */
   val compress: Double
   /** Specifies the format the image will be saved in. */
   val format: ImageFormat
