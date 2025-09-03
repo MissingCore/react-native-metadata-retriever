@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [2.0.0-beta.2] - 2025-09-02
+
 ### ❗ Breaking Changes
 
 - Revised "compression" option for `saveArtwork`.
@@ -266,7 +268,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.0.0-beta.1...HEAD
+[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.0.0-beta.2...HEAD
+[2.0.0-beta.2]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.0.0-beta.1...v2.0.0-beta.2
 [2.0.0-beta.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v1.1.0...v2.0.0-beta.1
 [1.1.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v0.9.0...v1.0.0
