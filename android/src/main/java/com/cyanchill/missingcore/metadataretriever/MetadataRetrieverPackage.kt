@@ -1,6 +1,6 @@
 package com.cyanchill.missingcore.metadataretriever
 
-import com.facebook.react.TurboReactPackage
+import com.facebook.react.BaseReactPackage
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.module.model.ReactModuleInfoProvider
@@ -9,7 +9,7 @@ import java.util.HashMap
 
 import com.cyanchill.missingcore.metadataretriever.modules.MetadataRetrieverModule
 
-class MetadataRetrieverPackage : TurboReactPackage() {
+class MetadataRetrieverPackage : BaseReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
     return if (name == MetadataRetrieverModule.NAME) {
       MetadataRetrieverModule(reactContext)
@@ -27,7 +27,6 @@ class MetadataRetrieverPackage : TurboReactPackage() {
         MetadataRetrieverModule.NAME,
         false,  // canOverrideExistingModule
         false,  // needsEagerInit
-        true,  // hasConstants
         false,  // isCxxModule
         isTurboModule // isTurboModule
       )

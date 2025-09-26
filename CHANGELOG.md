@@ -10,6 +10,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### ⚙️ Internal Changes
 
 - Flatten `examples/*` to single `example` folder.
+- Use `BaseReactPackage` instead of deprecated `TurboReactPackage`.
 
 ## [2.0.0-beta.2] - 2025-09-02
 
