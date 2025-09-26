@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ⚙️ Internal Changes
+
+- Flatten `examples/*` to single `example` folder.
+
 ## [2.0.0-beta.2] - 2025-09-02
 
 ### ❗ Breaking Changes

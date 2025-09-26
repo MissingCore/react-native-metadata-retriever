@@ -8,7 +8,7 @@ index 193cd60923b26ca1aea0285096f5d2de69e83e2e..edc7662960a13e5e5122a98f563c6d4f
          if (!opts.mainModuleName.startsWith('/') && !_path().default.isAbsolute(opts.mainModuleName)) {
 -            opts.mainModuleName = './' + opts.mainModuleName;
 +            // FIXME: Hard-coded due to not working as expected in monorepo.
-+            opts.mainModuleName = "./examples/benchmarking-demo";
++            opts.mainModuleName = "./example";
 +            // opts.mainModuleName = './' + opts.mainModuleName;
          }
          const output = await this.metroLoadModuleContents(opts.mainModuleName, opts, extraOptions);

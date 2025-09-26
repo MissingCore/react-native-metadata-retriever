@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   '@expo/cli':
-    hash: q5paakjp2bos3wo4wcdxa7wjaq
+    hash: xuy6kbv6ch3at3u5hannbhm44a
     path: patches/@expo__cli.patch
 
 importers:
@@ -62,11 +62,11 @@ importers:
         specifier: ^5.9.2
         version: 5.9.2
 
-  examples/benchmarking-demo:
+  example:
     dependencies:
       '@missingcore/react-native-metadata-retriever':
         specifier: workspace:*
-        version: link:../..
+        version: link:..
       '@shopify/flash-list':
         specifier: ^1.8.3
         version: 1.8.3(@babel/runtime@7.28.3)(react-native@0.79.6(@babel/core@7.28.3)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -6337,7 +6337,7 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@expo/cli@0.24.20(patch_hash=q5paakjp2bos3wo4wcdxa7wjaq)':
+  '@expo/cli@0.24.20(patch_hash=xuy6kbv6ch3at3u5hannbhm44a)':
     dependencies:
       '@0no-co/graphql.web': 1.2.0
       '@babel/runtime': 7.28.3
@@ -8452,7 +8452,7 @@ snapshots:
 
   dotenv-expand@11.0.7:
     dependencies:
-      dotenv: 16.4.7
+      dotenv: 16.6.1
 
   dotenv@16.4.7: {}
 
@@ -8918,7 +8918,7 @@ snapshots:
   expo@53.0.20(@babel/core@7.28.3)(react-native@0.79.6(@babel/core@7.28.3)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.28.3
-      '@expo/cli': 0.24.20(patch_hash=q5paakjp2bos3wo4wcdxa7wjaq)
+      '@expo/cli': 0.24.20(patch_hash=xuy6kbv6ch3at3u5hannbhm44a)
       '@expo/config': 11.0.13
       '@expo/config-plugins': 10.1.2
       '@expo/fingerprint': 0.13.4
