@@ -11,6 +11,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - Build issues for New Architecture (CodeGen doesn't support imported types).
 
+### ⚙️ Internal Changes
+
+- Enable New Architecture in example app.
+
 ## [2.0.0] - 2025-09-26
 
 ### ⚙️ Internal Changes
