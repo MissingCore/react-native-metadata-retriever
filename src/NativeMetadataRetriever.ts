@@ -1,16 +1,44 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
-import type { ArtworkOptions } from './types/ArtworkOptions';
-import type { ConfigOptions } from './types/ConfigOptions';
-import type { BulkMetadata } from './types/GetMetadata';
-import type { MediaMetadataPublicFields } from './types/MediaMetadataPublicField';
+//#region Codegen Types
+/*
+  FIXME: It's better to have type definitions inside a dedicated module,
+  but RN Codegen currently doesn't support it.
+    - https://github.com/reactwg/react-native-new-architecture/discussions/91#discussioncomment-13377469
+*/
+
+/** Extra options for when using `getArtwork`. */
+type ArtworkOptions = {
+  /**
+   * A value in the range `0.0` - `1.0` specifying the quality of the resulting image.
+   * - Defaults to `1`.
+   */
+  compress?: number;
+  /**
+   * Specifies the format the image will be saved in.
+   * - Defaults to `SaveFormat.JPEG`.
+   */
+  format?: 'jpeg' | 'png' | 'webp';
+  /** Uri we want to save the artwork to instead of the cache directory. */
+  saveUri?: string;
+};
+
+/** Options that can be set to modify the behavior of the package. */
+type ConfigOptions = {
+  /**
+   * Size of the returned base64 image in MB.
+   * - Defaults to `5`.
+   */
+  maxImageSizeMB?: number | null;
+};
+//#endregion
 
 export interface Spec extends TurboModule {
-  getBulkMetadata<TOptions extends MediaMetadataPublicFields>(
+  getBulkMetadata(
     uris: string[],
-    options: TOptions
-  ): Promise<BulkMetadata<TOptions>>;
+    options: string[]
+  ): Promise<Record<string, any>>;
 
   getArtwork(
     uri: string,

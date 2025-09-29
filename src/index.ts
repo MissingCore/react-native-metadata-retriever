@@ -16,7 +16,10 @@ import type {
 export async function getBulkMetadata<
   TOptions extends MediaMetadataPublicFields,
 >(uris: string[], options: TOptions) {
-  return MetadataRetriever.getBulkMetadata(uris, options);
+  return MetadataRetriever.getBulkMetadata(
+    uris,
+    options as unknown as string[]
+  ) as Promise<BulkMetadata<TOptions>>;
 }
 
 /** Returns the specified metadata of a media file from its uri. */
@@ -24,7 +27,10 @@ export async function getMetadata<TOptions extends MediaMetadataPublicFields>(
   uri: string,
   options: TOptions
 ): Promise<MediaMetadataExcerpt<TOptions>> {
-  const result = await MetadataRetriever.getBulkMetadata([uri], options);
+  const result = (await MetadataRetriever.getBulkMetadata(
+    [uri],
+    options as unknown as string[]
+  )) as BulkMetadata<TOptions>;
   if (result.errors.length) {
     const { message, name } = result.errors[0]!.data;
     const error = Error(message);
