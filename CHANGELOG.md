@@ -7,6 +7,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### 🎉 Added
+
+- Add support for `recordingDay`, `recordingMonth`, `recordingYear` fields for `.flac` files.
+  - I don't think this was supported with `MediaMetadataRetriever` from looking at the [ExoPlayer2 code](https://github.com/google/ExoPlayer/blob/release-v2/library/extractor/src/main/java/com/google/android/exoplayer2/metadata/flac/VorbisComment.java).
+
 ## [2.2.0-beta.1] - 2025-10-21
 
 ### 🛠️ Fixes
