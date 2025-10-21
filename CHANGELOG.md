@@ -11,6 +11,12 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - `Other` artwork classification not being saved.
   - Encountered a `.flac` file whose artwork was classified as `Other` but had `artworkDataType = -1`.
+- Get `trackNumber` from `.flac` files formatted as `x/x` (previously returned `null`).
+
+### ⚙️ Internal Changes
+
+- Switch to using [our fork of `androidx/media`](https://github.com/MissingCore/media).
+  - This allows us to patch in some fixes.
 
 ## [2.1.0] - 2025-09-29
 
