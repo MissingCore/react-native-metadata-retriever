@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [2.2.0] - 2025-10-21
+
 ### 🎉 Added
 
 - Add support for `recordingDay`, `recordingMonth`, `recordingYear` fields for `.flac` files.
@@ -303,7 +305,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.2.0-beta.1...HEAD
+[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.2.0-beta.1...v2.2.0
 [2.2.0-beta.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.1.0...v2.2.0-beta.1
 [2.1.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.0.0-beta.2...v2.0.0
