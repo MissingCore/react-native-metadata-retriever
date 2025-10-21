@@ -194,7 +194,9 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
 
         when (mediaMetadata.artworkDataType) {
           // "Other" Picture Type
-          MediaMetadata.PICTURE_TYPE_OTHER -> {
+          MediaMetadata.PICTURE_TYPE_OTHER,
+          // Sometimes "Other" Picture Type is set to `-1` (encountered with a `.flac` file)
+          -1 -> {
             if (backupImage == null || backupImageCode == 1) {
               val newImg = if (asBase64) reader.getBase64Image(mediaMetadata.artworkData) else mediaMetadata.artworkData
               if (newImg !== null) {

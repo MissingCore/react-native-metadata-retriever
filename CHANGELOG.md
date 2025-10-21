@@ -7,6 +7,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### 🛠️ Fixes
+
+- `Other` artwork classification not being saved.
+  - Encountered a `.flac` file whose artwork was classified as `Other` but had `artworkDataType = -1`.
+
 ## [2.1.0] - 2025-09-29
 
 ### 🛠️ Fixes
