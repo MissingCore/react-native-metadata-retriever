@@ -1,8 +1,8 @@
 diff --git a/build/src/start/server/metro/MetroBundlerDevServer.js b/build/src/start/server/metro/MetroBundlerDevServer.js
-index 193cd60923b26ca1aea0285096f5d2de69e83e2e..edc7662960a13e5e5122a98f563c6d4f56924f3f 100644
+index bc82e256df2f56acbff258438e50b2a667b20f5c..cbcb85b5f8900718b4ad1077c8088f36f42fa3ce 100644
 --- a/build/src/start/server/metro/MetroBundlerDevServer.js
 +++ b/build/src/start/server/metro/MetroBundlerDevServer.js
-@@ -642,7 +642,9 @@ class MetroBundlerDevServer extends _BundlerDevServer.BundlerDevServer {
+@@ -675,7 +675,9 @@ class MetroBundlerDevServer extends _BundlerDevServer.BundlerDevServer {
          };
          // https://github.com/facebook/metro/blob/2405f2f6c37a1b641cc379b9c733b1eff0c1c2a1/packages/metro/src/lib/parseOptionsFromUrl.js#L55-L87
          if (!opts.mainModuleName.startsWith('/') && !_path().default.isAbsolute(opts.mainModuleName)) {

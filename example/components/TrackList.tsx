@@ -36,7 +36,6 @@ export function TrackList({ hasPermissions, ...result }: TrackListProps) {
       <Text variant="center">Total Tracks Found: {data.tracks.length}</Text>
 
       <FlashList
-        estimatedItemSize={166}
         data={data.tracks}
         keyExtractor={({ id }) => id}
         renderItem={({ item }) => (

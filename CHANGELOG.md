@@ -10,6 +10,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### ⚙️ Internal Changes
 
 - Update to PNPM 10.
+- Upgrade example app to Expo SDK 54 / RN 0.81.
 
 ## [2.2.0] - 2025-10-21
 
