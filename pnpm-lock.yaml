@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   '@expo/cli':
-    hash: xuy6kbv6ch3at3u5hannbhm44a
+    hash: d42783b0bba8e2cb5164a43c4238fc8382f336ce1827e53367ab561f08d3d084
     path: patches/@expo__cli.patch
 
 importers:
@@ -6337,7 +6337,7 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@expo/cli@0.24.20(patch_hash=xuy6kbv6ch3at3u5hannbhm44a)':
+  '@expo/cli@0.24.20(patch_hash=d42783b0bba8e2cb5164a43c4238fc8382f336ce1827e53367ab561f08d3d084)':
     dependencies:
       '@0no-co/graphql.web': 1.2.0
       '@babel/runtime': 7.28.3
@@ -8918,7 +8918,7 @@ snapshots:
   expo@53.0.20(@babel/core@7.28.3)(react-native@0.79.6(@babel/core@7.28.3)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.28.3
-      '@expo/cli': 0.24.20(patch_hash=xuy6kbv6ch3at3u5hannbhm44a)
+      '@expo/cli': 0.24.20(patch_hash=d42783b0bba8e2cb5164a43c4238fc8382f336ce1827e53367ab561f08d3d084)
       '@expo/config': 11.0.13
       '@expo/config-plugins': 10.1.2
       '@expo/fingerprint': 0.13.4

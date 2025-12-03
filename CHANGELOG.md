@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ⚙️ Internal Changes
+
+- Update to PNPM 10.
+
 ## [2.2.0] - 2025-10-21
 
 ### 🎉 Added
