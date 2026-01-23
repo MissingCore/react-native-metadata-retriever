@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-01-23
+
 ### 🎉 Added
 
 - Add support for `discNumber` & `totalDiscCount` fields for ID3 (via https://github.com/MissingCore/media/commit/2ef44ffa0f8d0789f80bd17914734a65d955591c).
@@ -317,7 +319,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.2.1...HEAD
+[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.2.1...v2.3.0
 [2.2.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.2.0-beta.1...v2.2.0
 [2.2.0-beta.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.1.0...v2.2.0-beta.1
