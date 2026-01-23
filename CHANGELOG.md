@@ -7,6 +7,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### 🎉 Added
+
+- Add support for `discNumber` & `totalDiscCount` fields for ID3 (via https://github.com/MissingCore/media/commit/2ef44ffa0f8d0789f80bd17914734a65d955591c).
+  - Supports `x` & `x/y` formats.
+
 ## [2.2.1] - 2025-12-03
 
 ### ⚙️ Internal Changes
