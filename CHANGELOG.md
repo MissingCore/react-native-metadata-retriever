@@ -10,6 +10,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### ⚡ Changes
 
 - Bumped AndroidX media3 to `1.9.1` from `1.8.0`.
+- Update import of `MetadataRetriever` to new `:media3-inspector` module.
 
 ## [2.3.0] - 2026-01-23
 

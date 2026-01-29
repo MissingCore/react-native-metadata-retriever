@@ -16,7 +16,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Metadata
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.MetadataRetriever
+import androidx.media3.inspector.MetadataRetriever
 import java.util.concurrent.ExecutionException
 
 import com.cyanchill.missingcore.metadataretriever.MetadataRetrieverSpec
