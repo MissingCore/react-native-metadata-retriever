@@ -15,6 +15,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - `x/y` format for `discNumber` & `trackNumber` now also populate `totalDiscCount` & `totalTrackCount` for FLAC.
 
+### ⚙️ Internal Changes
+
+- Improve reliability of reading JitPack dependency by using `https://jitpack.io` instead of `https://www.jitpack.io`.
+
 ## [2.4.0] - 2026-01-29
 
 ### ⚡ Changes
