@@ -7,6 +7,14 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### 🎉 Added
+
+- Support `x/y` format for `discNumber` for FLAC (via https://github.com/MissingCore/media/commit/56c92dc9e1e99e5083e0cdb314636d3343eda76c).
+
+### ⚡ Changes
+
+- `x/y` format for `discNumber` & `trackNumber` now also populate `totalDiscCount` & `totalTrackCount` for FLAC.
+
 ## [2.4.0] - 2026-01-29
 
 ### ⚡ Changes
