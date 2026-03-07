@@ -1,7 +1,6 @@
 package com.cyanchill.missingcore.metadataretriever.modules
 
 import android.os.Bundle
-
 import com.cyanchill.missingcore.metadataretriever.utils.BundleUtils
 
 open class APIConfigs {

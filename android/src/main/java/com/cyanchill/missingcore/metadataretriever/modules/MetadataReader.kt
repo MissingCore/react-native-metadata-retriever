@@ -1,7 +1,5 @@
 package com.cyanchill.missingcore.metadataretriever.modules
 
-import com.facebook.react.bridge.ReactApplicationContext
-
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -13,12 +11,12 @@ import androidx.media3.common.PercentageRating
 import androidx.media3.common.Rating
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.UnstableApi
+import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
+import com.facebook.react.bridge.ReactApplicationContext
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URLConnection
 import java.util.UUID
-
-import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
 
 /**
  * Utilities to format & normalize sources of metadata as a map.

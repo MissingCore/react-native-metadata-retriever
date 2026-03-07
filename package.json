@@ -3,32 +3,32 @@
   "version": "2.5.0",
   "description": "React Native wrapper for Android's unstable `MetadataRetriever` API.",
   "main": "./lib/module/index.js",
-  "module": "./lib/module/index.js",
-  "types": "./lib/typescript/index.d.ts",
-  "react-native": "./src/index.ts",
-  "source": "./src/index.ts",
+  "types": "./lib/typescript/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./lib/typescript/index.d.ts",
-      "import": "./lib/module/index.js"
-    }
+      "source": "./src/index.ts",
+      "types": "./lib/typescript/src/index.d.ts",
+      "default": "./lib/module/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "src",
     "lib",
-    "!**/__tests__",
-    "!**/__fixtures__",
-    "!**/__mocks__",
     "android",
     "ios",
     "cpp",
     "*.podspec",
+    "react-native.config.js",
     "!ios/build",
     "!android/build",
     "!android/gradle",
     "!android/gradlew",
     "!android/gradlew.bat",
     "!android/local.properties",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
     "!**/.*"
   ],
   "scripts": {
@@ -55,22 +55,27 @@
   },
   "homepage": "https://github.com/MissingCore/react-native-metadata-retriever#readme",
   "devDependencies": {
-    "@react-native/eslint-config": "~0.81.5",
-    "@release-it/keep-a-changelog": "^7.0.0",
-    "@types/jest": "^30.0.0",
-    "@types/react": "~19.1.17",
-    "del-cli": "^7.0.0",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "jest": "^30.2.0",
-    "prettier": "^3.7.4",
-    "react": "19.1.0",
-    "react-native": "~0.81.5",
-    "react-native-builder-bob": "^0.40.16",
-    "release-it": "^19.0.6",
-    "release-it-pnpm": "^4.6.6",
-    "typescript": "^5.9.3"
+    "@eslint/compat": "2.0.3",
+    "@eslint/eslintrc": "3.3.5",
+    "@eslint/js": "9.39.3",
+    "@react-native/babel-preset": "0.81.6",
+    "@react-native/eslint-config": "0.81.6",
+    "@release-it/keep-a-changelog": "7.0.1",
+    "@types/jest": "30.0.0",
+    "@types/react": "19.1.17",
+    "del-cli": "7.0.0",
+    "eslint": "9.39.3",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-prettier": "5.5.5",
+    "jest": "30.2.0",
+    "prettier": "3.8.1",
+    "react": "19.1.4",
+    "react-native": "0.81.6",
+    "react-native-builder-bob": "0.40.18",
+    "release-it": "19.2.4",
+    "release-it-pnpm": "4.6.6",
+    "turbo": "2.8.14",
+    "typescript": "5.9.3"
   },
   "peerDependencies": {
     "react": "*",
@@ -104,35 +109,6 @@
       "release-it-pnpm": {}
     }
   },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@react-native",
-      "prettier"
-    ],
-    "plugins": [
-      "prettier"
-    ],
-    "rules": {
-      "react/react-in-jsx-scope": "off",
-      "prettier/prettier": [
-        "error",
-        {
-          "quoteProps": "consistent",
-          "singleQuote": true,
-          "tabWidth": 2,
-          "trailingComma": "es5",
-          "useTabs": false,
-          "endOfLine": "auto"
-        }
-      ]
-    }
-  },
-  "eslintIgnore": [
-    "node_modules/",
-    "coverage/",
-    "lib/"
-  ],
   "prettier": {
     "quoteProps": "consistent",
     "singleQuote": true,
@@ -168,9 +144,14 @@
     }
   },
   "create-react-native-library": {
-    "type": "module-mixed",
+    "type": "turbo-module",
     "languages": "kotlin-objc",
-    "version": "0.38.1"
+    "tools": [
+      "jest",
+      "release-it",
+      "eslint"
+    ],
+    "version": "0.57.2"
   },
   "pnpm": {
     "patchedDependencies": {

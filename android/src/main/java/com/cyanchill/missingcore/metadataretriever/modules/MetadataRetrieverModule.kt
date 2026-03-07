@@ -1,12 +1,5 @@
 package com.cyanchill.missingcore.metadataretriever.modules
 
-import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.Promise
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.ReadableArray
-import com.facebook.react.bridge.ReadableMap
-
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import androidx.annotation.OptIn
@@ -17,22 +10,25 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Metadata
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.inspector.MetadataRetriever
-import java.util.concurrent.ExecutionException
-
-import com.cyanchill.missingcore.metadataretriever.MetadataRetrieverSpec
+import com.cyanchill.missingcore.metadataretriever.NativeMetadataRetrieverSpec
 import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
 import com.cyanchill.missingcore.metadataretriever.models.BridgeReturnables.*
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReadableArray
+import com.facebook.react.bridge.ReadableMap
+import java.util.concurrent.ExecutionException
 
 @OptIn(UnstableApi::class)
-class MetadataRetrieverModule internal constructor(reactContext: ReactApplicationContext) :
-  MetadataRetrieverSpec(reactContext) {
+class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
+  NativeMetadataRetrieverSpec(reactContext) {
   private val context = reactContext
 
   private var reader = MetadataReader(reactContext)
 
-  @ReactMethod
   override fun getBulkMetadata(uris: ReadableArray, options: ReadableArray, promise: Promise) {
     val uriList = Arguments.toList(uris) as List<String>
     val optionsList = Arguments.toList(options) as List<String>
@@ -165,7 +161,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
    *
    * Either returns the URI to the saved artwork or a base64 image string.
    */
-  @ReactMethod
   override fun getArtwork(uri: String, options: ReadableMap, promise: Promise) {
     val artworkOptions = ArtworkOptions(options)
     val asBase64 = artworkOptions.asBase64
@@ -242,7 +237,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   }
 
   /** Expose to the user the ability to update internal configuration options. */
-  @ReactMethod
   override fun updateConfigs(options: ReadableMap, promise: Promise) {
     reader.updateConfigs(Arguments.toBundle(options) as Bundle)
     promise.resolve(null)
@@ -286,8 +280,6 @@ class MetadataRetrieverModule internal constructor(reactContext: ReactApplicatio
   //#endregion
 
   companion object {
-    const val NAME = "MetadataRetriever"
+    const val NAME = NativeMetadataRetrieverSpec.NAME
   }
-
-  override fun getName(): String = NAME
 }

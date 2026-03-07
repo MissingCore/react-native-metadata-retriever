@@ -24,7 +24,9 @@ async function getTracksWithBase64Artwork() {
 
   const audioFiles = await getAudioFiles();
   console.log(
-    `Got list of audio files in ${((performance.now() - start) / 1000).toFixed(4)}s.`
+    `Got list of audio files in ${((performance.now() - start) / 1000).toFixed(
+      4
+    )}s.`
   );
 
   const assetURIMap = Object.fromEntries(
@@ -40,7 +42,10 @@ async function getTracksWithBase64Artwork() {
     return { id, filename, ...data };
   });
   console.log(
-    `Got metadata of ${audioFiles.length} tracks in ${((performance.now() - start) / 1000).toFixed(4)}s.`
+    `Got metadata of ${audioFiles.length} tracks in ${(
+      (performance.now() - start) /
+      1000
+    ).toFixed(4)}s.`
   );
   console.log('Errors:', results.errors);
 

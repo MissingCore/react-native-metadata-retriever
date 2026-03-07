@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { Platform } from 'react-native';
 
 import type { Spec } from './NativeMetadataRetriever';
 
@@ -11,12 +11,7 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-// @ts-expect-error
-const isTurboModuleEnabled = global.__turboModuleProxy != null;
-
-const MetadataRetrieverModule = isTurboModuleEnabled
-  ? require('./NativeMetadataRetriever').default
-  : NativeModules.MetadataRetriever;
+const MetadataRetrieverModule = require('./NativeMetadataRetriever').default;
 
 const MetadataRetriever = MetadataRetrieverModule
   ? MetadataRetrieverModule

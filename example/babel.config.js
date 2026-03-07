@@ -1,18 +1,16 @@
-const path = require('node:path');
-const pak = require('../package.json');
+const path = require('path');
+const { getConfig } = require('react-native-builder-bob/babel-config');
+const pkg = require('../package.json');
 
-module.exports = {
-  presets: ['babel-preset-expo'],
-  plugins: [
-    [
-      'module-resolver',
-      {
-        extensions: ['.tsx', '.ts', '.js', '.json'],
-        alias: {
-          // For development, we want to alias the library to the source
-          [pak.name]: path.join(__dirname, '..', pak.source),
-        },
-      },
-    ],
-  ],
+const root = path.resolve(__dirname, '..');
+
+module.exports = function (api) {
+  api.cache(true);
+
+  return getConfig(
+    {
+      presets: ['babel-preset-expo'],
+    },
+    { root, pkg }
+  );
 };
