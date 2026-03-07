@@ -14,7 +14,7 @@ import type {
 
 /** Get the metadata from multiple uris. */
 export async function getBulkMetadata<
-  TOptions extends MediaMetadataPublicFields
+  TOptions extends MediaMetadataPublicFields,
 >(uris: string[], options: TOptions) {
   return MetadataRetriever.getBulkMetadata(
     uris,
