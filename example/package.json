@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@missingcore/react-native-metadata-retriever": "workspace:*",
-    "@shopify/flash-list": "^2.2.0",
-    "@tanstack/react-query": "^5.90.11",
+    "@shopify/flash-list": "2.3.0",
+    "@tanstack/react-query": "5.90.21",
     "expo": "54.0.33",
     "expo-image": "3.0.11",
     "expo-media-library": "18.2.1",
