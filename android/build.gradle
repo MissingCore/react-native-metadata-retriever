@@ -72,7 +72,6 @@ dependencies {
   def media3_version = "1.9.1-MissingCore.2"
 
   implementation "com.facebook.react:react-android"
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
   implementation "com.github.MissingCore.media:media3-common:$media3_version"
   implementation "com.github.MissingCore.media:media3-inspector:$media3_version"
