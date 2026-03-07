@@ -157,7 +157,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
   /**
    * Get artwork of audio file from its uri. Unlike getting the artwork from `getMetadata()`, whose
    * artwork is based on the last `artworkData` found, `getArtwork()` returns the artwork designated
-   * as "Cover (front)" and falls back to "Other".
+   * as "Cover (front)" and falls back to the first image found.
    *
    * Either returns the URI to the saved artwork or a base64 image string.
    */
@@ -168,11 +168,9 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
     try {
       val metadataList = getMetadataList(getFormatList(uri))
 
-      // We'll want to return the image designated as "Cover (front)", otherwise return image for
-      // "32x32 pixels 'file icon' (PNG only)" or "Other".
+      // We'll want to return the image designated as "Cover (front)", otherwise return first image found.
       var coverImage: Any? = null
       var backupImage: Any? = null
-      var backupImageCode: Int? = null
 
       // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
       if (metadataList.isEmpty()) {
@@ -188,28 +186,15 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
           .build()
 
         when (mediaMetadata.artworkDataType) {
-          // "Other" Picture Type
-          MediaMetadata.PICTURE_TYPE_OTHER,
-          // Sometimes "Other" Picture Type is set to `-1` (encountered with a `.flac` file)
-          -1 -> {
-            if (backupImage == null || backupImageCode == 1) {
-              val newImg = if (asBase64) reader.getBase64Image(mediaMetadata.artworkData) else mediaMetadata.artworkData
-              if (newImg !== null) {
-                backupImage = newImg
-                backupImageCode = 3
-              }
-            }
-          }
-          // "32x32 pixels 'file icon' (PNG only)" Picture Type
-          MediaMetadata.PICTURE_TYPE_FILE_ICON -> {
-            if (backupImage == null) {
-              backupImage = if (asBase64) reader.getBase64Image(mediaMetadata.artworkData) else mediaMetadata.artworkData
-              backupImageCode = 1
-            }
-          }
           // "Cover (front)" Picture Type
           MediaMetadata.PICTURE_TYPE_FRONT_COVER -> {
             coverImage = if (asBase64) reader.getBase64Image(mediaMetadata.artworkData) else mediaMetadata.artworkData
+          }
+          // Fallback to 1st image found.
+          else -> {
+            if (backupImage == null) {
+              backupImage = if (asBase64) reader.getBase64Image(mediaMetadata.artworkData) else mediaMetadata.artworkData
+            }
           }
         }
 

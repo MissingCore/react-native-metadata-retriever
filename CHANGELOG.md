@@ -10,6 +10,13 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### ❗ Breaking Changes
 
 - Drop support for Old Architecture.
+- Changed strategy for the kind of image returned by `getArtwork()`.
+  - Before, the priority was: `Cover (front)`, `Other`, and `32x32 pixels 'file icon' (PNG only)`.
+  - Now, the priority is: `Cover (front)`, "The first image found".
+
+### 🛠️ Fixes
+
+- Artwork not found for `.mp4` file.
 
 ### ⚙️ Internal Changes
 
