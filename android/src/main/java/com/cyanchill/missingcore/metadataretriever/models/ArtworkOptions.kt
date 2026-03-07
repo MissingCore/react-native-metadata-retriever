@@ -1,11 +1,10 @@
 package com.cyanchill.missingcore.metadataretriever.models
 
-import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.ReadableMap
-
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.ReadableMap
 
 class ArtworkOptions(options: ReadableMap) {
   /** If we want to return the artwork as a base64 string. */

@@ -22,7 +22,6 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import java.util.concurrent.ExecutionException
 
-
 @OptIn(UnstableApi::class)
 class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
   NativeMetadataRetrieverSpec(reactContext) {
