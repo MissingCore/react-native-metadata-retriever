@@ -10,7 +10,7 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Metadata
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.inspector.MetadataRetriever
-import com.cyanchill.missingcore.metadataretriever.NativeMusicGlyphToysSpec
+import com.cyanchill.missingcore.metadataretriever.NativeMetadataRetrieverSpec
 import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
 import com.cyanchill.missingcore.metadataretriever.models.BridgeReturnables.*
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException
 
 @OptIn(UnstableApi::class)
 class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
-  NativeMusicGlyphToysSpec(reactContext) {
+  NativeMetadataRetrieverSpec(reactContext) {
   private val context = reactContext
 
   private var reader = MetadataReader(reactContext)
@@ -281,6 +281,6 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
   //#endregion
 
   companion object {
-    const val NAME = NativeMusicGlyphToysSpec.NAME
+    const val NAME = NativeMetadataRetrieverSpec.NAME
   }
 }
