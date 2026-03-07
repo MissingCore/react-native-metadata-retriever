@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ❗ Breaking Changes
+
+- Drop support for Old Architecture.
+
 ### ⚙️ Internal Changes
 
 - Rewrite app to use Turbo Native Modules.
