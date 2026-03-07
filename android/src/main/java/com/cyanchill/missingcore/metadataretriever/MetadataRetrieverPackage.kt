@@ -1,13 +1,11 @@
 package com.cyanchill.missingcore.metadataretriever
 
-import com.facebook.react.BaseReactPackage
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.NativeModule
-import com.facebook.react.module.model.ReactModuleInfoProvider
-import com.facebook.react.module.model.ReactModuleInfo
-import java.util.HashMap
-
 import com.cyanchill.missingcore.metadataretriever.modules.MetadataRetrieverModule
+import com.facebook.react.BaseReactPackage
+import com.facebook.react.bridge.NativeModule
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.module.model.ReactModuleInfo
+import com.facebook.react.module.model.ReactModuleInfoProvider
 
 class MetadataRetrieverPackage : BaseReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
@@ -18,19 +16,16 @@ class MetadataRetrieverPackage : BaseReactPackage() {
     }
   }
 
-  override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
-    return ReactModuleInfoProvider {
-      val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
-      val isTurboModule: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-      moduleInfos[MetadataRetrieverModule.NAME] = ReactModuleInfo(
-        MetadataRetrieverModule.NAME,
-        MetadataRetrieverModule.NAME,
-        false,  // canOverrideExistingModule
-        false,  // needsEagerInit
-        false,  // isCxxModule
-        isTurboModule // isTurboModule
+  override fun getReactModuleInfoProvider() = ReactModuleInfoProvider {
+    mapOf(
+      MetadataRetrieverModule.NAME to ReactModuleInfo(
+        name = MetadataRetrieverModule.NAME,
+        className = MetadataRetrieverModule.NAME,
+        canOverrideExistingModule = false,
+        needsEagerInit = false,
+        isCxxModule = false,
+        isTurboModule = true
       )
-      moduleInfos
-    }
+    )
   }
 }
