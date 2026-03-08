@@ -17,6 +17,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### 🛠️ Fixes
 
 - Artwork not found for `.mp4` file.
+  - `MediaMetadataRetriever` does find the artwork via the `embeddedPicture` accessor while the process involving `MetatdataRetriever` doesn't.
+  - ❗ **This fix is only applied to `getArtwork()`.** ❗
 
 ### ⚙️ Internal Changes
 

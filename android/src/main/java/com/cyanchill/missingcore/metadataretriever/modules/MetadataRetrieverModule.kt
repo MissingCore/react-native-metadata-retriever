@@ -172,8 +172,12 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
       var coverImage: Any? = null
       var backupImage: Any? = null
 
-      // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever`.
-      if (metadataList.isEmpty()) {
+      val isFLAC = uri.endsWith(".flac") || uri.endsWith(".m4a") || uri.endsWith(".mp4")
+
+      // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever` or with
+      // flac/mp4/m4a files due to artwork not being parsed correctly.
+      //  - https://github.com/MissingCore/Music/issues/432
+      if (metadataList.isEmpty() || isFLAC) {
         val mmrMetadata = MediaMetadataRetriever()
         mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
         coverImage = if (asBase64) reader.getBase64Image(mmrMetadata.embeddedPicture) else mmrMetadata.embeddedPicture
