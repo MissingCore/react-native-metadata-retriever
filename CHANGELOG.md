@@ -28,6 +28,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - Rewrite app to use Turbo Native Modules.
 - Bump CI action versions to use Node 24.
+- Upgrade example app to Expo SDK 55 / RN 0.83.
 
 ## [2.5.0] - 2026-02-04
 
