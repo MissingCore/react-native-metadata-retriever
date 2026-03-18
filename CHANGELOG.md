@@ -14,6 +14,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
   - Before, the priority was: `Cover (front)`, `Other`, and `32x32 pixels 'file icon' (PNG only)`.
   - Now, the priority is: `Cover (front)`, "The first image found".
 
+### ⚡ Changes
+
+- Bumped AndroidX media3 to `1.9.3` from `1.9.1`.
+
 ### 🛠️ Fixes
 
 - Artwork not found for `.mp4` file.
