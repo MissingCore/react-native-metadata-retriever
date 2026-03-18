@@ -1,6 +1,6 @@
 {
   "name": "@missingcore/react-native-metadata-retriever",
-  "version": "2.5.0",
+  "version": "3.0.0-beta.1",
   "description": "React Native wrapper for Android's unstable `MetadataRetriever` API.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",

@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [3.0.0-beta.1] - 2026-03-18
+
 ### ❗ Breaking Changes
 
 - Drop support for Old Architecture.
@@ -363,7 +365,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.5.0...HEAD
+[Unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.0.0-beta.1...HEAD
+[3.0.0-beta.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.5.0...v3.0.0-beta.1
 [2.5.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.2.1...v2.3.0
