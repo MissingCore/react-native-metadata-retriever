@@ -23,6 +23,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### ⚙️ Internal Changes
 
 - Rewrite app to use Turbo Native Modules.
+- Bump CI action versions to use Node 24.
 
 ## [2.5.0] - 2026-02-04
 
