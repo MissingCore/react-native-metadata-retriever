@@ -45,6 +45,8 @@ export interface Spec extends TurboModule {
     options: ArtworkOptions & { base64?: boolean }
   ): Promise<string | null>;
 
+  getLyric(uri: string): Promise<string | null>;
+
   updateConfigs(options: ConfigOptions): Promise<void>;
 }
 

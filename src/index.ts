@@ -12,6 +12,7 @@ import type {
   MediaMetadataPublicFields,
 } from './types/MediaMetadataPublicField';
 
+//#region Get Metadata
 /** Get the metadata from multiple uris. */
 export async function getBulkMetadata<
   TOptions extends MediaMetadataPublicFields,
@@ -39,7 +40,9 @@ export async function getMetadata<TOptions extends MediaMetadataPublicFields>(
   }
   return result.results[0]!.data;
 }
+//#endregion
 
+//#region Get Artwork
 /**
  * Returns a base64 string representing the embedded artwork.
  * - Defaults to returning up to `5 MB` of data.
@@ -58,11 +61,21 @@ export async function saveArtwork(
 ): Promise<string | null> {
   return MetadataRetriever.getArtwork(uri, options ?? {});
 }
+//#endregion
 
+//#region Get Lyric
+/** Attempts to return the embedded lyrics. */
+export async function getLyric(uri: string): Promise<string | null> {
+  return MetadataRetriever.getLyric(uri);
+}
+//#endregion
+
+//#region Configuration
 /** Update internal configuration options. */
 export async function updateConfigs(options: ConfigOptions): Promise<void> {
   return MetadataRetriever.updateConfigs(options);
 }
+//#endregion
 
 export {
   type ArtworkOptions,
