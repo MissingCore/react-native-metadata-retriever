@@ -225,6 +225,42 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  /** Returns embedded lyrics in supported "lyrics" tags. Prefers returning synchronized lyrics. */
+  override fun getLyric(uri: String, promise: Promise) {
+    try {
+      val metadataList = getMetadataList(getFormatList(uri))
+
+      var syncLyrics: String? = null
+      var unsyncLyrics: String? = null
+
+      for (metadata in metadataList) {
+        val numEntries = metadata.length()
+        // Manually iterate over metadata entries to find a supported key.
+        for (i in 0 until numEntries) {
+          val metadataEntry = metadata[i].toString()
+
+          if (metadataEntry.contains(VORBIS_LYRICS_TAG)) {
+            syncLyrics = metadataEntry.split(VORBIS_LYRICS_TAG)[1]
+          }
+
+          if (syncLyrics !== null) break
+        }
+      }
+
+      promise.resolve(syncLyrics ?: unsyncLyrics)
+    } catch (e: ExecutionException) {
+      val isWantedException =
+        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
+          ?: false
+      when (isWantedException) {
+        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
+        false -> promise.reject("ERR_LYRIC", e.message, e)
+      }
+    } catch (e: Exception) {
+      promise.reject("ERR_LYRIC", e.message, e)
+    }
+  }
+
   /** Expose to the user the ability to update internal configuration options. */
   override fun updateConfigs(options: ReadableMap, promise: Promise) {
     reader.updateConfigs(Arguments.toBundle(options) as Bundle)
@@ -270,5 +306,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
 
   companion object {
     const val NAME = NativeMetadataRetrieverSpec.NAME
+
+    private const val VORBIS_LYRICS_TAG = "VC: LYRICS="
   }
 }
