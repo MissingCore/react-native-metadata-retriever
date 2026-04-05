@@ -241,6 +241,11 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
 
           if (metadataEntry.contains(VORBIS_LYRICS_TAG)) {
             syncLyrics = metadataEntry.split(VORBIS_LYRICS_TAG)[1]
+          } else if (metadataEntry.startsWith(ID3_LYRICS_UNSYNC_TAG)) {
+            // Lyrics are put inside `values=[]`.
+            unsyncLyrics = metadataEntry.split("values=[")[1].dropLast(1)
+          } else if (metadataEntry.startsWith(ID3_LYRICS_SYNC_TAG)) {
+            syncLyrics = metadataEntry.split("values=[")[1].dropLast(1)
           }
 
           if (syncLyrics !== null) break
@@ -307,6 +312,8 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
   companion object {
     const val NAME = NativeMetadataRetrieverSpec.NAME
 
+    private const val ID3_LYRICS_UNSYNC_TAG = "USLT:"
+    private const val ID3_LYRICS_SYNC_TAG = "SYLT:"
     private const val VORBIS_LYRICS_TAG = "VC: LYRICS="
   }
 }
