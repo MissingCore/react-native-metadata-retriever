@@ -23,7 +23,6 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
-import java.nio.charset.StandardCharsets
 import java.util.concurrent.ExecutionException
 
 @OptIn(UnstableApi::class)
@@ -250,9 +249,21 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
             (metadataEntry is TextInformationFrame || metadataEntry is BinaryFrame) &&
             metadataEntry.id.uppercase() in ID3v2_LYRIC_TAGS
           ) {
-            lyricsStr = when(metadataEntry) {
+            lyricsStr = when (metadataEntry) {
               is TextInformationFrame -> metadataEntry.values[0]
-              is BinaryFrame -> String(metadataEntry.data, StandardCharsets.UTF_8)
+              is BinaryFrame -> {
+                // The 1st byte in the array determines the encoding in ID3.
+                //  - Mp3Tag doesn't specify a Byte Order Mark if it's `1` (UTF-16), so we'll assume
+                //  it's UTF-16LE.
+                //  - Ref: https://mutagen-specs.readthedocs.io/en/latest/id3/id3v2.4.0-structure.html#id3v2-frame-overview
+                val encodingCharSet = when (metadataEntry.data[0].toString()) {
+                  "0" -> Charsets.ISO_8859_1
+                  "1" -> Charsets.UTF_16LE
+                  "2" -> Charsets.UTF_16BE
+                  else -> Charsets.UTF_8
+                }
+                String(metadataEntry.data, encodingCharSet)
+              }
               else -> null
             }
             isLyricsSync = metadataEntry.id.uppercase() === "SYLT"
