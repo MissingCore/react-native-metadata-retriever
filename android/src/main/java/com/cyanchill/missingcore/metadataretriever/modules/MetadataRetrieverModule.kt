@@ -284,6 +284,8 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
         }
       }
 
+      if (lyricsStr !== null) lyricsStr = lyricsStr.replace("\u0000", "")
+
       promise.resolve(lyricsStr)
     } catch (e: ExecutionException) {
       val isWantedException =

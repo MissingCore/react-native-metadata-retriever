@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### 🛠️ Fixes
+
+- Submitting string from `getLyric()` may not be completely saved to database due to unicode Null character (`\u0000`).
+
 ## [3.0.0-beta.2] - 2026-04-06
 
 ### 🎉 Added
