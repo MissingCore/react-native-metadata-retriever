@@ -254,8 +254,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
               is BinaryFrame -> {
                 val byteArr = metadataEntry.data
                 // The 1st byte in the array determines the encoding in ID3.
-                //  - Mp3Tag doesn't specify a Byte Order Mark if it's `1` (UTF-16), so we'll assume
-                //  it's UTF-16LE.
+                //  - Mp3Tag doesn't specify a Byte Order Mark if it's `1` (UTF-16), so we'll do a heuristic guess for what charset to use.
                 //  - Ref: https://mutagen-specs.readthedocs.io/en/latest/id3/id3v2.4.0-structure.html#id3v2-frame-overview
                 val encodingCharSet = when (byteArr[0].toString()) {
                   "0" -> Charsets.ISO_8859_1
