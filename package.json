@@ -74,7 +74,6 @@
     "react-native-builder-bob": "0.40.18",
     "release-it": "19.2.4",
     "release-it-pnpm": "4.6.6",
-    "turbo": "2.8.19",
     "typescript": "5.9.3"
   },
   "peerDependencies": {
