@@ -80,6 +80,14 @@ function getBulkMetadata<TOptions extends MediaMetadataPublicFields>(
 
 Get the metadata of multiple uris.
 
+### getLyric
+
+```ts
+function getLyric(uri: string): Promise<string | null>;
+```
+
+Attempts to return the embedded lyrics for a track.
+
 ### getMetadata
 
 ```ts

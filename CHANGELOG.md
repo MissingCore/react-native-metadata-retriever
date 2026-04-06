@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### 🎉 Added
+
+- New `getLyric()` function that attempts to return the embedded lyrics for a track.
+
 ## [3.0.0-beta.1] - 2026-03-18
 
 ### ❗ Breaking Changes

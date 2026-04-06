@@ -9,6 +9,9 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Metadata
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.extractor.metadata.id3.BinaryFrame
+import androidx.media3.extractor.metadata.id3.TextInformationFrame
+import androidx.media3.extractor.metadata.vorbis.VorbisComment
 import androidx.media3.inspector.MetadataRetriever
 import com.cyanchill.missingcore.metadataretriever.NativeMetadataRetrieverSpec
 import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
@@ -225,6 +228,77 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  /** Returns embedded lyrics in supported "lyrics" tags. Prefers returning synchronized lyrics. */
+  override fun getLyric(uri: String, promise: Promise) {
+    try {
+      val metadataList = getMetadataList(getFormatList(uri))
+
+      var lyricsStr: String? = null
+      var isLyricsSync = false
+
+      for (metadata in metadataList) {
+        val numEntries = metadata.length()
+        // Manually iterate over metadata entries to find a supported key.
+        for (i in 0 until numEntries) {
+          val metadataEntry = metadata[i]
+
+          if (metadataEntry is VorbisComment && metadataEntry.key.uppercase() == "LYRICS") {
+            lyricsStr = metadataEntry.value
+            isLyricsSync = true
+          } else if (
+            (metadataEntry is TextInformationFrame || metadataEntry is BinaryFrame) &&
+            metadataEntry.id.uppercase() in ID3v2_LYRIC_TAGS
+          ) {
+            lyricsStr = when (metadataEntry) {
+              is TextInformationFrame -> metadataEntry.values[0]
+              is BinaryFrame -> {
+                val byteArr = metadataEntry.data
+                // The 1st byte in the array determines the encoding in ID3.
+                //  - Mp3Tag doesn't specify a Byte Order Mark if it's `1` (UTF-16), so we'll assume
+                //  it's UTF-16LE.
+                //  - Ref: https://mutagen-specs.readthedocs.io/en/latest/id3/id3v2.4.0-structure.html#id3v2-frame-overview
+                val encodingCharSet = when (byteArr[0].toString()) {
+                  "0" -> Charsets.ISO_8859_1
+                  "1" -> {
+                    if (byteArr[1] == BYTE_0xFE && byteArr[2] == BYTE_0xFF) {
+                      Charsets.UTF_16BE
+                    } else if (byteArr[1] == BYTE_0xFF && byteArr[2] == BYTE_0xFE) {
+                      Charsets.UTF_16LE
+                    } else {
+                      // Heuristic guess of byte order using new line character.
+                      //  - If the conversion contains a newline character, that charset should be used.
+                      if (String(byteArr, Charsets.UTF_16LE).contains("\n")) Charsets.UTF_16LE
+                      else Charsets.UTF_16BE
+                    }
+                  }
+                  "2" -> Charsets.UTF_16BE
+                  else -> Charsets.UTF_8
+                }
+                String(byteArr, encodingCharSet)
+              }
+              else -> null
+            }
+            isLyricsSync = metadataEntry.id.uppercase() === "SYLT"
+          }
+
+          if (isLyricsSync) break
+        }
+      }
+
+      promise.resolve(lyricsStr)
+    } catch (e: ExecutionException) {
+      val isWantedException =
+        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
+          ?: false
+      when (isWantedException) {
+        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
+        false -> promise.reject("ERR_LYRIC", e.message, e)
+      }
+    } catch (e: Exception) {
+      promise.reject("ERR_LYRIC", e.message, e)
+    }
+  }
+
   /** Expose to the user the ability to update internal configuration options. */
   override fun updateConfigs(options: ReadableMap, promise: Promise) {
     reader.updateConfigs(Arguments.toBundle(options) as Bundle)
@@ -270,5 +344,10 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
 
   companion object {
     const val NAME = NativeMetadataRetrieverSpec.NAME
+
+    // We'll only support embedded lyrics in ID3v2.3+ tags.
+    private val ID3v2_LYRIC_TAGS = listOf("SYLT", "USLT")
+    private const val BYTE_0xFE = 0xFE.toByte()
+    private const val BYTE_0xFF = 0xFF.toByte()
   }
 }
