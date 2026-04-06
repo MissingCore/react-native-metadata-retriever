@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [3.0.0-beta.2] - 2026-04-06
+
 ### 🎉 Added
 
 - New `getLyric()` function that attempts to return the embedded lyrics for a track.
@@ -369,7 +371,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[Unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.0.0-beta.1...HEAD
+[Unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.0.0-beta.2...HEAD
+[3.0.0-beta.2]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.0.0-beta.1...v3.0.0-beta.2
 [3.0.0-beta.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.5.0...v3.0.0-beta.1
 [2.5.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v2.3.0...v2.4.0
