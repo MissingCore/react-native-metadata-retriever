@@ -9,6 +9,9 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Metadata
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.extractor.metadata.id3.BinaryFrame
+import androidx.media3.extractor.metadata.id3.TextInformationFrame
+import androidx.media3.extractor.metadata.vorbis.VorbisComment
 import androidx.media3.inspector.MetadataRetriever
 import com.cyanchill.missingcore.metadataretriever.NativeMetadataRetrieverSpec
 import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
@@ -20,6 +23,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
+import java.nio.charset.StandardCharsets
 import java.util.concurrent.ExecutionException
 
 @OptIn(UnstableApi::class)
@@ -230,29 +234,35 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
     try {
       val metadataList = getMetadataList(getFormatList(uri))
 
-      var syncLyrics: String? = null
-      var unsyncLyrics: String? = null
+      var lyricsStr: String? = null
+      var isLyricsSync = false
 
       for (metadata in metadataList) {
         val numEntries = metadata.length()
         // Manually iterate over metadata entries to find a supported key.
         for (i in 0 until numEntries) {
-          val metadataEntry = metadata[i].toString()
+          val metadataEntry = metadata[i]
 
-          if (metadataEntry.contains(VORBIS_LYRICS_TAG)) {
-            syncLyrics = metadataEntry.split(VORBIS_LYRICS_TAG)[1]
-          } else if (metadataEntry.startsWith(ID3_LYRICS_UNSYNC_TAG)) {
-            // Lyrics are put inside `values=[]`.
-            unsyncLyrics = metadataEntry.split("values=[")[1].dropLast(1)
-          } else if (metadataEntry.startsWith(ID3_LYRICS_SYNC_TAG)) {
-            syncLyrics = metadataEntry.split("values=[")[1].dropLast(1)
+          if (metadataEntry is VorbisComment && metadataEntry.key.uppercase() == "LYRICS") {
+            lyricsStr = metadataEntry.value
+            isLyricsSync = true
+          } else if (
+            (metadataEntry is TextInformationFrame || metadataEntry is BinaryFrame) &&
+            metadataEntry.id.uppercase() in ID3v2_LYRIC_TAGS
+          ) {
+            lyricsStr = when(metadataEntry) {
+              is TextInformationFrame -> metadataEntry.values[0]
+              is BinaryFrame -> String(metadataEntry.data, StandardCharsets.UTF_8)
+              else -> null
+            }
+            isLyricsSync = metadataEntry.id.uppercase() === "SYLT"
           }
 
-          if (syncLyrics !== null) break
+          if (isLyricsSync) break
         }
       }
 
-      promise.resolve(syncLyrics ?: unsyncLyrics)
+      promise.resolve(lyricsStr)
     } catch (e: ExecutionException) {
       val isWantedException =
         e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
@@ -312,8 +322,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
   companion object {
     const val NAME = NativeMetadataRetrieverSpec.NAME
 
-    private const val ID3_LYRICS_UNSYNC_TAG = "USLT:"
-    private const val ID3_LYRICS_SYNC_TAG = "SYLT:"
-    private const val VORBIS_LYRICS_TAG = "VC: LYRICS="
+    // We'll only support embedded lyrics in ID3v2.3+ tags.
+    private val ID3v2_LYRIC_TAGS = listOf("SYLT", "USLT")
   }
 }
