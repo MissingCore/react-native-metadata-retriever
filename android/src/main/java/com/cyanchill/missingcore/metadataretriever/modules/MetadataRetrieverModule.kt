@@ -252,17 +252,29 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
             lyricsStr = when (metadataEntry) {
               is TextInformationFrame -> metadataEntry.values[0]
               is BinaryFrame -> {
+                val byteArr = metadataEntry.data
                 // The 1st byte in the array determines the encoding in ID3.
                 //  - Mp3Tag doesn't specify a Byte Order Mark if it's `1` (UTF-16), so we'll assume
                 //  it's UTF-16LE.
                 //  - Ref: https://mutagen-specs.readthedocs.io/en/latest/id3/id3v2.4.0-structure.html#id3v2-frame-overview
-                val encodingCharSet = when (metadataEntry.data[0].toString()) {
+                val encodingCharSet = when (byteArr[0].toString()) {
                   "0" -> Charsets.ISO_8859_1
-                  "1" -> Charsets.UTF_16LE
+                  "1" -> {
+                    if (byteArr[1] == BYTE_0xFE && byteArr[2] == BYTE_0xFF) {
+                      Charsets.UTF_16BE
+                    } else if (byteArr[1] == BYTE_0xFF && byteArr[2] == BYTE_0xFE) {
+                      Charsets.UTF_16LE
+                    } else {
+                      // Heuristic guess of byte order using new line character.
+                      //  - If the conversion contains a newline character, that charset should be used.
+                      if (String(byteArr, Charsets.UTF_16LE).contains("\n")) Charsets.UTF_16LE
+                      else Charsets.UTF_16BE
+                    }
+                  }
                   "2" -> Charsets.UTF_16BE
                   else -> Charsets.UTF_8
                 }
-                String(metadataEntry.data, encodingCharSet)
+                String(byteArr, encodingCharSet)
               }
               else -> null
             }
@@ -335,5 +347,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
 
     // We'll only support embedded lyrics in ID3v2.3+ tags.
     private val ID3v2_LYRIC_TAGS = listOf("SYLT", "USLT")
+    private const val BYTE_0xFE = 0xFE.toByte()
+    private const val BYTE_0xFF = 0xFF.toByte()
   }
 }
