@@ -83,5 +83,5 @@ android/generated
 nitrogen/
 
 # User files
-TODO.md
 coverage/
+.notes
