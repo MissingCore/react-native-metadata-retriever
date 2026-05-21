@@ -1,3 +1,8 @@
+# Ensure only packages released at least 1 day ago can be installed.
+minimumReleaseAge: 1440
+
+nodeLinker: "hoisted"
+
 packages:
   - 'example'
 
@@ -7,3 +12,9 @@ catalog:
   react: 19.2.0
   react-native: 0.83.6
   react-native-builder-bob: 0.41.0
+
+allowBuilds:
+  unrs-resolver: false
+
+patchedDependencies:
+  '@expo/cli': 'patches/@expo__cli.patch'

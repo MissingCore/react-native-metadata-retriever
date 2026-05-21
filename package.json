@@ -151,10 +151,5 @@
       "eslint"
     ],
     "version": "0.57.2"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "@expo/cli": "patches/@expo__cli.patch"
-    }
   }
 }
