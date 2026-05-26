@@ -1,4 +1,4 @@
-import * as MediaLibrary from 'expo-media-library';
+import * as MediaLibrary from 'expo-media-library/legacy';
 
 export async function getAudioFiles() {
   const { totalCount } = await MediaLibrary.getAssetsAsync({

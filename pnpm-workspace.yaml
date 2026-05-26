@@ -1,20 +1,18 @@
 # Ensure only packages released at least 1 day ago can be installed.
 minimumReleaseAge: 1440
 
-nodeLinker: "hoisted"
+nodeLinker: 'hoisted'
 
 packages:
   - 'example'
 
 catalog:
-  '@react-native/babel-preset': 0.83.6
-  '@react-native/eslint-config': 0.83.6
-  react: 19.2.0
-  react-native: 0.83.6
+  '@react-native/babel-preset': 0.85.3
+  '@react-native/eslint-config': 0.85.3
+  react: 19.2.3
+  react-native: 0.85.3
   react-native-builder-bob: 0.41.0
 
 allowBuilds:
+  msgpackr-extract: false
   unrs-resolver: false
-
-patchedDependencies:
-  '@expo/cli': 'patches/@expo__cli.patch'
