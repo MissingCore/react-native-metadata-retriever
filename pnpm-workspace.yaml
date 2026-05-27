@@ -9,6 +9,7 @@ packages:
 catalog:
   '@react-native/babel-preset': 0.85.3
   '@react-native/eslint-config': 0.85.3
+  '@react-native/jest-preset': 0.85.3
   react: 19.2.3
   react-native: 0.85.3
   react-native-builder-bob: 0.41.0
