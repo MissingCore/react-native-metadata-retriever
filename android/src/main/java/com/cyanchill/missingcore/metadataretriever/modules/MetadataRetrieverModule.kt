@@ -306,6 +306,34 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
     promise.resolve(null)
   }
 
+  override fun debugEmbeddedTags(uri: String, promise: Promise) {
+    val returnObj = Arguments.createMap()
+    val formatStrArr = Arguments.createArray()
+    val metadataStrArr = Arguments.createArray()
+
+    try {
+      val formatList = getFormatList(uri)
+      formatList.forEach { item -> formatStrArr.pushString(item.toString()) }
+
+      val metadataList = getMetadataList(formatList)
+      metadataList.forEach { item -> metadataStrArr.pushString(item.toString()) }
+
+      returnObj.putArray("format", formatStrArr)
+      returnObj.putArray("metadata", metadataStrArr)
+      promise.resolve(returnObj)
+    } catch (e: ExecutionException) {
+      val isWantedException =
+        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
+          ?: false
+      when (isWantedException) {
+        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
+        false -> promise.reject("ERR_DEBUG", e.message, e)
+      }
+    } catch (e: Exception) {
+      promise.reject("ERR_DEBUG", e.message, e)
+    }
+  }
+
   //#region [Internal Helpers]
   /**
    * Returns a list of `Format` from an uri.

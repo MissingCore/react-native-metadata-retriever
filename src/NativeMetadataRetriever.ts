@@ -32,6 +32,21 @@ type ConfigOptions = {
    */
   maxImageSizeMB?: number | null;
 };
+
+type DebugInfo = {
+  /**
+   * Result of `Format.toString()`.
+   *
+   * @see https://developer.android.com/reference/androidx/media3/common/Format
+   */
+  format: string[];
+  /**
+   * Result of `Metadata.toString()`.
+   *
+   * @see https://developer.android.com/reference/androidx/media3/common/Metadata
+   */
+  metadata: string[];
+};
 //#endregion
 
 export interface Spec extends TurboModule {
@@ -48,6 +63,12 @@ export interface Spec extends TurboModule {
   getLyric(uri: string): Promise<string | null>;
 
   updateConfigs(options: ConfigOptions): Promise<void>;
+
+  /**
+   * @deprecated For debugging purposes. Returns an object containing
+   * the stringified `Format` & `Metadata` associated with the file.
+   */
+  debugEmbeddedTags(uri: string): Promise<DebugInfo>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('MetadataRetriever');

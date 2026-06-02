@@ -77,6 +77,16 @@ export async function updateConfigs(options: ConfigOptions): Promise<void> {
 }
 //#endregion
 
+//#region Debug Helpers
+/**
+ * @deprecated For debugging purposes. Returns an object containing
+ * the stringified `Format` & `Metadata` associated with the file.
+ */
+export async function debugEmbeddedTags(uri: string) {
+  return MetadataRetriever.debugEmbeddedTags(uri);
+}
+//#endregion
+
 export {
   type ArtworkOptions,
   type BulkMetadata,
