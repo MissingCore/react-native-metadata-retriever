@@ -70,6 +70,13 @@ export async function getLyric(uri: string): Promise<string | null> {
 }
 //#endregion
 
+//#region Replay Gain
+/** Returns the replay gain for the track. */
+export async function getR128Gain(uri: string): Promise<number | null> {
+  return MetadataRetriever.getR128Gain(uri);
+}
+//#endregion
+
 //#region Configuration
 /** Update internal configuration options. */
 export async function updateConfigs(options: ConfigOptions): Promise<void> {
