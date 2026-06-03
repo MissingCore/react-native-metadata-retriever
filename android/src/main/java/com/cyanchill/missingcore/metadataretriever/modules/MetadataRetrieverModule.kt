@@ -9,16 +9,15 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Metadata
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.extractor.metadata.id3.BinaryFrame
-import androidx.media3.extractor.metadata.id3.TextInformationFrame
-import androidx.media3.extractor.metadata.vorbis.VorbisComment
 import androidx.media3.inspector.MetadataRetriever
 import com.cyanchill.missingcore.metadataretriever.NativeMetadataRetrieverSpec
 import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
 import com.cyanchill.missingcore.metadataretriever.models.BridgeReturnables.*
+import com.cyanchill.missingcore.metadataretriever.utils.LyricsParser
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
 import com.cyanchill.missingcore.metadataretriever.utils.ReplayGainParser
+import com.cyanchill.missingcore.metadataretriever.utils.safeExecuteOnURI
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -169,7 +168,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
     val artworkOptions = ArtworkOptions(options)
     val asBase64 = artworkOptions.asBase64
 
-    try {
+    safeExecuteOnURI(uri, "ERR_ARTWORK", promise) {
       val metadataList = getMetadataList(getFormatList(uri))
 
       // We'll want to return the image designated as "Cover (front)", otherwise return first image found.
@@ -216,95 +215,35 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
         val imgUri = (coverImage ?: backupImage)?.let { reader.saveImage(it as ByteArray, artworkOptions) }
         promise.resolve(imgUri)
       }
-    } catch (e: ExecutionException) {
-      val isWantedException =
-        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
-          ?: false
-      when (isWantedException) {
-        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
-        false -> promise.reject("ERR_ARTWORK", e.message, e)
-      }
-    } catch (e: Exception) {
-      promise.reject("ERR_ARTWORK", e.message, e)
     }
   }
 
   /** Returns embedded lyrics in supported "lyrics" tags. Prefers returning synchronized lyrics. */
   override fun getLyric(uri: String, promise: Promise) {
-    try {
+    safeExecuteOnURI(uri, "ERR_LYRIC", promise) {
       val metadataList = getMetadataList(getFormatList(uri))
-
-      var lyricsStr: String? = null
-      var isLyricsSync = false
+      var parsedLyrics: LyricsParser? = null
 
       for (metadata in metadataList) {
         val numEntries = metadata.length()
         // Manually iterate over metadata entries to find a supported key.
         for (i in 0 until numEntries) {
-          val metadataEntry = metadata[i]
-
-          if (metadataEntry is VorbisComment && metadataEntry.key.uppercase() == "LYRICS") {
-            lyricsStr = metadataEntry.value
-            isLyricsSync = true
-          } else if (
-            (metadataEntry is TextInformationFrame || metadataEntry is BinaryFrame) &&
-            metadataEntry.id.uppercase() in ID3v2_LYRIC_TAGS
-          ) {
-            lyricsStr = when (metadataEntry) {
-              is TextInformationFrame -> metadataEntry.values.firstOrNull()
-              is BinaryFrame -> {
-                val byteArr = metadataEntry.data
-                // The 1st byte in the array determines the encoding in ID3.
-                //  - Mp3Tag doesn't specify a Byte Order Mark if it's `1` (UTF-16), so we'll do a heuristic guess for what charset to use.
-                //  - Ref: https://mutagen-specs.readthedocs.io/en/latest/id3/id3v2.4.0-structure.html#id3v2-frame-overview
-                val encodingCharSet = when (byteArr[0].toString()) {
-                  "0" -> Charsets.ISO_8859_1
-                  "1" -> {
-                    if (byteArr[1] == BYTE_0xFE && byteArr[2] == BYTE_0xFF) {
-                      Charsets.UTF_16BE
-                    } else if (byteArr[1] == BYTE_0xFF && byteArr[2] == BYTE_0xFE) {
-                      Charsets.UTF_16LE
-                    } else {
-                      // Heuristic guess of byte order using new line character.
-                      //  - If the conversion contains a newline character, that charset should be used.
-                      if (String(byteArr, Charsets.UTF_16LE).contains("\n")) Charsets.UTF_16LE
-                      else Charsets.UTF_16BE
-                    }
-                  }
-                  "2" -> Charsets.UTF_16BE
-                  else -> Charsets.UTF_8
-                }
-                String(byteArr, encodingCharSet)
-              }
-              else -> null
-            }
-            isLyricsSync = metadataEntry.id.uppercase() === "SYLT"
+          val lyricsCandidate = LyricsParser(metadata[i])
+          if (lyricsCandidate.lyrics != null) {
+            parsedLyrics = lyricsCandidate
+            if (parsedLyrics.isSync) break
           }
-
-          if (isLyricsSync) break
         }
 
-        if (isLyricsSync) break
+        if (parsedLyrics?.isSync == true) break
       }
 
-      if (lyricsStr !== null) lyricsStr = lyricsStr.replace("\u0000", "")
-
-      promise.resolve(lyricsStr)
-    } catch (e: ExecutionException) {
-      val isWantedException =
-        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
-          ?: false
-      when (isWantedException) {
-        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
-        false -> promise.reject("ERR_LYRIC", e.message, e)
-      }
-    } catch (e: Exception) {
-      promise.reject("ERR_LYRIC", e.message, e)
+      promise.resolve(parsedLyrics?.lyrics)
     }
   }
 
   override fun getR128Gain(uri: String, promise: Promise) {
-    try {
+    safeExecuteOnURI(uri, "ERR_REPLAY_GAIN", promise) {
       val metadataList = getMetadataList(getFormatList(uri))
       var gain: Float? = null
 
@@ -320,16 +259,6 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
       }
 
       promise.resolve(gain)
-    } catch (e: ExecutionException) {
-      val isWantedException =
-        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
-          ?: false
-      when (isWantedException) {
-        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
-        false -> promise.reject("ERR_REPLAY_GAIN", e.message, e)
-      }
-    } catch (e: Exception) {
-      promise.reject("ERR_REPLAY_GAIN", e.message, e)
     }
   }
 
@@ -344,7 +273,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
     val formatStrArr = Arguments.createArray()
     val metadataStrArr = Arguments.createArray()
 
-    try {
+    safeExecuteOnURI(uri, "ERR_DEBUG", promise) {
       val formatList = getFormatList(uri)
       formatList.forEach { item -> formatStrArr.pushString(item.toString()) }
 
@@ -354,16 +283,6 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
       returnObj.putArray("format", formatStrArr)
       returnObj.putArray("metadata", metadataStrArr)
       promise.resolve(returnObj)
-    } catch (e: ExecutionException) {
-      val isWantedException =
-        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
-          ?: false
-      when (isWantedException) {
-        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
-        false -> promise.reject("ERR_DEBUG", e.message, e)
-      }
-    } catch (e: Exception) {
-      promise.reject("ERR_DEBUG", e.message, e)
     }
   }
 
@@ -406,10 +325,5 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
 
   companion object {
     const val NAME = NativeMetadataRetrieverSpec.NAME
-
-    // We'll only support embedded lyrics in ID3v2.3+ tags.
-    private val ID3v2_LYRIC_TAGS = listOf("SYLT", "USLT")
-    private const val BYTE_0xFE = 0xFE.toByte()
-    private const val BYTE_0xFF = 0xFF.toByte()
   }
 }
