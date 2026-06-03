@@ -251,7 +251,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
             metadataEntry.id.uppercase() in ID3v2_LYRIC_TAGS
           ) {
             lyricsStr = when (metadataEntry) {
-              is TextInformationFrame -> metadataEntry.values[0]
+              is TextInformationFrame -> metadataEntry.values.firstOrNull()
               is BinaryFrame -> {
                 val byteArr = metadataEntry.data
                 // The 1st byte in the array determines the encoding in ID3.
