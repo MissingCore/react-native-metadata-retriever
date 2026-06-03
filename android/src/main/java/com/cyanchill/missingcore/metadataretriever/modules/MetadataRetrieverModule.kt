@@ -17,6 +17,7 @@ import com.cyanchill.missingcore.metadataretriever.utils.LyricsParser
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
 import com.cyanchill.missingcore.metadataretriever.utils.ReplayGainParser
+import com.cyanchill.missingcore.metadataretriever.utils.safeExecuteOnURI
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -167,7 +168,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
     val artworkOptions = ArtworkOptions(options)
     val asBase64 = artworkOptions.asBase64
 
-    try {
+    safeExecuteOnURI(uri, "ERR_ARTWORK", promise) {
       val metadataList = getMetadataList(getFormatList(uri))
 
       // We'll want to return the image designated as "Cover (front)", otherwise return first image found.
@@ -214,22 +215,12 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
         val imgUri = (coverImage ?: backupImage)?.let { reader.saveImage(it as ByteArray, artworkOptions) }
         promise.resolve(imgUri)
       }
-    } catch (e: ExecutionException) {
-      val isWantedException =
-        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
-          ?: false
-      when (isWantedException) {
-        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
-        false -> promise.reject("ERR_ARTWORK", e.message, e)
-      }
-    } catch (e: Exception) {
-      promise.reject("ERR_ARTWORK", e.message, e)
     }
   }
 
   /** Returns embedded lyrics in supported "lyrics" tags. Prefers returning synchronized lyrics. */
   override fun getLyric(uri: String, promise: Promise) {
-    try {
+    safeExecuteOnURI(uri, "ERR_LYRIC", promise) {
       val metadataList = getMetadataList(getFormatList(uri))
       var parsedLyrics: LyricsParser? = null
 
@@ -248,21 +239,11 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
       }
 
       promise.resolve(parsedLyrics?.lyrics)
-    } catch (e: ExecutionException) {
-      val isWantedException =
-        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
-          ?: false
-      when (isWantedException) {
-        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
-        false -> promise.reject("ERR_LYRIC", e.message, e)
-      }
-    } catch (e: Exception) {
-      promise.reject("ERR_LYRIC", e.message, e)
     }
   }
 
   override fun getR128Gain(uri: String, promise: Promise) {
-    try {
+    safeExecuteOnURI(uri, "ERR_REPLAY_GAIN", promise) {
       val metadataList = getMetadataList(getFormatList(uri))
       var gain: Float? = null
 
@@ -278,16 +259,6 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
       }
 
       promise.resolve(gain)
-    } catch (e: ExecutionException) {
-      val isWantedException =
-        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
-          ?: false
-      when (isWantedException) {
-        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
-        false -> promise.reject("ERR_REPLAY_GAIN", e.message, e)
-      }
-    } catch (e: Exception) {
-      promise.reject("ERR_REPLAY_GAIN", e.message, e)
     }
   }
 
@@ -302,7 +273,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
     val formatStrArr = Arguments.createArray()
     val metadataStrArr = Arguments.createArray()
 
-    try {
+    safeExecuteOnURI(uri, "ERR_DEBUG", promise) {
       val formatList = getFormatList(uri)
       formatList.forEach { item -> formatStrArr.pushString(item.toString()) }
 
@@ -312,16 +283,6 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
       returnObj.putArray("format", formatStrArr)
       returnObj.putArray("metadata", metadataStrArr)
       promise.resolve(returnObj)
-    } catch (e: ExecutionException) {
-      val isWantedException =
-        e.message?.contains("androidx.media3.datasource.FileDataSource\$FileDataSourceException")
-          ?: false
-      when (isWantedException) {
-        true -> promise.reject("ENOENT", "ENOENT: No such file or directory (${uri})", e)
-        false -> promise.reject("ERR_DEBUG", e.message, e)
-      }
-    } catch (e: Exception) {
-      promise.reject("ERR_DEBUG", e.message, e)
     }
   }
 
