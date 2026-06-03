@@ -57,13 +57,7 @@ class LyricsParser(entry: Metadata.Entry) {
       else -> Charsets.UTF_8
     }
 
-    // Skip encoding byte; also skip BOM if present for UTF-16 with BOM (encoding 1)
-    val skipBytes = when (byteArr[0].toString()) {
-      "1" -> if ((byteArr[1] == BYTE_0xFE && byteArr[2] == BYTE_0xFF) ||
-                 (byteArr[1] == BYTE_0xFF && byteArr[2] == BYTE_0xFE)) 3 else 1
-      else -> 1
-    }
-    lyrics = String(byteArr, skipBytes, byteArr.size - skipBytes, encodingCharSet)
+    lyrics = String(byteArr, encodingCharSet)
     isSync = tagName == "SYLT"
   }
 
