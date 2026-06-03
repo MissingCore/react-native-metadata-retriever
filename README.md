@@ -101,6 +101,14 @@ Returns the specified metadata of the provided uri based on the `options` argume
 
 > **Note:** The "complicated" typing is to make the resulting promise type-safe and be based off the provided `options`.
 
+### getR128Gain
+
+```ts
+function getR128Gain(uri: string): Promise<number | null>;
+```
+
+Attempts to return the track replay gain.
+
 ### saveArtwork
 
 ```ts

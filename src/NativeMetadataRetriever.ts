@@ -62,6 +62,8 @@ export interface Spec extends TurboModule {
 
   getLyric(uri: string): Promise<string | null>;
 
+  getR128Gain(uri: string): Promise<number | null>;
+
   updateConfigs(options: ConfigOptions): Promise<void>;
 
   /**
