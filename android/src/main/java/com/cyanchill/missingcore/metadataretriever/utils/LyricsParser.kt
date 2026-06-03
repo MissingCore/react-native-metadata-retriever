@@ -21,7 +21,7 @@ class LyricsParser(entry: Metadata.Entry) {
     }
 
     // Sanitize input
-    lyrics?.replace("\u0000", "")
+    lyrics = lyrics?.replace("\u0000", "")
   }
 
   private fun handleTextInformationFrame(frame: TextInformationFrame) {
