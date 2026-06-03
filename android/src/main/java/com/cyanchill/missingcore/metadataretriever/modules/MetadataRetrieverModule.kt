@@ -237,8 +237,11 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
         val numEntries = metadata.length()
         // Manually iterate over metadata entries to find a supported key.
         for (i in 0 until numEntries) {
-          parsedLyrics = LyricsParser(metadata[i])
-          if (parsedLyrics.isSync) break
+          val lyricsCandidate = LyricsParser(metadata[i])
+          if (lyricsCandidate.lyrics != null) {
+            parsedLyrics = lyricsCandidate
+            if (parsedLyrics.isSync) break
+          }
         }
 
         if (parsedLyrics?.isSync == true) break
