@@ -7,6 +7,16 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### 🎉 Added
+
+- New `getR128Gain()` function which returns the track replay gain value.
+  - We've validated `ReplayGain Xing/Info` & `REPLAYGAIN_TRACK_GAIN` in MP3 files.
+  - We also theoretically support `R128_TRACK_GAIN` in MP3 files. In addition, both `REPLAYGAIN_TRACK_GAIN` & `R128_TRACK_GAIN` should theoretically work with Vorbis Comments.
+
+### ⚙️ Internal Changes
+
+- New `debugEmbeddedTags()` function which returns the stringified [`Format`](https://developer.android.com/reference/androidx/media3/common/Format) & [`Metadata`](https://developer.android.com/reference/androidx/media3/common/Metadata) associated with the file.
+
 ## [3.1.0] - 2026-05-26
 
 ### ⚙️ Internal Changes
