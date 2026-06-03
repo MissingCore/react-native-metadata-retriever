@@ -283,6 +283,8 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
 
           if (isLyricsSync) break
         }
+
+        if (isLyricsSync) break
       }
 
       if (lyricsStr !== null) lyricsStr = lyricsStr.replace("\u0000", "")
@@ -313,6 +315,8 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
           gain = ReplayGainParser(metadata[i]).gain
           if (gain != null) break
         }
+        
+        if (gain != null) break
       }
 
       promise.resolve(gain)
