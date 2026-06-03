@@ -23,7 +23,9 @@ class ReplayGainParser(entry: Metadata.Entry) {
 
   private fun handleTextInformationFrame(frame: TextInformationFrame): Float? =
     when (frame.description?.uppercase()) {
-      in COMMON_REPLAY_GAIN_TAGS -> frame.values[0].parseReplayGainAdjustment()
+      "REPLAYGAIN_TRACK_GAIN" -> frame.values.firstOrNull()?.parseReplayGainAdjustment()
+      //? R128 gain needs to be divided by `256f`.
+      "R128_TRACK_GAIN" -> frame.values.firstOrNull()?.parseReplayGainAdjustment()?.div(256f)
       else -> null
     }
 
@@ -34,15 +36,13 @@ class ReplayGainParser(entry: Metadata.Entry) {
 
   private fun handleVorbisComment(comment: VorbisComment): Float? =
     when (comment.key.uppercase()) {
-      in COMMON_REPLAY_GAIN_TAGS -> comment.value.parseReplayGainAdjustment()
+      "REPLAYGAIN_TRACK_GAIN" -> comment.value.parseReplayGainAdjustment()
+      //? R128 gain needs to be divided by `256f`.
+      "R128_TRACK_GAIN" -> comment.value.parseReplayGainAdjustment()?.div(256f)
       else -> null
     }
 
   /** Some replay gain tags include "dB" in the string. */
   private fun String.parseReplayGainAdjustment() =
     replace(Regex("[^\\d.-]"), "").toFloatOrNull()
-
-  companion object {
-    private val COMMON_REPLAY_GAIN_TAGS = listOf("REPLAYGAIN_TRACK_GAIN", "R128_TRACK_GAIN")
-  }
 }

@@ -315,7 +315,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
           gain = ReplayGainParser(metadata[i]).gain
           if (gain != null) break
         }
-        
+
         if (gain != null) break
       }
 
