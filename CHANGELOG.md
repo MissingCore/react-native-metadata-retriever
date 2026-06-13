@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-06-13
+
 ### 🎉 Added
 
 - New `getR128Gain()` function which returns the track replay gain value.
@@ -401,7 +403,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[Unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.0.0-beta.3...v3.0.0
 [3.0.0-beta.3]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.0.0-beta.2...v3.0.0-beta.3
