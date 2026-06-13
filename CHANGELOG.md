@@ -16,6 +16,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### ⚙️ Internal Changes
 
 - New `debugEmbeddedTags()` function which returns the stringified [`Format`](https://developer.android.com/reference/androidx/media3/common/Format) & [`Metadata`](https://developer.android.com/reference/androidx/media3/common/Metadata) associated with the file.
+- Bumped dependencies.
 
 ## [3.1.0] - 2026-05-26
 
