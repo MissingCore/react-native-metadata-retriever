@@ -15,7 +15,6 @@ import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
 import com.cyanchill.missingcore.metadataretriever.models.BridgeReturnables.*
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
-import com.cyanchill.missingcore.metadataretriever.utils.ReplayGainParser
 import com.cyanchill.missingcore.metadataretriever.utils.safeExecuteOnURI
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
@@ -225,23 +224,11 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  /** Returns the embedded track ReplayGain. */
   override fun getR128Gain(uri: String, promise: Promise) {
     safeExecuteOnURI(uri, "ERR_REPLAY_GAIN", promise) {
       val metadataList = getMetadataList(getFormatList(uri))
-      var gain: Float? = null
-
-      for (metadata in metadataList) {
-        val numEntries = metadata.length()
-        // Manually iterate over metadata entries to find a supported key.
-        for (i in 0 until numEntries) {
-          gain = ReplayGainParser(metadata[i]).gain
-          if (gain != null) break
-        }
-
-        if (gain != null) break
-      }
-
-      promise.resolve(gain)
+      promise.resolve(ReplayGainParser(metadataList).gain)
     }
   }
 
