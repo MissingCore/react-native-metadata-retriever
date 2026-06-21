@@ -37,8 +37,7 @@ class LyricsParser(metadataList: List<Metadata>) {
     }
 
     if (result !== null && result.lyrics !== null) {
-      // Sanitize input before returning it.
-      lyrics = result.lyrics.replace("\u0000", "")
+      lyrics = result.lyrics
       isSync = result.isSync
     }
   }
