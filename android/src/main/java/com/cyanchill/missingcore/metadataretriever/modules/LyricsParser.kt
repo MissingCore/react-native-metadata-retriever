@@ -37,7 +37,8 @@ class LyricsParser(metadataList: List<Metadata>) {
     }
 
     if (result !== null && result.lyrics !== null) {
-      lyrics = result.lyrics
+      // `null` byte might still appear at the end of the lyrics.
+      lyrics = result.lyrics.replace("\u0000", "")
       isSync = result.isSync
     }
   }
