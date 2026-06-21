@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [3.2.1] - 2026-06-21
+
 ### 🛠️ Fixes
 
 - Random junk in front of lyrics returned by `getLyric()` if they're in an ID3 binary frame.
@@ -412,7 +414,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[Unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.2.0...HEAD
+[Unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.2.1...HEAD
+[3.2.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.0.0-beta.3...v3.0.0
