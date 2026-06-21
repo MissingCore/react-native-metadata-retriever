@@ -1,4 +1,4 @@
-package com.cyanchill.missingcore.metadataretriever.utils
+package com.cyanchill.missingcore.metadataretriever.modules
 
 import androidx.annotation.OptIn
 import androidx.media3.common.Metadata
@@ -7,33 +7,52 @@ import androidx.media3.extractor.metadata.id3.BinaryFrame
 import androidx.media3.extractor.metadata.id3.TextInformationFrame
 import androidx.media3.extractor.metadata.vorbis.VorbisComment
 
+private data class ParsedResult(
+  val lyrics: String?,
+  val isSync: Boolean,
+)
+
 @OptIn(UnstableApi::class)
-class LyricsParser(entry: Metadata.Entry) {
+class LyricsParser(metadataList: List<Metadata>) {
+  private var isSync = false
   var lyrics: String? = null
-  var isSync = false
 
   init {
-    // Extra lyrics based on the class.
-    when (entry) {
+    for (metadata in metadataList) {
+      val numEntries = metadata.length()
+      for (i in 0 until numEntries) {
+        parseMetadataEntry(metadata[i])
+        if (isSync) break
+      }
+      if (isSync) break
+    }
+  }
+
+  private fun parseMetadataEntry(entry: Metadata.Entry) {
+    val result = when (entry) {
       is TextInformationFrame -> handleTextInformationFrame(entry)
       is BinaryFrame -> handleBinaryFrame(entry)
       is VorbisComment -> handleVorbisComment(entry)
+      else -> null
     }
 
-    // Sanitize input
-    lyrics = lyrics?.replace("\u0000", "")
+    if (result !== null && result.lyrics !== null) {
+      // Sanitize input before returning it.
+      lyrics = result.lyrics.replace("\u0000", "")
+      isSync = result.isSync
+    }
   }
 
-  private fun handleTextInformationFrame(frame: TextInformationFrame) {
+  //#region [Lyrics Containers]
+  private fun handleTextInformationFrame(frame: TextInformationFrame): ParsedResult? {
     val tagName = frame.id.uppercase()
-    if (tagName !in ID3v2_LYRIC_TAGS) return
-    lyrics = frame.values.firstOrNull()
-    isSync = tagName == "SYLT"
+    if (tagName !in ID3v2_LYRIC_TAGS) return null
+    return ParsedResult(frame.values.firstOrNull(), tagName == "SYLT")
   }
 
-  private fun handleBinaryFrame(frame: BinaryFrame) {
+  private fun handleBinaryFrame(frame: BinaryFrame): ParsedResult? {
     val tagName = frame.id.uppercase()
-    if (tagName !in ID3v2_LYRIC_TAGS) return
+    if (tagName !in ID3v2_LYRIC_TAGS) return null
 
     val byteArr = frame.data
     // The 1st byte in the array determines the encoding in ID3.
@@ -57,17 +76,16 @@ class LyricsParser(entry: Metadata.Entry) {
       else -> Charsets.UTF_8
     }
 
-    lyrics = String(byteArr, encodingCharSet)
-    isSync = tagName == "SYLT"
+    return ParsedResult(String(byteArr, encodingCharSet), tagName == "SYLT")
   }
 
-  private fun handleVorbisComment(comment: VorbisComment) {
-    if (comment.key.uppercase() != "LYRICS") return
+  private fun handleVorbisComment(comment: VorbisComment): ParsedResult? {
+    if (comment.key.uppercase() != "LYRICS") return null
     // We immediately bail out if we find lyrics in Vorbis Comments due to
     // there being no specific tag for synchronized lyrics.
-    lyrics = comment.value
-    isSync = true
+    return ParsedResult(comment.value, true)
   }
+  //#endregion
 
   companion object {
     private val ID3v2_LYRIC_TAGS = listOf("SYLT", "USLT")
