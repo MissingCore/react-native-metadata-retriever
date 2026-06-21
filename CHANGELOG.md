@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### 🛠️ Fixes
+
+- Random junk in front of lyrics returned by `getLyric()` if they're in an ID3 binary frame.
+
 ## [3.2.0] - 2026-06-13
 
 ### 🎉 Added

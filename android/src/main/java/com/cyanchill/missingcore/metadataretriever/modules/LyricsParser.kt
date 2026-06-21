@@ -54,11 +54,12 @@ class LyricsParser(metadataList: List<Metadata>) {
     val tagName = frame.id.uppercase()
     if (tagName !in ID3v2_LYRIC_TAGS) return null
 
-    val byteArr = frame.data
+    var byteArr = frame.data
     // The 1st byte in the array determines the encoding in ID3.
     //  - Mp3Tag doesn't specify a Byte Order Mark if it's `1` (UTF-16), so we'll do a heuristic guess for what charset to use.
     //  - Ref: https://mutagen-specs.readthedocs.io/en/latest/id3/id3v2.4.0-structure.html#id3v2-frame-overview
-    val encodingCharSet = when (byteArr[0].toString()) {
+    val encodingByte = byteArr[0].toString()
+    val encodingCharSet = when (encodingByte) {
       "0" -> Charsets.ISO_8859_1
       "1" -> {
         if (byteArr[1] == BYTE_0xFE && byteArr[2] == BYTE_0xFF) {
@@ -76,6 +77,23 @@ class LyricsParser(metadataList: List<Metadata>) {
       else -> Charsets.UTF_8
     }
 
+    val twoByteNull = encodingByte == "1" || encodingByte == "2"
+    // `USLT` starts with 4 bytes of "junk" while `SYLT` starts with 6 bytes.
+    //  - https://mutagen-specs.readthedocs.io/en/latest/id3/id3v2.4.0-frames.html#unsynchronised-lyrics-text-transcription
+    //  - https://mutagen-specs.readthedocs.io/en/latest/id3/id3v2.4.0-frames.html#synchronised-lyrics-text
+    byteArr = byteArr.drop(if (tagName == "USLT") 4 else 6).toByteArray()
+    // We then have a "content descriptor", which ends with either 1 or 2 null bytes (based on the text encoding).
+    var droppedBytes = 0
+    for (i in 0 until byteArr.size - 1) {
+      if (byteArr[i] == BYTE_0x00) {
+        if (!twoByteNull) break
+        if (byteArr[i + 1] == BYTE_0x00) break
+      }
+      droppedBytes += 1
+      if (twoByteNull && i == byteArr.size - 2) break
+    }
+    byteArr = byteArr.drop(droppedBytes + if (twoByteNull) 2 else 1).toByteArray()
+
     return ParsedResult(String(byteArr, encodingCharSet), tagName == "SYLT")
   }
 
@@ -89,6 +107,7 @@ class LyricsParser(metadataList: List<Metadata>) {
 
   companion object {
     private val ID3v2_LYRIC_TAGS = listOf("SYLT", "USLT")
+    private const val BYTE_0x00 = 0x00.toByte()
     private const val BYTE_0xFE = 0xFE.toByte()
     private const val BYTE_0xFF = 0xFF.toByte()
   }
