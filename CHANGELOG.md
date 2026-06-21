@@ -14,6 +14,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### ⚙️ Internal Changes
 
 - Rewrite `LyricsParser` & `ReplayGainParser`.
+- Bumped dependencies.
 
 ## [3.2.0] - 2026-06-13
 

@@ -13,7 +13,7 @@
     "@missingcore/react-native-metadata-retriever": "workspace:*",
     "@shopify/flash-list": "2.3.2",
     "@tanstack/react-query": "5.101.0",
-    "expo": "56.0.11",
+    "expo": "56.0.12",
     "expo-image": "56.0.11",
     "expo-media-library": "56.0.7",
     "expo-status-bar": "56.0.4",
@@ -22,7 +22,7 @@
     "react-native-safe-area-context": "5.8.0"
   },
   "devDependencies": {
-    "expo-build-properties": "56.0.18",
+    "expo-build-properties": "56.0.19",
     "react-native-builder-bob": "catalog:"
   }
 }
