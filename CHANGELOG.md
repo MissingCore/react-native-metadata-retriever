@@ -11,6 +11,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - Random junk in front of lyrics returned by `getLyric()` if they're in an ID3 binary frame.
 
+### ⚙️ Internal Changes
+
+- Rewrite `LyricsParser` & `ReplayGainParser`.
+
 ## [3.2.0] - 2026-06-13
 
 ### 🎉 Added
