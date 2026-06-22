@@ -69,7 +69,7 @@ repositories {
 }
 
 dependencies {
-  def media3_version = "1.9.3-MissingCore.1"
+  def media3_version = "1.10.1-MissingCore.1"
 
   implementation "com.facebook.react:react-android"
 
