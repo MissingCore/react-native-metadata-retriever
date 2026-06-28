@@ -27,7 +27,7 @@ data class ArtworkOptions(
   val saveDirectory: String?,
   /**
    * [Only for Image Hashing Strategy]
-   * A list of image hashes inside of `saveDirectory`.
+   * A list of image hashes inside of `saveDirectory` with the format specified by `format`.
    */
   val knownHashes: ArrayList<String>?
 ) {

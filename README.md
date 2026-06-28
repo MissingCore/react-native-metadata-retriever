@@ -129,6 +129,8 @@ function saveHashedArtwork(
 
 Returns the hash of the embedded image & uri of the saved artwork.
 
+> **Note:** It will work as "expected" given that everything follows the same "social contract", as in `knownHashes` contain hashes based on the same configuration passed to this function call.
+
 ## Types
 
 ### ArtworkOptions
@@ -187,7 +189,8 @@ type HashedArtworkOptions = {
   saveDirectory: string;
   /**
    * An array of known MD5 hashes formatted as a 32-character hexadecimal string
-   * which are stored in `saveDirectory`.
+   * which are stored in `saveDirectory` and is of the same format as what we
+   * pass for the `format` option.
    */
   knownHashes: string[];
 };

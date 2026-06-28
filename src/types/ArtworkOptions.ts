@@ -33,7 +33,8 @@ export type HashedArtworkOptions = SharedArtworkOptions & {
   saveDirectory: string;
   /**
    * An array of known MD5 hashes formatted as a 32-character hexadecimal string
-   * which are stored in `saveDirectory`.
+   * which are stored in `saveDirectory` and is of the same format as what we
+   * pass for the `format` option.
    */
   knownHashes: string[];
 };
