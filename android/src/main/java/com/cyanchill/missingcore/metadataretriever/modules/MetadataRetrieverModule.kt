@@ -1,6 +1,5 @@
 package com.cyanchill.missingcore.metadataretriever.modules
 
-import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
@@ -15,7 +14,6 @@ import androidx.media3.inspector.MetadataRetriever
 import com.cyanchill.missingcore.metadataretriever.NativeMetadataRetrieverSpec
 import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
 import com.cyanchill.missingcore.metadataretriever.models.BridgeReturnables.*
-import com.cyanchill.missingcore.metadataretriever.models.HashedArtworkOptions
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
 import com.cyanchill.missingcore.metadataretriever.utils.safeExecuteOnURI
@@ -26,7 +24,6 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.util.RNLog
 import java.io.File
-import java.io.FileOutputStream
 import java.security.MessageDigest
 import java.util.concurrent.ExecutionException
 
@@ -170,8 +167,8 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
    * Either returns the URI to the saved artwork or a base64 image string.
    */
   override fun getArtwork(uri: String, options: ReadableMap, promise: Promise) {
-    val artworkOptions = ArtworkOptions(options)
-    val asBase64 = artworkOptions.asBase64
+    val artworkOptions = ArtworkOptions.fromReadableMap(options)
+    val asBase64 = artworkOptions.base64
 
     safeExecuteOnURI(uri, "ERR_ARTWORK", promise) {
       val metadataList = getMetadataList(getFormatList(uri))
@@ -224,9 +221,15 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
   }
 
   override fun getHashedArtwork(uri: String, options: ReadableMap, promise: Promise) {
-    val artworkOptions = HashedArtworkOptions(options)
+    val artworkOptions = ArtworkOptions.fromReadableMap(options)
 
     safeExecuteOnURI(uri, "ERR_HASHED_ARTWORK", promise) {
+      if (artworkOptions.saveDirectory == null) {
+        throw IllegalStateException("`saveDirectory` must be defined in order to use `getHashedArtwork`.")
+      } else if (artworkOptions.knownHashes == null) {
+        throw IllegalStateException("`knownHashes` must be defined in order to use `getHashedArtwork`.")
+      }
+
       val metadataList = getMetadataList(getFormatList(uri))
 
       // We'll want to return the image designated as "Cover (front)", otherwise return first image found.
@@ -273,35 +276,27 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
 
       val usedArtwork = coverImage ?: backupImage
       val usedHash = coverImageHash ?: backupImageHash
-      val savePath = "${artworkOptions.saveDirectory}${File.separator}$usedHash${artworkOptions.format.fileExtension}"
 
       RNLog.w(context, "ByteArraySize: ${usedArtwork?.size}, Hash: $usedHash")
       if (usedHash == null || usedArtwork == null) {
         RNLog.w(context, "No hash or artwork")
         promise.resolve(null)
       } else {
+        val usableArtworkOptions = artworkOptions.withGeneratedSaveUri(usedHash)
+
         val expectedOutput = Arguments.createMap().apply {
           putString("hash", usedHash)
-          putString("uri",  Uri.fromFile(File(savePath)).toString())
+          putString("uri",  Uri.fromFile(File(usableArtworkOptions.saveUri as String)).toString())
         }
 
         if (usedHash in artworkOptions.knownHashes) {
           promise.resolve(expectedOutput)
         } else {
-          try {
-            val bitmap = BitmapFactory.decodeByteArray(usedArtwork, 0, usedArtwork.size)
-            FileOutputStream(savePath).use { fos ->
-              bitmap.compress(
-                artworkOptions.format.compressFormat,
-                (artworkOptions.compress * 100).toInt(),
-                fos,
-              )
-              fos.flush()
-            }
-            promise.resolve(expectedOutput)
-          } catch (e: Exception) {
-            RNLog.w(context, "${e.message}")
+          val imgUri = (coverImage ?: backupImage)?.let { reader.saveImage(it, usableArtworkOptions) }
+          if (imgUri == null) {
             promise.resolve(null)
+          } else {
+            promise.resolve(expectedOutput)
           }
         }
       }
