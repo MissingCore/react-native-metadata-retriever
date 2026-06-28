@@ -2,9 +2,11 @@ import MetadataRetriever from './MetadataRetriever';
 
 import { MetadataPresets } from './constants';
 
-import type { ArtworkOptions } from './types/ArtworkOptions';
+import type {
+  ArtworkOptions,
+  HashedArtworkOptions,
+} from './types/ArtworkOptions';
 import { SaveFormat } from './types/ArtworkOptions';
-import type { ConfigOptions } from './types/ConfigOptions';
 import type { BulkMetadata, MediaMetadataExcerpt } from './types/GetMetadata';
 import type { MediaMetadata } from './types/MediaMetadata';
 import type {
@@ -48,7 +50,8 @@ export async function getMetadata<TOptions extends MediaMetadataPublicFields>(
  * - Defaults to returning up to `5 MB` of data.
  */
 export async function getArtwork(uri: string): Promise<string | null> {
-  return MetadataRetriever.getArtwork(uri, { base64: true });
+  const result = await MetadataRetriever.getArtwork(uri, { base64: true });
+  return result ? result.data : null;
 }
 
 /**
@@ -59,7 +62,30 @@ export async function saveArtwork(
   uri: string,
   options?: ArtworkOptions
 ): Promise<string | null> {
-  return MetadataRetriever.getArtwork(uri, options ?? {});
+  const result = await MetadataRetriever.getArtwork(uri, options ?? {});
+  return result ? result.data : null;
+}
+
+/**
+ * Returns the hash & uri of the saved artwork.
+ * - Ignores the hard-limit on the max size of the image that can be saved.
+ * - The hash is based off the raw ByteArray before any formatting.
+ */
+export async function saveHashedArtwork(
+  uri: string,
+  options: HashedArtworkOptions
+): Promise<{ hash: string; uri: string } | null> {
+  if (!options.saveDirectory)
+    throw new Error(
+      '`saveDirectory` is a required argument in `saveHashedArtwork`.'
+    );
+  if (!options.knownHashes)
+    throw new Error(
+      '`knownHashes` is a required argument in `saveHashedArtwork`.'
+    );
+
+  const result = await MetadataRetriever.getArtwork(uri, options);
+  return result ? { hash: result.hash, uri: result.data } : null;
 }
 //#endregion
 
@@ -77,13 +103,6 @@ export async function getR128Gain(uri: string): Promise<number | null> {
 }
 //#endregion
 
-//#region Configuration
-/** Update internal configuration options. */
-export async function updateConfigs(options: ConfigOptions): Promise<void> {
-  return MetadataRetriever.updateConfigs(options);
-}
-//#endregion
-
 //#region Debug Helpers
 /**
  * @deprecated For debugging purposes. Returns an object containing
@@ -97,7 +116,7 @@ export async function debugEmbeddedTags(uri: string) {
 export {
   type ArtworkOptions,
   type BulkMetadata,
-  type ConfigOptions,
+  type HashedArtworkOptions,
   type MediaMetadata,
   type MediaMetadataExcerpt,
   type MediaMetadataPublicField,

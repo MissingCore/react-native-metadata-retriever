@@ -1,7 +1,6 @@
 package com.cyanchill.missingcore.metadataretriever.modules
 
 import android.media.MediaMetadataRetriever
-import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
@@ -29,6 +28,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
   private val context = reactContext
 
   private var reader = MetadataReader(reactContext)
+  private var artwork = ArtworkParser(reactContext)
 
   override fun getBulkMetadata(uris: ReadableArray, options: ReadableArray, promise: Promise) {
     val uriList = Arguments.toList(uris) as List<String>
@@ -160,59 +160,51 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
    * artwork is based on the last `artworkData` found, `getArtwork()` returns the artwork designated
    * as "Cover (front)" and falls back to the first image found.
    *
-   * Either returns the URI to the saved artwork or a base64 image string.
+   * Returns an object containing the hash of the image ByteArray along with a uri or base64 string
+   * representing the image.
    */
   override fun getArtwork(uri: String, options: ReadableMap, promise: Promise) {
-    val artworkOptions = ArtworkOptions(options)
-    val asBase64 = artworkOptions.asBase64
+    val artworkOptions = ArtworkOptions.fromReadableMap(options)
+    val asBase64 = artworkOptions.base64
 
     safeExecuteOnURI(uri, "ERR_ARTWORK", promise) {
       val metadataList = getMetadataList(getFormatList(uri))
+      val (hash, bytes) = artwork.extractArtwork(uri, metadataList)
+        ?: return@safeExecuteOnURI promise.resolve(null)
 
-      // We'll want to return the image designated as "Cover (front)", otherwise return first image found.
-      var coverImage: Any? = null
-      var backupImage: Any? = null
-
-      val isFLAC = uri.endsWith(".flac") || uri.endsWith(".m4a") || uri.endsWith(".mp4")
-
-      // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever` or with
-      // flac/mp4/m4a files due to artwork not being parsed correctly.
-      //  - https://github.com/MissingCore/Music/issues/432
-      if (metadataList.isEmpty() || isFLAC) {
-        val mmrMetadata = MediaMetadataRetriever()
-        mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
-        coverImage = if (asBase64) reader.getBase64Image(mmrMetadata.embeddedPicture) else mmrMetadata.embeddedPicture
-        mmrMetadata.release()
+      val returnObj = Arguments.createMap().apply {
+        putString("hash", hash)
       }
 
-      for (metadataItem in metadataList) {
-        val mediaMetadata = MediaMetadata.Builder()
-          .populateFromMetadata(metadataItem)
-          .build()
-
-        when (mediaMetadata.artworkDataType) {
-          // "Cover (front)" Picture Type
-          MediaMetadata.PICTURE_TYPE_FRONT_COVER -> {
-            coverImage = if (asBase64) reader.getBase64Image(mediaMetadata.artworkData) else mediaMetadata.artworkData
-          }
-          // Fallback to 1st image found.
-          else -> {
-            if (backupImage == null) {
-              backupImage = if (asBase64) reader.getBase64Image(mediaMetadata.artworkData) else mediaMetadata.artworkData
-            }
-          }
-        }
-
-        if (coverImage !== null) break
-      }
-
+      // Case 1: Return base64 image.
       if (asBase64) {
-        // `coverImage` or `backupImage` should be a base64 string or `null`.
-        promise.resolve(coverImage ?: backupImage)
-      } else {
-        val imgUri = (coverImage ?: backupImage)?.let { reader.saveImage(it as ByteArray, artworkOptions) }
-        promise.resolve(imgUri)
+        val base64Str = artwork.asBase64(bytes)
+          ?: return@safeExecuteOnURI promise.resolve(null)
+        returnObj.putString("data", base64Str)
+        return@safeExecuteOnURI promise.resolve(returnObj)
       }
+
+      // Case 2: Return image independently of hash.
+      if (artworkOptions.saveDirectory == null || artworkOptions.knownHashes == null) {
+        val imgUri = artwork.asFile(bytes, artworkOptions)
+          ?: return@safeExecuteOnURI promise.resolve(null)
+        returnObj.putString("data", imgUri)
+        return@safeExecuteOnURI promise.resolve(returnObj)
+      }
+
+      // Case 3: Return image with respect to hash.
+      val hashedArtworkOptions = artworkOptions.withGeneratedSaveUri(hash)
+      returnObj.putString("data", artwork.formatUri(hashedArtworkOptions.saveUri as String))
+
+      // If hash isn't known, save the image.
+      if (hash !in artworkOptions.knownHashes) {
+        // If we failed to save the image, return `null` instead.
+        artwork.asFile(bytes, hashedArtworkOptions)
+          ?: return@safeExecuteOnURI promise.resolve(null)
+      }
+
+      // A "fixed" result for this case.
+      promise.resolve(returnObj)
     }
   }
 
@@ -230,12 +222,6 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
       val metadataList = getMetadataList(getFormatList(uri))
       promise.resolve(ReplayGainParser(metadataList).gain)
     }
-  }
-
-  /** Expose to the user the ability to update internal configuration options. */
-  override fun updateConfigs(options: ReadableMap, promise: Promise) {
-    reader.updateConfigs(Arguments.toBundle(options) as Bundle)
-    promise.resolve(null)
   }
 
   override fun debugEmbeddedTags(uri: String, promise: Promise) {

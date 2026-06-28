@@ -7,9 +7,25 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ❗ Breaking Changes
+
+- Removed `updateConfigs()` function.
+  - If you used it to specify the max size of the return base64 image, patch the package and update the `maxImgSizeMB` variable in `ArtworkParser.kt`.
+  - ❗ Things are a bit "strict" as the hashes in `knownHashes` must reflect the other specified arguments (`saveDirectory` & `format`).
+
+### 🎉 Added
+
+- New `saveHashedArtwork()` function which saves embedded artwork by their derived MD5 hash.
+  - This helps reuse previously saved artwork as you can provide an array of previously saved hashes to help us identify whether the artwork should be saved. The returned `uri` is made up of the hash.
+
 ### ⚡ Changes
 
 - Bumped AndroidX media3 to `1.10.1` from `1.9.3`.
+
+### ⚙️ Internal Changes
+
+- Refactor image saving logic.
+- Have the "Saved Artwork" strategy in the example app use `saveHashedArtwork()`.
 
 ## [3.2.1] - 2026-06-21
 

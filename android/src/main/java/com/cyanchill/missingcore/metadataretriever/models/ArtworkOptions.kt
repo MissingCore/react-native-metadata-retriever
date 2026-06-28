@@ -3,31 +3,58 @@ package com.cyanchill.missingcore.metadataretriever.models
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import com.cyanchill.missingcore.metadataretriever.utils.RequiredArgumentException
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
+import java.io.File
 
-class ArtworkOptions(options: ReadableMap) {
-  /** If we want to return the artwork as a base64 string. */
-  val asBase64: Boolean
+data class ArtworkOptions(
+  /** If the image should be returned as a base64 string. */
+  val base64: Boolean = false,
+  /** Value in the range of `0.0` - `1.0` specifying the quality of the resulting image. */
+  val compress: Double = 1.0,
+  /** Format the image will be saved in. */
+  val format: ImageFormat = ImageFormat.JPEG,
+  /**
+   * [Only for Non-Image Hashing Strategy]
+   * "Location" artwork will be saved to (includes file name + extension).
+   */
+  val saveUri: String?,
+  /**
+   * [Only for Image Hashing Strategy]
+   * The directory the file will be saved to.
+   */
+  val saveDirectory: String?,
+  /**
+   * [Only for Image Hashing Strategy]
+   * A list of image hashes inside of `saveDirectory` with the format specified by `format`.
+   */
+  val knownHashes: ArrayList<String>?
+) {
+  fun withGeneratedSaveUri(hash: String): ArtworkOptions {
+    if (saveDirectory == null) {
+      throw RequiredArgumentException("withGeneratedSaveUri", "saveDirectory")
+    }
+    return this.copy(
+      saveUri = "${saveDirectory}${File.separator}$hash${format.fileExtension}",
+    )
+  }
 
-  /** A value in the range `0.0` - `1.0` specifying the quality of the resulting image. */
-  val compress: Double
-  /** Specifies the format the image will be saved in. */
-  val format: ImageFormat
-  /** Location where we want to save the image. */
-  val saveUri: String?
+  companion object {
+    fun fromReadableMap(options: ReadableMap): ArtworkOptions {
+      val optionsBundle = Arguments.toBundle(options) as Bundle
 
-  init {
-    val optionsBundle = Arguments.toBundle(options) as Bundle
-    asBase64 = optionsBundle.getBoolean("base64")
-
-    compress = if (optionsBundle.containsKey("compress")) optionsBundle.getDouble("compress") else 1.0
-    // Default format to JPEG if it's not provided.
-    format = ImageFormat.fromCode(optionsBundle.getString("format")) ?: ImageFormat.JPEG
-
-    // Remove `file://` in `saveUri` if provided.
-    val uri = optionsBundle.getString("saveUri")
-    saveUri = if (uri != null) Uri.parse(uri).path else null
+      return ArtworkOptions(
+        optionsBundle.getBoolean("base64"),
+        if (optionsBundle.containsKey("compress")) {
+          optionsBundle.getDouble("compress").coerceIn(0.0, 1.0)
+        } else 1.0,
+        ImageFormat.fromCode(optionsBundle.getString("format")) ?: ImageFormat.JPEG,
+        optionsBundle.getString("saveUri")?.let { Uri.parse(it).path },
+        optionsBundle.getString("saveDirectory")?.let { Uri.parse(it).path },
+        optionsBundle.getStringArrayList("knownHashes"),
+      )
+    }
   }
 }
 
