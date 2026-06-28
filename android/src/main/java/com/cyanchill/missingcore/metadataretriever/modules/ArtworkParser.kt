@@ -55,9 +55,12 @@ class ArtworkParser(reactContext: ReactApplicationContext) {
     //  - https://github.com/MissingCore/Music/issues/432
     if (metadataList.isEmpty() || isFLAC) {
       val mmrMetadata = MediaMetadataRetriever()
-      mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
-      coverImage = ArtworkSignature.fromBytes(mmrMetadata.embeddedPicture)
-      mmrMetadata.release()
+      try {
+        mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
+        coverImage = ArtworkSignature.fromBytes(mmrMetadata.embeddedPicture)
+      } finally {
+        mmrMetadata.release()
+      }
     }
 
     for (metadataItem in metadataList) {
@@ -88,7 +91,7 @@ class ArtworkParser(reactContext: ReactApplicationContext) {
   //#region ["Formatters"]
   fun asBase64(bytes: ByteArray): String? {
     if (!isBase64Convertible(bytes)) return null
-    return "data:${getMimeType(bytes)};base64,${Base64.encodeToString(bytes, Base64.DEFAULT)}"
+    return "data:${getMimeType(bytes)};base64,${Base64.encodeToString(bytes, Base64.NO_WRAP)}"
   }
 
   fun asFile(bytes: ByteArray, options: ArtworkOptions): String? {

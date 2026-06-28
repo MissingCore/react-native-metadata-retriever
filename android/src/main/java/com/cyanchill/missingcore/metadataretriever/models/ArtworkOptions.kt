@@ -46,7 +46,9 @@ data class ArtworkOptions(
 
       return ArtworkOptions(
         optionsBundle.getBoolean("base64"),
-        if (optionsBundle.containsKey("compress")) optionsBundle.getDouble("compress") else 1.0,
+        if (optionsBundle.containsKey("compress")) {
+          optionsBundle.getDouble("compress").coerceIn(0.0, 1.0)
+        } else 1.0,
         ImageFormat.fromCode(optionsBundle.getString("format")) ?: ImageFormat.JPEG,
         optionsBundle.getString("saveUri")?.let { Uri.parse(it).path },
         optionsBundle.getString("saveDirectory")?.let { Uri.parse(it).path },
