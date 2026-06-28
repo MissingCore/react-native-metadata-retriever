@@ -24,6 +24,24 @@ type ArtworkOptions = {
   saveUri?: string;
 };
 
+/** Extra options for when using `getHashedArtwork`. */
+type HashedArtworkOptions = {
+  /**
+   * A value in the range `0.0` - `1.0` specifying the quality of the resulting image.
+   * - Defaults to `1`.
+   */
+  compress?: number;
+  /**
+   * Specifies the format the image will be saved in.
+   * - Defaults to `SaveFormat.JPEG`.
+   */
+  format?: 'jpeg' | 'png' | 'webp';
+  /** An array of known MD5 hashes formatted as a 32-character hexadecimal string. */
+  knownHashes: string[];
+  /** Directory where we want to save the hashed image. The file name will be the hash. */
+  saveDirectory: string;
+};
+
 /** Options that can be set to modify the behavior of the package. */
 type ConfigOptions = {
   /**
@@ -59,6 +77,10 @@ export interface Spec extends TurboModule {
     uri: string,
     options: ArtworkOptions & { base64?: boolean }
   ): Promise<string | null>;
+  getHashedArtwork(
+    uri: string,
+    options: HashedArtworkOptions
+  ): Promise<{ hash: string; uri: string } | null>;
 
   getLyric(uri: string): Promise<string | null>;
 

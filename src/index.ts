@@ -2,7 +2,10 @@ import MetadataRetriever from './MetadataRetriever';
 
 import { MetadataPresets } from './constants';
 
-import type { ArtworkOptions } from './types/ArtworkOptions';
+import type {
+  ArtworkOptions,
+  HashedArtworkOptions,
+} from './types/ArtworkOptions';
 import { SaveFormat } from './types/ArtworkOptions';
 import type { ConfigOptions } from './types/ConfigOptions';
 import type { BulkMetadata, MediaMetadataExcerpt } from './types/GetMetadata';
@@ -61,6 +64,18 @@ export async function saveArtwork(
 ): Promise<string | null> {
   return MetadataRetriever.getArtwork(uri, options ?? {});
 }
+
+/**
+ * Returns the hash & uri of the saved artwork.
+ * - Ignores the hard-limit on the max size of the image that can be saved.
+ * - The hash is based off the raw ByteArray before any formatting.
+ */
+export async function saveHashedArtwork(
+  uri: string,
+  options: HashedArtworkOptions
+): Promise<{ hash: string; uri: string } | null> {
+  return MetadataRetriever.getHashedArtwork(uri, options);
+}
 //#endregion
 
 //#region Get Lyric
@@ -98,6 +113,7 @@ export {
   type ArtworkOptions,
   type BulkMetadata,
   type ConfigOptions,
+  type HashedArtworkOptions,
   type MediaMetadata,
   type MediaMetadataExcerpt,
   type MediaMetadataPublicField,
