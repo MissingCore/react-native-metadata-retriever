@@ -9,7 +9,10 @@ import { TurboModuleRegistry } from 'react-native';
 */
 
 /** Extra options for when using `getArtwork`. */
-type ArtworkOptions = {
+type MergedArtworkOptions = {
+  /** Specify that we want to return a base64 string representing the image. */
+  base64?: boolean;
+
   /**
    * A value in the range `0.0` - `1.0` specifying the quality of the resulting image.
    * - Defaults to `1`.
@@ -20,29 +23,21 @@ type ArtworkOptions = {
    * - Defaults to `SaveFormat.JPEG`.
    */
   format?: 'jpeg' | 'png' | 'webp';
+
   /** Uri we want to save the artwork to instead of the cache directory. */
   saveUri?: string;
-};
 
-/** Extra options for when using `getHashedArtwork`. */
-type HashedArtworkOptions = {
-  /**
-   * A value in the range `0.0` - `1.0` specifying the quality of the resulting image.
-   * - Defaults to `1`.
-   */
-  compress?: number;
-  /**
-   * Specifies the format the image will be saved in.
-   * - Defaults to `SaveFormat.JPEG`.
-   */
-  format?: 'jpeg' | 'png' | 'webp';
+  // -------------------------------------------------------------------
+  //  Use hashing strategy if the following fields are provided:
+  // -------------------------------------------------------------------
+
   /** Directory where we want to save the hashed image. The file name will be its hash. */
-  saveDirectory: string;
+  saveDirectory?: string;
   /**
    * An array of known MD5 hashes formatted as a 32-character hexadecimal string
    * which are stored in `saveDirectory`.
    */
-  knownHashes: string[];
+  knownHashes?: string[];
 };
 
 /** Options that can be set to modify the behavior of the package. */
@@ -78,12 +73,8 @@ export interface Spec extends TurboModule {
 
   getArtwork(
     uri: string,
-    options: ArtworkOptions & { base64?: boolean }
-  ): Promise<string | null>;
-  getHashedArtwork(
-    uri: string,
-    options: HashedArtworkOptions
-  ): Promise<{ hash: string; uri: string } | null>;
+    options: MergedArtworkOptions
+  ): Promise<{ hash: string; data: string } | null>;
 
   getLyric(uri: string): Promise<string | null>;
 

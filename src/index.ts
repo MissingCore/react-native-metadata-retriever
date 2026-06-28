@@ -51,7 +51,8 @@ export async function getMetadata<TOptions extends MediaMetadataPublicFields>(
  * - Defaults to returning up to `5 MB` of data.
  */
 export async function getArtwork(uri: string): Promise<string | null> {
-  return MetadataRetriever.getArtwork(uri, { base64: true });
+  const result = await MetadataRetriever.getArtwork(uri, { base64: true });
+  return result ? result.data : null;
 }
 
 /**
@@ -62,7 +63,8 @@ export async function saveArtwork(
   uri: string,
   options?: ArtworkOptions
 ): Promise<string | null> {
-  return MetadataRetriever.getArtwork(uri, options ?? {});
+  const result = await MetadataRetriever.getArtwork(uri, options ?? {});
+  return result ? result.data : null;
 }
 
 /**
@@ -74,7 +76,17 @@ export async function saveHashedArtwork(
   uri: string,
   options: HashedArtworkOptions
 ): Promise<{ hash: string; uri: string } | null> {
-  return MetadataRetriever.getHashedArtwork(uri, options);
+  if (!options.saveDirectory)
+    throw new Error(
+      '`saveDirectory` is a required argument in `saveHashedArtwork`.'
+    );
+  if (!options.knownHashes)
+    throw new Error(
+      '`knownHashes` is a required argument in `saveHashedArtwork`.'
+    );
+
+  const result = await MetadataRetriever.getArtwork(uri, options);
+  return result ? { hash: result.hash, uri: result.data } : null;
 }
 //#endregion
 
