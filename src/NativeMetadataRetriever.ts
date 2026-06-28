@@ -40,15 +40,6 @@ type MergedArtworkOptions = {
   knownHashes?: string[];
 };
 
-/** Options that can be set to modify the behavior of the package. */
-type ConfigOptions = {
-  /**
-   * Size of the returned base64 image in MB.
-   * - Defaults to `5`.
-   */
-  maxImageSizeMB?: number | null;
-};
-
 type DebugInfo = {
   /**
    * Result of `Format.toString()`.
@@ -79,8 +70,6 @@ export interface Spec extends TurboModule {
   getLyric(uri: string): Promise<string | null>;
 
   getR128Gain(uri: string): Promise<number | null>;
-
-  updateConfigs(options: ConfigOptions): Promise<void>;
 
   /**
    * @deprecated For debugging purposes. Returns an object containing

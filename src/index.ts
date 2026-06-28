@@ -7,7 +7,6 @@ import type {
   HashedArtworkOptions,
 } from './types/ArtworkOptions';
 import { SaveFormat } from './types/ArtworkOptions';
-import type { ConfigOptions } from './types/ConfigOptions';
 import type { BulkMetadata, MediaMetadataExcerpt } from './types/GetMetadata';
 import type { MediaMetadata } from './types/MediaMetadata';
 import type {
@@ -104,13 +103,6 @@ export async function getR128Gain(uri: string): Promise<number | null> {
 }
 //#endregion
 
-//#region Configuration
-/** Update internal configuration options. */
-export async function updateConfigs(options: ConfigOptions): Promise<void> {
-  return MetadataRetriever.updateConfigs(options);
-}
-//#endregion
-
 //#region Debug Helpers
 /**
  * @deprecated For debugging purposes. Returns an object containing
@@ -124,7 +116,6 @@ export async function debugEmbeddedTags(uri: string) {
 export {
   type ArtworkOptions,
   type BulkMetadata,
-  type ConfigOptions,
   type HashedArtworkOptions,
   type MediaMetadata,
   type MediaMetadataExcerpt,

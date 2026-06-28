@@ -1,7 +1,6 @@
 import {
   MetadataPresets,
   getBulkMetadata,
-  updateConfigs,
 } from '@missingcore/react-native-metadata-retriever';
 import { useQuery } from '@tanstack/react-query';
 
@@ -18,8 +17,6 @@ export function useTracksWithBase64Artwork(hasPermissions: boolean) {
 }
 
 async function getTracksWithBase64Artwork() {
-  await updateConfigs({ maxImageSizeMB: 0.5 });
-
   const start = performance.now();
 
   const audioFiles = await getAudioFiles();

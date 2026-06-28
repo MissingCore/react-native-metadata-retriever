@@ -1,37 +1,20 @@
 package com.cyanchill.missingcore.metadataretriever.modules
 
-import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
-import android.net.Uri
-import android.util.Base64
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.PercentageRating
 import androidx.media3.common.Rating
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.UnstableApi
-import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
 import com.facebook.react.bridge.ReactApplicationContext
-import java.io.File
-import java.io.FileOutputStream
-import java.net.URLConnection
-import java.util.UUID
 
 /**
  * Utilities to format & normalize sources of metadata as a map.
  */
 @OptIn(UnstableApi::class)
-class MetadataReader(reactContext: ReactApplicationContext): APIConfigs() {
-  private val saveDirectory = "${reactContext.cacheDir.absolutePath}${File.separator}MetadataRetriever"
-
-  /** Create `saveDirectory` if it doesn't exist. */
-  init {
-    try {
-      val directory = File(saveDirectory)
-      if (!directory.exists()) directory.mkdirs()
-    } catch (e: Exception) {}
-  }
+class MetadataReader(reactContext: ReactApplicationContext) {
+  private var artwork = ArtworkParser(reactContext)
 
   /**
    * Relevant metadata fields found on `Format`.
@@ -64,7 +47,7 @@ class MetadataReader(reactContext: ReactApplicationContext): APIConfigs() {
     val dataMap = hashMapOf<String, Any?>()
 
     // Pre-compute values to put in hash map.
-    val artworkData = if (getArtworkData) getBase64Image(mediaMetadata.artworkData) else null
+    val artworkData = if (getArtworkData) mediaMetadata.artworkData?.let { artwork.asBase64(it) } else null
     val trackNumber = if (mediaMetadata.trackNumber == 0) null else mediaMetadata.trackNumber
     val year = parseYear(mediaMetadata.recordingYear) ?: parseYear(mediaMetadata.releaseYear)
 
@@ -120,7 +103,7 @@ class MetadataReader(reactContext: ReactApplicationContext): APIConfigs() {
     val dataMap = hashMapOf<String, Any?>()
 
     // Pre-compute values to put in hash map.
-    val artworkData = if (getArtworkData) getBase64Image(mmr.embeddedPicture) else null
+    val artworkData = if (getArtworkData) mmr.embeddedPicture?.let { artwork.asBase64(it) } else null
     val trackNumber = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER)
       ?.let { if (it.toIntOrNull() == 0) null else it.toIntOrNull() }
     val year = parseYear(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)) ?: run {
@@ -153,45 +136,6 @@ class MetadataReader(reactContext: ReactApplicationContext): APIConfigs() {
 
     return dataMap
   }
-
-  //#region [Artwork Utils]
-  /** Returns a base64 image string from a `ByteArray`. */
-  fun getBase64Image(bytes: ByteArray? = null): String? {
-    if (bytes == null) return null
-    // Determine the mimetype from bytes.
-    val mimeType = URLConnection.guessContentTypeFromStream(bytes.inputStream())?.let {
-      MimeTypes.normalizeMimeType(it)
-    }
-    // Ensure the mimeType we get is defined and is for an image.
-    if (!MimeTypes.isImage(mimeType)) return null
-    // Convert max MB to bytes. We take 3/4 of the max MB as converting a byte array to a base64
-    // string causes a 33% increase in size.
-    val maxSizeMB = apiConfigs.getDouble(MAX_IMAGE_SIZE_MB, 5.0)
-    val maxSizeBytes = maxSizeMB * 0.75 * 1024 * 1024
-    if (bytes.size > maxSizeBytes) return null
-    return "data:$mimeType;base64,${Base64.encodeToString(bytes, Base64.DEFAULT)}"
-  }
-
-  /** Save `ByteArray` as image, returning the URI if it was saved correctly. */
-  fun saveImage(bytes: ByteArray, options: ArtworkOptions): String? {
-    try {
-      // Generate path to save image if we didn't provide one.
-      val imgUri = options.saveUri ?: "$saveDirectory${File.separator}${UUID.randomUUID()}${options.format.fileExtension}"
-      val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-      FileOutputStream(imgUri).use { fos ->
-        bitmap.compress(
-          options.format.compressFormat,
-          (options.compress * 100).toInt(),
-          fos,
-        )
-        fos.flush()
-      }
-      return Uri.fromFile(File(imgUri)).toString()
-    } catch (e: Exception) {
-      return null
-    }
-  }
-  //#endregion
 
   //#region [Internal Helpers To Parse Metadata Values]
   /**
