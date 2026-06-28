@@ -16,6 +16,7 @@ import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
 import com.cyanchill.missingcore.metadataretriever.models.BridgeReturnables.*
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
+import com.cyanchill.missingcore.metadataretriever.utils.RequiredArgumentException
 import com.cyanchill.missingcore.metadataretriever.utils.safeExecuteOnURI
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
@@ -225,9 +226,9 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
 
     safeExecuteOnURI(uri, "ERR_HASHED_ARTWORK", promise) {
       if (artworkOptions.saveDirectory == null) {
-        throw IllegalStateException("`saveDirectory` must be defined in order to use `getHashedArtwork`.")
+        throw RequiredArgumentException("getHashedArtwork", "saveDirectory")
       } else if (artworkOptions.knownHashes == null) {
-        throw IllegalStateException("`knownHashes` must be defined in order to use `getHashedArtwork`.")
+        throw RequiredArgumentException("getHashedArtwork", "knownHashes")
       }
 
       val metadataList = getMetadataList(getFormatList(uri))

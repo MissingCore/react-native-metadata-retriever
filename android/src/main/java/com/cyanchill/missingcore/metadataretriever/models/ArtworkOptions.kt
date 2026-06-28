@@ -3,6 +3,7 @@ package com.cyanchill.missingcore.metadataretriever.models
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import com.cyanchill.missingcore.metadataretriever.utils.RequiredArgumentException
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import java.io.File
@@ -31,7 +32,9 @@ data class ArtworkOptions(
   val knownHashes: ArrayList<String>?
 ) {
   fun withGeneratedSaveUri(hash: String): ArtworkOptions {
-    if (saveDirectory == null) throw IllegalStateException("`saveDirectory` must be defined in order to call `generateSaveUriFromHash`.")
+    if (saveDirectory == null) {
+      throw RequiredArgumentException("withGeneratedSaveUri", "saveDirectory")
+    }
     return this.copy(
       saveUri = "${saveDirectory}${File.separator}$hash${format.fileExtension}",
     )
