@@ -37,10 +37,12 @@ async function getTracksWithSavedArtwork() {
     MetadataPresets.standard
   );
 
-  const savedHashedImages = getImageDirectory()
-    .listAsRecords()
-    .map(({ uri }) => uri.split('/').at(-1)?.split('.')[0])
-    .filter((hash) => hash !== undefined);
+  const savedHashedImages = new Set(
+    getImageDirectory()
+      .listAsRecords()
+      .map(({ uri }) => uri.split('/').at(-1)?.split('.')[0])
+      .filter((hash) => hash !== undefined)
+  );
 
   const tracksMetadata: Array<
     (typeof results)['results'][number]['data'] & {
@@ -55,10 +57,10 @@ async function getTracksWithSavedArtwork() {
       const { id, filename } = assetURIMap[uri]!;
       const img = await saveHashedArtwork(uri, {
         saveDirectory: ImageDirectory,
-        knownHashes: savedHashedImages,
+        knownHashes: Array.from(savedHashedImages),
         compress: 0.8,
       });
-      if (img?.hash) savedHashedImages.push(img.hash);
+      if (img?.hash) savedHashedImages.add(img.hash);
       tracksMetadata.push({ id, filename, artworkData: img?.uri, ...data });
     } catch {}
   }
