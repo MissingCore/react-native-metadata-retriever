@@ -40,7 +40,9 @@ async function getTracksWithSavedArtwork() {
   const savedHashedImages = new Set(
     getImageDirectory()
       .listAsRecords()
-      .map(({ uri }) => uri.split('/').at(-1)?.split('.')[0])
+      .map(({ uri, isDirectory }) =>
+        isDirectory ? undefined : uri.split('/').at(-1)?.split('.')[0]
+      )
       .filter((hash) => hash !== undefined)
   );
 
