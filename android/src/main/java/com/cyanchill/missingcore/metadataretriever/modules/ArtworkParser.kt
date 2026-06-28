@@ -104,23 +104,28 @@ class ArtworkParser(reactContext: ReactApplicationContext) {
         )
         fos.flush()
       }
-      return Uri.fromFile(File(imgUri)).toString()
+      return formatUri(imgUri)
     } catch (e: Exception) {
       return null
     }
+  }
+
+  /** Sanitizes URI with Android's URI util. */
+  fun formatUri(uri: String): String {
+    return Uri.fromFile(File(uri)).toString()
   }
   //#endregion
 
   //#region [Helpers]
   /** Determines mimetype from bytes. */
-  fun getMimeType(bytes: ByteArray): String? {
+  private fun getMimeType(bytes: ByteArray): String? {
     return URLConnection.guessContentTypeFromStream(bytes.inputStream())?.let {
       MimeTypes.normalizeMimeType(it)
     }
   }
 
   /** Determines if ByteArray can be converted as a base64 string based on our constraints. */
-  fun isBase64Convertible(bytes: ByteArray?): Boolean {
+  private fun isBase64Convertible(bytes: ByteArray?): Boolean {
     if (bytes == null) return false
     // Ensure the mimeType we get is defined and is for an image.
     if (!MimeTypes.isImage(getMimeType(bytes))) return false

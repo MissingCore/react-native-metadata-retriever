@@ -1,7 +1,6 @@
 package com.cyanchill.missingcore.metadataretriever.modules
 
 import android.media.MediaMetadataRetriever
-import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
@@ -21,8 +20,6 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
-import java.io.File
-import java.security.MessageDigest
 import java.util.concurrent.ExecutionException
 
 @OptIn(UnstableApi::class)
@@ -197,7 +194,7 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
 
       // Case 3: Return image with respect to hash.
       val hashedArtworkOptions = artworkOptions.withGeneratedSaveUri(hash)
-      returnObj.putString("data", Uri.fromFile(File(hashedArtworkOptions.saveUri as String)).toString())
+      returnObj.putString("data", artwork.formatUri(hashedArtworkOptions.saveUri as String))
 
       // If hash isn't known, save the image.
       if (hash !in artworkOptions.knownHashes) {
