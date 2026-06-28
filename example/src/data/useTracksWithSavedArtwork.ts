@@ -48,7 +48,7 @@ async function getTracksWithSavedArtwork() {
     (typeof results)['results'][number]['data'] & {
       id: string;
       filename: string;
-      artworkData?: string | null;
+      artworkData: string | null;
     }
   > = [];
 
@@ -61,7 +61,12 @@ async function getTracksWithSavedArtwork() {
         compress: 0.8,
       });
       if (img?.hash) savedHashedImages.add(img.hash);
-      tracksMetadata.push({ id, filename, artworkData: img?.uri, ...data });
+      tracksMetadata.push({
+        id,
+        filename,
+        artworkData: img?.uri || null,
+        ...data,
+      });
     } catch {}
   }
 
