@@ -1,11 +1,12 @@
 import {
   MetadataPresets,
   getBulkMetadata,
-  saveArtwork,
+  saveHashedArtwork,
 } from '@missingcore/react-native-metadata-retriever';
 import { useQuery } from '@tanstack/react-query';
 
 import { getAudioFiles } from './getAudioFiles';
+import { ImageDirectory, getImageDirectory } from '../utils/fs';
 
 export function useTracksWithSavedArtwork(hasPermissions: boolean) {
   return useQuery({
@@ -36,19 +37,29 @@ async function getTracksWithSavedArtwork() {
     MetadataPresets.standard
   );
 
+  const savedHashedImages = getImageDirectory()
+    .listAsRecords()
+    .map(({ uri }) => uri.split('/').at(-1)?.split('.')[0])
+    .filter((hash) => hash !== undefined);
+
   const tracksMetadata: Array<
     (typeof results)['results'][number]['data'] & {
       id: string;
       filename: string;
-      artworkData: string | null;
+      artworkData?: string | null;
     }
   > = [];
 
   for (const { uri, data } of results.results) {
     try {
       const { id, filename } = assetURIMap[uri]!;
-      const imgUri = await saveArtwork(uri, { compress: 0.8 });
-      tracksMetadata.push({ id, filename, artworkData: imgUri, ...data });
+      const img = await saveHashedArtwork(uri, {
+        saveDirectory: ImageDirectory,
+        knownHashes: savedHashedImages,
+        compress: 0.8,
+      });
+      if (img?.hash) savedHashedImages.push(img.hash);
+      tracksMetadata.push({ id, filename, artworkData: img?.uri, ...data });
     } catch {}
   }
 
