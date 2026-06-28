@@ -1,6 +1,8 @@
 package com.cyanchill.missingcore.metadataretriever.modules
 
+import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.media3.common.C
@@ -13,6 +15,7 @@ import androidx.media3.inspector.MetadataRetriever
 import com.cyanchill.missingcore.metadataretriever.NativeMetadataRetrieverSpec
 import com.cyanchill.missingcore.metadataretriever.models.ArtworkOptions
 import com.cyanchill.missingcore.metadataretriever.models.BridgeReturnables.*
+import com.cyanchill.missingcore.metadataretriever.models.HashedArtworkOptions
 import com.cyanchill.missingcore.metadataretriever.utils.MapUtils
 import com.cyanchill.missingcore.metadataretriever.utils.Normalization
 import com.cyanchill.missingcore.metadataretriever.utils.safeExecuteOnURI
@@ -21,6 +24,10 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.util.RNLog
+import java.io.File
+import java.io.FileOutputStream
+import java.security.MessageDigest
 import java.util.concurrent.ExecutionException
 
 @OptIn(UnstableApi::class)
@@ -216,6 +223,91 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  override fun getHashedArtwork(uri: String, options: ReadableMap, promise: Promise) {
+    val artworkOptions = HashedArtworkOptions(options)
+
+    safeExecuteOnURI(uri, "ERR_HASHED_ARTWORK", promise) {
+      val metadataList = getMetadataList(getFormatList(uri))
+
+      // We'll want to return the image designated as "Cover (front)", otherwise return first image found.
+      var coverImage: ByteArray? = null
+      var coverImageHash: String? = null
+      var backupImage: ByteArray? = null
+      var backupImageHash: String? = null
+
+      val isFLAC = uri.endsWith(".flac") || uri.endsWith(".m4a") || uri.endsWith(".mp4")
+
+      // Fallback to `MediaMetadataRetriever` if we find nothing with `MetadataRetriever` or with
+      // flac/mp4/m4a files due to artwork not being parsed correctly.
+      //  - https://github.com/MissingCore/Music/issues/432
+      if (metadataList.isEmpty() || isFLAC) {
+        val mmrMetadata = MediaMetadataRetriever()
+        mmrMetadata.setDataSource(Normalization.getSafeUri(uri))
+        coverImage = mmrMetadata.embeddedPicture
+        coverImageHash = mmrMetadata.embeddedPicture?.toMd5Hex()
+        mmrMetadata.release()
+      }
+
+      for (metadataItem in metadataList) {
+        val mediaMetadata = MediaMetadata.Builder()
+          .populateFromMetadata(metadataItem)
+          .build()
+
+        when (mediaMetadata.artworkDataType) {
+          // "Cover (front)" Picture Type
+          MediaMetadata.PICTURE_TYPE_FRONT_COVER -> {
+            coverImage = mediaMetadata.artworkData
+            coverImageHash = mediaMetadata.artworkData?.toMd5Hex()
+          }
+          // Fallback to 1st image found.
+          else -> {
+            if (backupImage == null) {
+              backupImage = mediaMetadata.artworkData
+              backupImageHash = mediaMetadata.artworkData?.toMd5Hex()
+            }
+          }
+        }
+
+        if (coverImage !== null) break
+      }
+
+      val usedArtwork = coverImage ?: backupImage
+      val usedHash = coverImageHash ?: backupImageHash
+      val savePath = "${artworkOptions.saveDirectory}${File.separator}$usedHash${artworkOptions.format.fileExtension}"
+
+      RNLog.w(context, "ByteArraySize: ${usedArtwork?.size}, Hash: $usedHash")
+      if (usedHash == null || usedArtwork == null) {
+        RNLog.w(context, "No hash or artwork")
+        promise.resolve(null)
+      } else {
+        val expectedOutput = Arguments.createMap().apply {
+          putString("hash", usedHash)
+          putString("uri",  Uri.fromFile(File(savePath)).toString())
+        }
+
+        if (usedHash in artworkOptions.knownHashes) {
+          promise.resolve(expectedOutput)
+        } else {
+          try {
+            val bitmap = BitmapFactory.decodeByteArray(usedArtwork, 0, usedArtwork.size)
+            FileOutputStream(savePath).use { fos ->
+              bitmap.compress(
+                artworkOptions.format.compressFormat,
+                (artworkOptions.compress * 100).toInt(),
+                fos,
+              )
+              fos.flush()
+            }
+            promise.resolve(expectedOutput)
+          } catch (e: Exception) {
+            RNLog.w(context, "${e.message}")
+            promise.resolve(null)
+          }
+        }
+      }
+    }
+  }
+
   /** Returns embedded lyrics in supported "lyrics" tags. Prefers returning synchronized lyrics. */
   override fun getLyric(uri: String, promise: Promise) {
     safeExecuteOnURI(uri, "ERR_LYRIC", promise) {
@@ -290,6 +382,15 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
       it.metadata?.let { metadataList.add(it) }
     }
     return metadataList
+  }
+  //#endregion
+
+  //#region [Internal Overloads]
+  /** Get an MD5 hash as a 32-character hexadecimal string. */
+  fun ByteArray.toMd5Hex(): String {
+    val md = MessageDigest.getInstance("MD5")
+    val digest = md.digest(this)
+    return digest.joinToString("") { "%02x".format(it) }
   }
   //#endregion
 

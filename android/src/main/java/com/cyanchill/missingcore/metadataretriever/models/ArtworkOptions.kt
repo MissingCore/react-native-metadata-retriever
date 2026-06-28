@@ -31,6 +31,31 @@ class ArtworkOptions(options: ReadableMap) {
   }
 }
 
+class HashedArtworkOptions(options: ReadableMap) {
+  /** A value in the range `0.0` - `1.0` specifying the quality of the resulting image. */
+  val compress: Double
+  /** Specifies the format the image will be saved in. */
+  val format: ImageFormat
+  /** Location where we want to save the image. */
+  val saveDirectory: String
+  /** A list of know image hashes. */
+  val knownHashes: ArrayList<String>
+
+  init {
+    val optionsBundle = Arguments.toBundle(options) as Bundle
+
+    compress = if (optionsBundle.containsKey("compress")) optionsBundle.getDouble("compress") else 1.0
+    // Default format to JPEG if it's not provided.
+    format = ImageFormat.fromCode(optionsBundle.getString("format")) ?: ImageFormat.JPEG
+
+    // Remove `file://` in `saveUri` if provided.
+    val uri = optionsBundle.getString("saveDirectory") as String
+    saveDirectory = Uri.parse(uri).path as String
+
+    knownHashes = optionsBundle.getStringArrayList("knownHashes") as ArrayList<String>
+  }
+}
+
 enum class ImageFormat(val code: String) {
   JPEG("jpeg"),
   JPG("jpg"),
