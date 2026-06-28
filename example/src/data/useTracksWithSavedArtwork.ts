@@ -7,8 +7,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getAudioFiles } from './getAudioFiles';
 
-import { isFulfilled } from '../utils/promise';
-
 export function useTracksWithSavedArtwork(hasPermissions: boolean) {
   return useQuery({
     queryKey: ['tracks', 'savedArtwork'],
@@ -37,13 +35,23 @@ async function getTracksWithSavedArtwork() {
     audioFiles.map(({ uri }) => uri),
     MetadataPresets.standard
   );
-  const tracksMetadata = await Promise.allSettled(
-    results.results.map(async ({ uri, data }) => {
+
+  const tracksMetadata: Array<
+    (typeof results)['results'][number]['data'] & {
+      id: string;
+      filename: string;
+      artworkData: string | null;
+    }
+  > = [];
+
+  for (const { uri, data } of results.results) {
+    try {
       const { id, filename } = assetURIMap[uri]!;
       const imgUri = await saveArtwork(uri, { compress: 0.8 });
-      return { id, filename, artworkData: imgUri, ...data };
-    })
-  );
+      tracksMetadata.push({ id, filename, artworkData: imgUri, ...data });
+    } catch {}
+  }
+
   console.log(
     `Got metadata of ${audioFiles.length} tracks in ${(
       (performance.now() - start) /
@@ -54,6 +62,6 @@ async function getTracksWithSavedArtwork() {
 
   return {
     duration: ((performance.now() - start) / 1000).toFixed(4),
-    tracks: tracksMetadata.filter(isFulfilled).map(({ value }) => value),
+    tracks: tracksMetadata,
   };
 }
