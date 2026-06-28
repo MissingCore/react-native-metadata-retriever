@@ -55,21 +55,22 @@ async function getTracksWithSavedArtwork() {
   > = [];
 
   for (const { uri, data } of results.results) {
+    const { id, filename } = assetURIMap[uri]!;
+    let img: { hash: string; uri: string } | null = null;
     try {
-      const { id, filename } = assetURIMap[uri]!;
-      const img = await saveHashedArtwork(uri, {
+      img = await saveHashedArtwork(uri, {
         saveDirectory: ImageDirectory,
         knownHashes: Array.from(savedHashedImages),
         compress: 0.8,
       });
-      if (img?.hash) savedHashedImages.add(img.hash);
-      tracksMetadata.push({
-        id,
-        filename,
-        artworkData: img?.uri || null,
-        ...data,
-      });
     } catch {}
+    if (img?.hash) savedHashedImages.add(img.hash);
+    tracksMetadata.push({
+      id,
+      filename,
+      artworkData: img?.uri || null,
+      ...data,
+    });
   }
 
   console.log(

@@ -11,6 +11,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - Removed `updateConfigs()` function.
   - If you used it to specify the max size of the return base64 image, patch the package and update the `maxImgSizeMB` variable in `ArtworkParser.kt`.
+  - ❗ Things are a bit "strict" as the hashes in `knownHashes` must reflect the other specified arguments (`saveDirectory` & `format`).
 
 ### 🎉 Added
 
