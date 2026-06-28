@@ -36,10 +36,13 @@ type HashedArtworkOptions = {
    * - Defaults to `SaveFormat.JPEG`.
    */
   format?: 'jpeg' | 'png' | 'webp';
-  /** An array of known MD5 hashes formatted as a 32-character hexadecimal string. */
-  knownHashes: string[];
-  /** Directory where we want to save the hashed image. The file name will be the hash. */
+  /** Directory where we want to save the hashed image. The file name will be its hash. */
   saveDirectory: string;
+  /**
+   * An array of known MD5 hashes formatted as a 32-character hexadecimal string
+   * which are stored in `saveDirectory`.
+   */
+  knownHashes: string[];
 };
 
 /** Options that can be set to modify the behavior of the package. */

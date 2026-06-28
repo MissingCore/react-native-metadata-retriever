@@ -38,7 +38,7 @@ class HashedArtworkOptions(options: ReadableMap) {
   val format: ImageFormat
   /** Location where we want to save the image. */
   val saveDirectory: String
-  /** A list of know image hashes. */
+  /** A list of know image hashes that are stored in `saveDirectory`. */
   val knownHashes: ArrayList<String>
 
   init {

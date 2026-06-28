@@ -29,8 +29,11 @@ export type ArtworkOptions = SharedArtworkOptions & {
 
 /** Extra options for when using `getHashedArtwork`. */
 export type HashedArtworkOptions = SharedArtworkOptions & {
-  /** An array of known MD5 hashes formatted as a 32-character hexadecimal string. */
-  knownHashes: string[];
   /** Directory where we want to save the hashed image. The file name will be the hash. */
   saveDirectory: string;
+  /**
+   * An array of known MD5 hashes formatted as a 32-character hexadecimal string
+   * which are stored in `saveDirectory`.
+   */
+  knownHashes: string[];
 };
