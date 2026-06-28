@@ -282,15 +282,6 @@ class MetadataRetrieverModule(reactContext: ReactApplicationContext) :
   }
   //#endregion
 
-  //#region [Internal Overloads]
-  /** Get an MD5 hash as a 32-character hexadecimal string. */
-  fun ByteArray.toMd5Hex(): String {
-    val md = MessageDigest.getInstance("MD5")
-    val digest = md.digest(this)
-    return digest.joinToString("") { "%02x".format(it) }
-  }
-  //#endregion
-
   companion object {
     const val NAME = NativeMetadataRetrieverSpec.NAME
   }

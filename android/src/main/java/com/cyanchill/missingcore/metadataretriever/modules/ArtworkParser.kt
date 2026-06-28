@@ -132,7 +132,7 @@ class ArtworkParser(reactContext: ReactApplicationContext) {
   //#endregion
 
   companion object {
-    var maxImgSizeMB = 5.0
+    var maxImgSizeMB: Double = 5.0
   }
 }
 

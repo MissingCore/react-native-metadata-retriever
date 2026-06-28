@@ -65,9 +65,7 @@ Formats that we can save the image as.
 function getArtwork(uri: string): Promise<string | null>;
 ```
 
-Returns a base64 string representing the embedded artwork.
-
-> **Note:** Defaults to returning up to `5 MB` of data. Can be configured with [`updateConfigs`](#updateConfigs).
+Returns a base64 string (worth up to `5 MB` of data) representing the embedded artwork.
 
 ### getBulkMetadata
 
@@ -120,15 +118,16 @@ function saveArtwork(
 
 Returns the uri of the saved artwork.
 
-> **Note:** Ignores the hard-limit of the max size of the image that can be saved.
-
-### updateConfigs
+### saveHashedArtwork
 
 ```ts
-function updateConfigs(options: ConfigOptions): Promise<void>;
+function saveHashedArtwork(
+  uri: string,
+  options?: HashedArtworkOptions
+): Promise<{ hash: string; uri: string } | null>;
 ```
 
-Update internal configuration options such as the max size of the returned base64 image.
+Returns the hash of the embedded image & uri of the saved artwork.
 
 ## Types
 
@@ -170,19 +169,31 @@ type BulkMetadata<TKeys extends MediaMetadataPublicFields> = {
 
 Structure returned when using `getBulkMetadata`.
 
-### ConfigOptions
+### HashedArtworkOptions
 
 ```ts
-type ConfigOptions = {
+type HashedArtworkOptions = {
   /**
-   * Size of the returned base64 image in MB.
-   * - Defaults to `5`.
+   * A value in the range `0.0` - `1.0` specifying the quality of the resulting image.
+   * - Defaults to `1`.
    */
-  maxImageSizeMB?: number | null;
+  compress?: number;
+  /**
+   * Specifies the format the image will be saved in.
+   * - Defaults to `SaveFormat.JPEG`.
+   */
+  format?: SaveFormat;
+  /** Directory where we want to save the hashed image. The file name will be the hash. */
+  saveDirectory: string;
+  /**
+   * An array of known MD5 hashes formatted as a 32-character hexadecimal string
+   * which are stored in `saveDirectory`.
+   */
+  knownHashes: string[];
 };
 ```
 
-Configuration options we can set to modify the behavior of the package.
+Options to change the behavior of `saveHashedArtwork`.
 
 ### MediaMetadata
 
