@@ -25,7 +25,8 @@
         "expo-build-properties",
         {
           "android": {
-           "enableBundleCompression": true,
+            "cmakeVersion": "3.31.6",
+            "enableBundleCompression": true,
             "enableMinifyInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true
           }
