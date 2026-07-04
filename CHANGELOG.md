@@ -26,6 +26,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - Refactor image saving logic.
 - Have the "Saved Artwork" strategy in the example app use `saveHashedArtwork()`.
+- Upgrade example app to Expo SDK 57 / React Native 0.86.
 
 ## [3.2.1] - 2026-06-21
 
