@@ -69,11 +69,11 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.6",
     "jest": "29.7.0",
-    "prettier": "3.8.4",
+    "prettier": "3.9.4",
     "react": "catalog:",
     "react-native": "catalog:",
     "react-native-builder-bob": "catalog:",
-    "release-it": "20.2.0",
+    "release-it": "20.2.1",
     "release-it-pnpm": "4.6.6",
     "typescript": "5.9.3"
   },
