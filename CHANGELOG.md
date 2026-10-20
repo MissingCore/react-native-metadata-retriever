@@ -7,6 +7,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [4.0.0-beta.2] - 2026-10-20
+
 ### ⚙️ Internal Changes
 
 - Upgrade example app to Expo SDK 58 / React Native 0.88.
@@ -441,7 +443,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 Add section to make `release-it` not complain that this is missing. 2024-07-20 is when we really started working on this repository.
 
-[Unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v4.0.0-beta.1...HEAD
+[Unreleased]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v4.0.0-beta.2...HEAD
+[4.0.0-beta.2]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v4.0.0-beta.1...v4.0.0-beta.2
 [4.0.0-beta.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.2.1...v4.0.0-beta.1
 [3.2.1]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/MissingCore/react-native-metadata-retriever/compare/v3.1.0...v3.2.0
