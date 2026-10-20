@@ -7,6 +7,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### ⚙️ Internal Changes
+
+- Upgrade example app to Expo SDK 58 / React Native 0.88.
+
 ## [4.0.0-beta.1] - 2026-07-04
 
 ### ❗ Breaking Changes

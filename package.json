@@ -63,7 +63,7 @@
     "@react-native/jest-preset": "catalog:",
     "@release-it/keep-a-changelog": "8.0.1",
     "@types/jest": "29.5.14",
-    "@types/react": "19.2.18",
+    "@types/react": "19.3.0",
     "del-cli": "8.0.1",
     "eslint": "9.39.4",
     "eslint-config-prettier": "10.1.8",
